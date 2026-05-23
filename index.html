@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hameethiya Driving School - Premium Driving Education</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // https://dashboard.emailjs.com/admin/account
+            emailjs.init("Z_M5vtlICYNiJ_zws");
+        })();
+    </script>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo-container">
+                <div class="logo-icon">H</div>
+                <div class="logo-text">
+                    <span class="logo-name">Hameethiya</span>
+                    <span class="logo-tagline">Driving School</span>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#reviews">Reviews</a></li>
+                <li><a href="#location">Location</a></li>
+                <li><a href="#contact" class="btn-primary">Enquire Now</a></li>
+            </ul>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <img src="https://cdn-icons-png.flaticon.com/512/744/744465.png" class="car-animation" alt="Moving Car">
+        <div class="container hero-content">
+            <h1 data-aos="fade-down">Master the Art of Driving</h1>
+            <p data-aos="fade-up" data-aos-delay="200">Experience premium driving education with personalized attention and luxury vehicles.</p>
+            <div data-aos="zoom-in" data-aos-delay="400">
+                <a href="#contact" class="btn-primary">Start Your Journey</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Traffic Training Section -->
+    <section id="traffic-rules" class="section traffic-rules">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Indian Traffic Rules & Signals</h2>
+                <div class="divider"></div>
+                <p>Learn essential road discipline as per Indian Government standards.</p>
+            </div>
+
+            <div class="traffic-training-grid">
+                <!-- Red Signal -->
+                <div class="signal-card" data-aos="fade-right">
+                    <div class="signal-visual">
+                        <div class="light red"></div>
+                        <div class="light"></div>
+                        <div class="light"></div>
+                    </div>
+                    <div class="signal-info">
+                        <h4>STOP (Red)</h4>
+                        <p>Mandatory stop before the stop line at intersections.</p>
+                    </div>
+                </div>
+                <!-- Yellow Signal -->
+                <div class="signal-card" data-aos="fade-up">
+                    <div class="signal-visual">
+                        <div class="light"></div>
+                        <div class="light yellow"></div>
+                        <div class="light"></div>
+                    </div>
+                    <div class="signal-info">
+                        <h4>CAUTION (Amber)</h4>
+                        <p>Prepare to stop. Do not cross if you haven't entered the junction.</p>
+                    </div>
+                </div>
+                <!-- Green Signal -->
+                <div class="signal-card" data-aos="fade-left">
+                    <div class="signal-visual">
+                        <div class="light"></div>
+                        <div class="light"></div>
+                        <div class="light green"></div>
+                    </div>
+                    <div class="signal-info">
+                        <h4>GO (Green)</h4>
+                        <p>Proceed with caution, ensuring the path is clear.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="signs-header" style="margin-top: 50px; text-align: center;" data-aos="fade-up">
+                <h3>Mandatory Road Signs</h3>
+                <div class="signs-grid">
+                    <div class="traffic-sign">
+                        <div class="sign-icon"><i class="fas fa-ban"></i></div>
+                        <p>No Entry</p>
+                    </div>
+                    <div class="traffic-sign">
+                        <div class="sign-icon tri"><i class="fas fa-exclamation-triangle"></i></div>
+                        <p>Caution</p>
+                    </div>
+                    <div class="traffic-sign">
+                        <div class="sign-icon"><i class="fas fa-arrow-up"></i></div>
+                        <p>One Way</p>
+                    </div>
+                    <div class="traffic-sign">
+                        <div class="sign-icon"><i class="fas fa-parking"></i></div>
+                        <p>No Parking</p>
+                    </div>
+                    <div class="traffic-sign">
+                        <div class="sign-icon"><i class="fas fa-volume-mute"></i></div>
+                        <p>No Honking</p>
+                    </div>
+                    <div class="traffic-sign">
+                        <div class="sign-icon"><i class="fas fa-walking"></i></div>
+                        <p>Pedestrian Cross</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section about">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Our Journey Path</h2>
+                <div class="divider"></div>
+                <p>An innovative approach to mastering the roads with precision and safety.</p>
+            </div>
+            
+            <div class="path-grid">
+                <!-- Step 1 -->
+                <div class="path-step" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-number">01</div>
+                    <i class="fas fa-book-open"></i>
+                    <h4>Theory Mastery</h4>
+                    <p>Deep dive into road safety, traffic laws, and psychological preparedness for modern driving.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="path-step" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-number">02</div>
+                    <i class="fas fa-desktop"></i>
+                    <h4>Simulated Training</h4>
+                    <p>Experience realistic driving scenarios in our high-tech simulators before hitting the actual road.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="path-step" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-number">03</div>
+                    <i class="fas fa-road"></i>
+                    <h4>Road Precision</h4>
+                    <p>Personalized on-road training with expert instructors focusing on defensive driving techniques.</p>
+                </div>
+                <!-- Step 4 -->
+                <div class="path-step" data-aos="fade-up" data-aos-delay="400">
+                    <div class="step-number">04</div>
+                    <i class="fas fa-award"></i>
+                    <h4>Elite Certification</h4>
+                    <p>Join the elite group of confident drivers with our recognized professional certification.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="section gallery">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Our Gallery</h2>
+                <div class="divider"></div>
+                <p>Capturing milestones and successful journeys at Hameethiya.</p>
+            </div>
+            
+            <div id="galleryGrid" class="gallery-grid">
+                <!-- Content will be injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews & Feedback Section -->
+    <section id="reviews" class="section reviews">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Customer Feedback</h2>
+                <div class="divider"></div>
+                <p>We value your experience. Share your thoughts with us.</p>
+            </div>
+
+            <div class="reviews-container">
+                <!-- Feedback Form -->
+                <div class="feedback-form-container" data-aos="fade-right">
+                    <h3>Leave a Review</h3>
+                    <form id="feedbackForm" onsubmit="handleFeedbackSubmission(event)">
+                        <div class="form-group">
+                            <label for="rev_name">Your Name</label>
+                            <input type="text" id="rev_name" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Rating</label>
+                            <div class="star-rating">
+                                <input type="radio" id="star5" name="rating" value="5" required /><label for="star5" title="5 stars"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 stars"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 stars"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 star"><i class="fas fa-star"></i></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="rev_comment">Your Feedback</label>
+                            <textarea id="rev_comment" rows="4" required placeholder="Tell us about your experience..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%;">Submit Review</button>
+                    </form>
+                </div>
+
+                <!-- Display Reviews -->
+                <div class="reviews-display" data-aos="fade-left">
+                    <h3>Recent Reviews</h3>
+                    <div id="publicReviewsList" class="public-reviews-list">
+                        <!-- Reviews will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Location Section -->
+    <section id="location" class="section location">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Find Us</h2>
+                <div class="divider"></div>
+            </div>
+            <div class="location-content">
+                <div class="location-info" data-aos="fade-right" style="padding: 30px;">
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Address</h4>
+                            <p>RC Church Complex, <br>Paramakudi, Tamil Nadu</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>+91 9597326976</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>info@hameethiya.com</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Hours</h4>
+                            <p>Mon - Sat: 9:00 AM - 6:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="map-container" data-aos="fade-left" style="padding: 10px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3934.332303531671!2d78.5866!3d9.5447!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b01198647000001%3A0x884964e526433e21!2sRC%20Church%20Complex%2C%20Paramakudi!5e0!3m2!1sen!2sin!4v1716380000000!5m2!1sen!2sin" width="100%" height="400" style="border:0; border-radius: 10px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enquiry & Signup Section -->
+    <section id="contact" class="section contact">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Get Started</h2>
+                <div class="divider"></div>
+                <p>Choose between a quick enquiry or a full registration.</p>
+            </div>
+            
+            <div class="forms-container">
+                <!-- Quick Enquiry Form -->
+                <div class="contact-card" data-aos="fade-right">
+                    <h3>Quick Enquiry</h3>
+                    <form id="enquiryForm" class="enquiry-form">
+                        <div class="hp-field">
+                            <input type="text" name="honeypot" id="enquiry_hp">
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required placeholder="Your Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="+91 00000 00000">
+                        </div>
+                        <div class="form-group">
+                            <label for="service">Service</label>
+                            <select id="service" name="service">
+                                <option value="General Inquiry">General Inquiry</option>
+                                <option value="Course Details">Course Details</option>
+                                <option value="Fee Structure">Fee Structure</option>
+                                <option value="License Help">License Help</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">Submit Enquiry</button>
+                            <button type="button" class="btn-whatsapp" onclick="handleFormSubmission('enquiry', true)">
+                                <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Customer Signup Form -->
+                <div class="contact-card" data-aos="fade-left">
+                    <h3>Customer Registration</h3>
+                    <form id="signupForm" class="enquiry-form">
+                        <div class="hp-field">
+                            <input type="text" name="honeypot" id="signup_hp">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg_name">Full Name</label>
+                            <input type="text" id="reg_name" name="name" required placeholder="Full Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg_phone">Phone Number</label>
+                            <input type="tel" id="reg_phone" name="phone" required placeholder="+91 00000 00000">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg_course">Selected Course</label>
+                            <select id="reg_course" name="course">
+                                <option value="Beginner (20 Days)">Beginner (20 Days)</option>
+                                <option value="Intermediate (15 Days)">Intermediate (15 Days)</option>
+                                <option value="Refresher (7 Days)">Refresher (7 Days)</option>
+                                <option value="Professional (30 Days)">Professional (30 Days)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg_time">Preferred Time</label>
+                            <select id="reg_time" name="time">
+                                <option value="Morning (6AM - 9AM)">Morning (6AM - 9AM)</option>
+                                <option value="Noon (11AM - 2PM)">Noon (11AM - 2PM)</option>
+                                <option value="Evening (4PM - 7PM)">Evening (4PM - 7PM)</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">Register Now</button>
+                            <button type="button" class="btn-whatsapp" onclick="handleFormSubmission('signup', true)">
+                                <i class="fab fa-whatsapp"></i> Register via WhatsApp
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Hameethiya</h2>
+                    <p>Driving School.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#home">Home</a>
+                    <a href="#about">About</a>
+                    <a href="#gallery">Gallery</a>
+                    <a href="#location">Location</a>
+                    <a href="#contact">Contact</a>
+                    <a href="javascript:void(0)" onclick="toggleAdminModal()" class="admin-link"><i class="fas fa-lock"></i> Admin</a>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Hameethiya Driving School. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="close-lightbox">&times;</span>
+        <img id="lightbox-img" src="" alt="Full View">
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="toggleAdminModal()">&times;</span>
+            <h3>Admin Portal</h3>
+            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="admin_user" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="admin_pass" required>
+                </div>
+                <button type="submit" class="btn-submit">Login</button>
+            </form>
+            
+            <div id="adminPanel" style="display: none; margin-top: 20px;">
+                <div class="admin-top-bar">
+                    <h3>Admin Dashboard</h3>
+                    <button class="btn-logout" onclick="adminLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                
+                <div class="admin-tabs">
+                    <button class="tab-btn active" onclick="switchAdminTab('photos')">Photos</button>
+                    <button class="tab-btn" onclick="switchAdminTab('enquiries')">Enquiries <span id="enquiryBadge" class="badge">0</span></button>
+                    <button class="tab-btn" onclick="switchAdminTab('feedbacks')">Feedbacks <span id="feedbackBadge" class="badge">0</span></button>
+                </div>
+
+                <!-- Photos Section -->
+                <div id="tab-photos" class="tab-content active">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
+                        <div class="glass-card" style="padding: 30px; border-color: rgba(255,255,255,0.05);">
+                            <h4>Upload New Photo</h4>
+                            <div class="form-group" style="margin-top: 20px;">
+                                <label>Select Image</label>
+                                <input type="file" id="photoUpload" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label>Caption</label>
+                                <input type="text" id="photoCaption" placeholder="e.g. Recent Event">
+                            </div>
+                            <button class="btn-primary" style="width: 100%; margin-top: 10px;" onclick="simulateUpload()">
+                                <i class="fas fa-cloud-upload-alt"></i> Upload to Gallery
+                            </button>
+                        </div>
+                        
+                        <div class="glass-card" style="padding: 30px; border-color: rgba(255,255,255,0.05); height: 100%; display: flex; flex-direction: column;">
+                            <h4>Manage Uploaded Photos</h4>
+                            <div id="uploadedPhotosList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 15px; margin-top: 20px; flex: 1; overflow-y: auto; max-height: 300px; padding-right: 10px;">
+                                <!-- Uploaded items will appear here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enquiries Section -->
+                <div id="tab-enquiries" class="tab-content">
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer Name</th>
+                                    <th>Phone</th>
+                                    <th>Interest</th>
+                                    <th>Preferred Time</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="enquiryTableBody">
+                                <!-- Rows will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="enquiryEmptyMsg" style="text-align: center; padding: 60px; color: var(--text-muted); display: none; font-size: 1.1rem;">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 20px; display: block; opacity: 0.3;"></i>
+                        No active enquiries found.
+                    </div>
+                    <div style="margin-top: 30px; display: flex; gap: 15px;">
+                        <button class="btn-primary" style="background: #444; padding: 10px 20px; font-size: 0.8rem;" onclick="clearAllEnquiries()">Clear History</button>
+                    </div>
+                </div>
+
+                <!-- Feedbacks Section -->
+                <div id="tab-feedbacks" class="tab-content">
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer Name</th>
+                                    <th>Rating</th>
+                                    <th>Feedback</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feedbackTableBody">
+                                <!-- Rows will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="feedbackEmptyMsg" style="text-align: center; padding: 60px; color: var(--text-muted); display: none; font-size: 1.1rem;">
+                        <i class="fas fa-comments" style="font-size: 3rem; margin-bottom: 20px; display: block; opacity: 0.3;"></i>
+                        No customer feedbacks found.
+                    </div>
+                    <div style="margin-top: 30px; display: flex; gap: 15px;">
+                        <button class="btn-primary" style="background: #444; padding: 10px 20px; font-size: 0.8rem;" onclick="clearAllFeedbacks()">Clear Feedbacks</button>
+                    </div>
+                </div>
+                
+                <p style="font-size: 0.8rem; color: #888; margin-top: 20px;">Note: Data is stored locally for this preview session.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
