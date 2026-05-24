@@ -194,9 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Gallery & Admin Logic ---
+    // --- Dynamic Gallery & Admin Logic ---
 
-    const INITIAL_PHOTOS = [
+    const DEFAULT_PHOTOS = [
         { url: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", caption: "Training Sessions" },
         { url: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", caption: "Premium Fleet" },
         { url: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", caption: "Recent Events" },
@@ -205,13 +205,24 @@ document.addEventListener('DOMContentLoaded', () => {
         { url: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", caption: "Road Mastery" }
     ];
 
+    // Initialize Gallery Data if first time
+    function initializeGallery() {
+        if (!localStorage.getItem('hameethiya_photos')) {
+            localStorage.setItem('hameethiya_photos', JSON.stringify(DEFAULT_PHOTOS));
+        }
+    }
+
     // Load and Render Gallery
     function renderGallery() {
         const grid = document.getElementById('galleryGrid');
         if (!grid) return;
 
-        const uploadedPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
-        const allPhotos = [...INITIAL_PHOTOS, ...uploadedPhotos];
+        const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
+
+        if (allPhotos.length === 0) {
+            grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 50px;">Gallery is empty. Upload new photos from Admin.</p>';
+            return;
+        }
 
         grid.innerHTML = allPhotos.map((photo, index) => `
             <div class="gallery-item" data-aos="fade-up" data-aos-delay="${(index % 3) * 100}" onclick="openLightbox(this)">
@@ -226,7 +237,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof AOS !== 'undefined') AOS.refresh();
     }
 
-    // Initial Render
+    // Initial Load
+    initializeGallery();
     renderGallery();
 
     // Lightbox Logic
@@ -447,16 +459,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const listContainer = document.getElementById('uploadedPhotosList');
         if (!listContainer) return;
 
-        const uploadedPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
+        const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
         
-        if (uploadedPhotos.length === 0) {
-            listContainer.innerHTML = '<p style="grid-column: span 3; color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-top: 20px;">No uploaded photos yet.</p>';
+        if (allPhotos.length === 0) {
+            listContainer.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-top: 20px;">No photos to manage.</p>';
             return;
         }
 
-        listContainer.innerHTML = uploadedPhotos.map((photo, index) => `
-            <div style="position: relative; height: 80px; border: 1px solid rgba(157, 80, 187, 0.2); border-radius: 8px; overflow: hidden; background: #000;">
-                <img src="${photo.url}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
+        listContainer.innerHTML = allPhotos.map((photo, index) => `
+            <div style="position: relative; height: 80px; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 8px; overflow: hidden; background: #000;">
+                <img src="${photo.url}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
                 <button onclick="deletePhoto(${index})" style="position: absolute; top: 5px; right: 5px; background: rgba(220, 53, 69, 0.9); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">&times;</button>
             </div>
         `).join('');
@@ -466,9 +478,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.deletePhoto = function(index) {
         if (!confirm("Are you sure you want to delete this photo?")) return;
 
-        const uploadedPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
-        uploadedPhotos.splice(index, 1);
-        localStorage.setItem('hameethiya_photos', JSON.stringify(uploadedPhotos));
+        const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
+        allPhotos.splice(index, 1);
+        localStorage.setItem('hameethiya_photos', JSON.stringify(allPhotos));
         
         updateAdminPhotoList();
         renderGallery();
@@ -521,12 +533,12 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = function(e) {
             const imageData = e.target.result;
             
-            // Save to localStorage
-            const uploadedPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
-            uploadedPhotos.push({ url: imageData, caption: caption });
+            // Save to dynamic storage
+            const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
+            allPhotos.push({ url: imageData, caption: caption });
             
             try {
-                localStorage.setItem('hameethiya_photos', JSON.stringify(uploadedPhotos));
+                localStorage.setItem('hameethiya_photos', JSON.stringify(allPhotos));
                 alert("Photo uploaded successfully!");
                 
                 // Clear form and update gallery
