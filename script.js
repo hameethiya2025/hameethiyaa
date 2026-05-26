@@ -72,14 +72,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hamburger && navLinks) {
         hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('active');
-            // Toggle hamburger icon if needed
-            const icon = hamburger.querySelector('i');
             if (navLinks.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
+                navLinks.style.display = 'flex';
+                navLinks.style.flexDirection = 'column';
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '70px';
+                navLinks.style.left = '0';
+                navLinks.style.width = '100%';
+                navLinks.style.backgroundColor = 'rgba(11, 12, 16, 0.98)';
+                navLinks.style.backdropFilter = 'blur(10px)';
+                navLinks.style.padding = '30px';
+                navLinks.style.height = '100vh';
+                navLinks.style.justifyContent = 'center';
+                navLinks.style.gap = '40px';
             } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
+                navLinks.style.display = 'none';
             }
         });
     }
@@ -93,11 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 target.scrollIntoView({
                     behavior: 'smooth'
                 });
-                if (navLinks && navLinks.classList.contains('active')) {
+                if (window.innerWidth <= 768 && navLinks) {
+                    navLinks.style.display = 'none';
                     navLinks.classList.remove('active');
-                    const icon = hamburger.querySelector('i');
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
                 }
             }
         });
