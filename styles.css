@@ -170,6 +170,65 @@ body:not(.aos-initialized) [data-aos] {
     background: rgba(0, 21, 41, 0.98);
 }
 
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: var(--transition);
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+.hamburger {
+    display: none;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    cursor: pointer;
+}
+
+@media (max-width: 992px) {
+    .hamburger {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 21, 41, 0.98);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        padding: 40px;
+        gap: 30px;
+        border-bottom: 1px solid var(--glass-border);
+        z-index: 999;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+}
+
 .logo-container {
     display: flex;
     align-items: center;
@@ -1182,33 +1241,166 @@ h4 {
     width: 100%;
 }
 
-@media (max-width: 992px) {
-    .about-content, .location-content, .forms-container {
-        grid-template-columns: 1fr;
-    }
+/* Mobile Responsiveness & Adaptive Layouts */
+
+/* Standard Desktop and Tablet Fixes */
+@media (max-width: 1200px) {
     .hero-content h1 {
-        font-size: 3rem;
+        font-size: 4.5rem;
+    }
+    .container {
+        max-width: 95%;
     }
 }
 
-@media (max-width: 768px) {
-    .nav-links {
-        display: none;
-    }
-    .hamburger {
-        display: block;
-    }
-    .navbar .container {
-        padding: 0 30px;
-    }
+@media (max-width: 992px) {
     .hero-content h1 {
-        font-size: 3rem;
+        font-size: 3.5rem;
+    }
+    .about-content, .location-content, .forms-container, .reviews-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .path-grid, .traffic-training-grid {
+        grid-template-columns: 1fr;
+    }
+    .path-step {
+        border-bottom: 1px solid rgba(212, 175, 55, 0.1) !important;
+        padding: 40px 20px;
+    }
+    .logo-name {
+        font-size: 1.8rem;
+        letter-spacing: 4px;
+    }
+}
+
+/* Specific Mobile Optimization (Phones) */
+@media (max-width: 768px) {
+    .section {
+        padding: 80px 0;
     }
     .section-header h2 {
         font-size: 2.2rem;
     }
+    .hero-content h1 {
+        font-size: 2.8rem;
+        letter-spacing: 2px;
+    }
+    .hero-content p {
+        font-size: 1.1rem;
+    }
+    .btn-primary {
+        padding: 12px 25px;
+        font-size: 0.9rem;
+    }
+    .navbar {
+        padding: 10px 0;
+    }
+    .logo-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.5rem;
+    }
+    .logo-name {
+        font-size: 1.5rem;
+        letter-spacing: 3px;
+    }
+    .logo-tagline {
+        font-size: 0.6rem;
+        letter-spacing: 3px;
+    }
+
+    /* Admin Dashboard Mobile Fixes */
     .modal-content {
-        padding: 20px;
+        padding: 15px;
         width: 98%;
+        height: 98vh;
+        border-radius: 5px;
+    }
+    .admin-top-bar {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    .admin-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .tab-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    .admin-table th, .admin-table td {
+        padding: 12px 10px;
+        font-size: 0.8rem;
+    }
+    .btn-ack {
+        padding: 6px 10px;
+        font-size: 0.7rem;
+    }
+
+    /* Form Optimizations */
+    .form-group input, .form-group select, .form-group textarea {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    /* Gallery Mobile Fix */
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+    }
+    .gallery-item {
+        height: 180px;
+    }
+
+    /* Traffic Signs Grid */
+    .signs-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .sign-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
+    }
+}
+
+/* Extra Small Screens */
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+    .logo-text {
+        display: none; /* Hide tagline on very small screens to save space */
+    }
+    .logo-name {
+        display: block;
+    }
+    .section-header h2 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Fix for horizontal scroll on mobile */
+html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Utility classes for mobile visibility */
+.mobile-hide {
+    display: none !important;
+}
+
+@media (min-width: 769px) {
+    .mobile-only {
+        display: none !important;
+    }
+    .mobile-hide {
+        display: block !important;
     }
 }

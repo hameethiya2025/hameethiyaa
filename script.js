@@ -2,13 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Firebase Configuration ---
     // IMPORTANT: Replace with your actual Firebase config from Firebase Console
    const firebaseConfig = {
-  apiKey: "AIzaSyAY8aW7751YUvDdv4xZYnXSF5AZevOBIxI",
-  authDomain: "hameethiya.firebaseapp.com",
-  projectId: "hameethiya",
-  storageBucket: "hameethiya.firebasestorage.app",
-  messagingSenderId: "206037846",
-  appId: "1:206037846:web:0bcbcfd67f6989e46d6cf7",
-  measurementId: "G-8ZQ1Y0CPQZ"
+        apiKey: "AIzaSyAY8aW7751YUvDdv4xZYnXSF5AZevOBIxI",
+        authDomain: "hameethiya.firebaseapp.com",
+        projectId: "hameethiya",
+        storageBucket: "hameethiya.firebasestorage.app",
+        messagingSenderId: "206037846",
+        appId: "1:206037846:web:0bcbcfd67f6989e46d6cf7",
+        measurementId: "G-8ZQ1Y0CPQZ"
     };
 
     // Initialize Firebase (if config is provided)
@@ -72,21 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hamburger && navLinks) {
         hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('active');
+            // Toggle hamburger icon if needed
+            const icon = hamburger.querySelector('i');
             if (navLinks.classList.contains('active')) {
-                navLinks.style.display = 'flex';
-                navLinks.style.flexDirection = 'column';
-                navLinks.style.position = 'absolute';
-                navLinks.style.top = '70px';
-                navLinks.style.left = '0';
-                navLinks.style.width = '100%';
-                navLinks.style.backgroundColor = 'rgba(11, 12, 16, 0.98)';
-                navLinks.style.backdropFilter = 'blur(10px)';
-                navLinks.style.padding = '30px';
-                navLinks.style.height = '100vh';
-                navLinks.style.justifyContent = 'center';
-                navLinks.style.gap = '40px';
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
             } else {
-                navLinks.style.display = 'none';
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
             }
         });
     }
@@ -100,9 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 target.scrollIntoView({
                     behavior: 'smooth'
                 });
-                if (window.innerWidth <= 768 && navLinks) {
-                    navLinks.style.display = 'none';
+                if (navLinks && navLinks.classList.contains('active')) {
                     navLinks.classList.remove('active');
+                    const icon = hamburger.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
                 }
             }
         });
