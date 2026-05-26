@@ -1,4 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Firebase Configuration ---
+    // IMPORTANT: Replace these placeholders with your actual Firebase project credentials
+    const firebaseConfig = {
+        apiKey: "AIzaSyAY8aW7751YUvDdv4xZYnXSF5AZevOBIxI",
+        authDomain: "hameethiya.firebaseapp.com",
+        projectId: "hameethiya",
+        storageBucket: "hameethiya.firebasestorage.app",
+        messagingSenderId: "206037846",
+        appId: "1:206037846:web:0bcbcfd67f6989e46d6cf7",
+        measurementId: "G-8ZQ1Y0CPQZ"
+    };
+    // Initialize Firebase if config is provided
+    let db = null;
+    if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+    } else {
+        console.warn("Firebase not configured. Using LocalStorage fallback.");
+    }
+
     // Navbar Scroll Effect
     const navbar = document.querySelector('.navbar');
     window.addEventListener('scroll', () => {
@@ -113,17 +133,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const intro = formType === 'enquiry' ? "I'm interested in your driving services." : "I'd like to register for a driving course!";
         
         // Save to Live Enquiry Dashboard
-        const enquiries = JSON.parse(localStorage.getItem('hameethiya_enquiries') || '[]');
-        enquiries.unshift({
+        const enquiryData = {
             name: data.name,
             phone: data.phone,
             type: formType,
             service: data.service || data.course,
             time: data.time || 'N/A',
-            timestamp: new Date().toLocaleString()
-        });
+            timestamp: new Date().toLocaleString(),
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        // Sync to Firebase Cloud
+        if (db) {
+            db.collection("enquiries").add(enquiryData)
+                .then(() => {
+                    console.log("Enquiry synced to cloud.");
+                    updateEnquiryDashboard();
+                })
+                .catch(err => console.error("Cloud sync error:", err));
+        }
+
+        // Fallback to LocalStorage
+        const enquiries = JSON.parse(localStorage.getItem('hameethiya_enquiries') || '[]');
+        enquiries.unshift(enquiryData);
         localStorage.setItem('hameethiya_enquiries', JSON.stringify(enquiries));
-        updateEnquiryDashboard();
+        if (!db) updateEnquiryDashboard();
 
         let message = `${greeting}%0A%0A${intro}%0A%0A`;
         message += `*--- CUSTOMER DETAILS ---*%0A`;
@@ -217,24 +251,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('galleryGrid');
         if (!grid) return;
 
-        const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
-
-        if (allPhotos.length === 0) {
-            grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 50px;">Gallery is empty. Upload new photos from Admin.</p>';
-            return;
-        }
-
-        grid.innerHTML = allPhotos.map((photo, index) => `
-            <div class="gallery-item" data-aos="fade-up" data-aos-delay="${(index % 3) * 100}" onclick="openLightbox(this)">
-                <img src="${photo.url}" alt="${photo.caption}">
-                <div class="gallery-overlay">
-                    <span>${photo.caption}</span>
+        const renderItems = (allPhotos) => {
+            if (allPhotos.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 50px;">Gallery is empty. Upload new photos from Admin.</p>';
+                return;
+            }
+            grid.innerHTML = allPhotos.map((photo, index) => `
+                <div class="gallery-item" data-aos="fade-up" data-aos-delay="${(index % 3) * 100}" onclick="openLightbox(this)">
+                    <img src="${photo.url}" alt="${photo.caption}">
+                    <div class="gallery-overlay">
+                        <span>${photo.caption}</span>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `).join('');
+            if (typeof AOS !== 'undefined') AOS.refresh();
+        };
 
-        // Refresh AOS to detect new elements
-        if (typeof AOS !== 'undefined') AOS.refresh();
+        if (db) {
+            db.collection("gallery").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+                const cloudPhotos = snapshot.docs.map(doc => doc.data());
+                // Combine with default if cloud is empty or just show cloud?
+                // User said "old photos removed and replace when i upload new"
+                // So if cloud has items, show only cloud.
+                if (cloudPhotos.length > 0) {
+                    renderItems(cloudPhotos);
+                } else {
+                    renderItems(DEFAULT_PHOTOS);
+                }
+            });
+        } else {
+            const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
+            renderItems(allPhotos);
+        }
     }
 
     // Initial Load
@@ -277,8 +325,20 @@ document.addEventListener('DOMContentLoaded', () => {
             rating: rating,
             comment: comment,
             timestamp: new Date().toLocaleString(),
-            id: Date.now()
+            id: Date.now(),
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
+
+        // Sync to Firebase Cloud
+        if (db) {
+            db.collection("feedbacks").add(feedbackData)
+                .then(() => {
+                    console.log("Feedback synced to cloud.");
+                    renderPublicReviews();
+                    updateFeedbackDashboard();
+                })
+                .catch(err => console.error("Cloud sync error:", err));
+        }
 
         const feedbacks = JSON.parse(localStorage.getItem('hameethiya_feedbacks') || '[]');
         feedbacks.unshift(feedbackData);
@@ -286,8 +346,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         alert("Thank you for your feedback!");
         document.getElementById('feedbackForm').reset();
-        renderPublicReviews();
-        updateFeedbackDashboard();
+        if (!db) {
+            renderPublicReviews();
+            updateFeedbackDashboard();
+        }
     };
 
     // Render Reviews for Public View
@@ -295,25 +357,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const list = document.getElementById('publicReviewsList');
         if (!list) return;
 
-        const feedbacks = JSON.parse(localStorage.getItem('hameethiya_feedbacks') || '[]');
-        
-        if (feedbacks.length === 0) {
-            list.innerHTML = '<p style="color: #666; text-align: center; margin-top: 20px;">No reviews yet. Be the first to share your experience!</p>';
-            return;
-        }
-
-        list.innerHTML = feedbacks.map(rev => `
-            <div class="public-review-card glass-card" data-aos="fade-up">
-                <div class="review-header">
-                    <span class="review-name">${rev.name}</span>
-                    <div class="review-stars">
-                        ${Array(5).fill(0).map((_, i) => `<i class="${i < rev.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}
+        const renderItems = (feedbacks) => {
+            if (feedbacks.length === 0) {
+                list.innerHTML = '<p style="color: #666; text-align: center; margin-top: 20px;">No reviews yet. Be the first to share your experience!</p>';
+                return;
+            }
+            list.innerHTML = feedbacks.map(rev => `
+                <div class="public-review-card glass-card" data-aos="fade-up">
+                    <div class="review-header">
+                        <span class="review-name">${rev.name}</span>
+                        <div class="review-stars">
+                            ${Array(5).fill(0).map((_, i) => `<i class="${i < rev.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}
+                        </div>
                     </div>
+                    <p class="review-comment">"${rev.comment}"</p>
+                    <span class="review-date">${rev.timestamp}</span>
                 </div>
-                <p class="review-comment">"${rev.comment}"</p>
-                <span class="review-date">${rev.timestamp}</span>
-            </div>
-        `).join('');
+            `).join('');
+        };
+
+        if (db) {
+            db.collection("feedbacks").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+                const cloudFeedbacks = snapshot.docs.map(doc => doc.data());
+                renderItems(cloudFeedbacks);
+            });
+        } else {
+            const localFeedbacks = JSON.parse(localStorage.getItem('hameethiya_feedbacks') || '[]');
+            renderItems(localFeedbacks);
+        }
     }
 
     // Update Admin Feedback Dashboard
@@ -323,47 +394,60 @@ document.addEventListener('DOMContentLoaded', () => {
         const badge = document.getElementById('feedbackBadge');
         if (!tableBody) return;
 
-        const feedbacks = JSON.parse(localStorage.getItem('hameethiya_feedbacks') || '[]');
-        badge.innerText = feedbacks.length;
+        const renderItems = (feedbacks) => {
+            badge.innerText = feedbacks.length;
+            if (feedbacks.length === 0) {
+                tableBody.closest('.table-container').style.display = 'none';
+                emptyMsg.style.display = 'block';
+                return;
+            }
+            tableBody.closest('.table-container').style.display = 'block';
+            emptyMsg.style.display = 'none';
+            tableBody.innerHTML = feedbacks.map((rev, index) => `
+                <tr>
+                    <td>${rev.timestamp}</td>
+                    <td><strong>${rev.name}</strong></td>
+                    <td>
+                        <div style="color: var(--primary-color);">
+                            ${Array(5).fill(0).map((_, i) => `<i class="${i < rev.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}
+                        </div>
+                    </td>
+                    <td style="max-width: 300px; white-space: normal;">${rev.comment}</td>
+                    <td>
+                        <button class="btn-ack" style="background: #dc3545;" onclick="deleteFeedback('${rev.id_cloud || index}', ${!!rev.id_cloud})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        };
 
-        if (feedbacks.length === 0) {
-            tableBody.closest('.table-container').style.display = 'none';
-            emptyMsg.style.display = 'block';
-            return;
+        if (db) {
+            db.collection("feedbacks").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+                const cloudFeedbacks = snapshot.docs.map(doc => ({ id_cloud: doc.id, ...doc.data() }));
+                renderItems(cloudFeedbacks);
+            });
+        } else {
+            const localFeedbacks = JSON.parse(localStorage.getItem('hameethiya_feedbacks') || '[]');
+            renderItems(localFeedbacks);
         }
-
-        tableBody.closest('.table-container').style.display = 'block';
-        emptyMsg.style.display = 'none';
-
-        tableBody.innerHTML = feedbacks.map((rev, index) => `
-            <tr>
-                <td>${rev.timestamp}</td>
-                <td><strong>${rev.name}</strong></td>
-                <td>
-                    <div style="color: var(--primary-color);">
-                        ${Array(5).fill(0).map((_, i) => `<i class="${i < rev.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}
-                    </div>
-                </td>
-                <td style="max-width: 300px; white-space: normal;">${rev.comment}</td>
-                <td>
-                    <button class="btn-ack" style="background: #dc3545;" onclick="deleteFeedback(${index})">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </td>
-            </tr>
-        `).join('');
     }
 
     // Delete Feedback
-    window.deleteFeedback = function(index) {
+    window.deleteFeedback = function(id, isCloud) {
         if (!confirm("Are you sure you want to delete this review?")) return;
 
-        const feedbacks = JSON.parse(localStorage.getItem('hameethiya_feedbacks') || '[]');
-        feedbacks.splice(index, 1);
-        localStorage.setItem('hameethiya_feedbacks', JSON.stringify(feedbacks));
-        
-        updateFeedbackDashboard();
-        renderPublicReviews();
+        if (isCloud && db) {
+            db.collection("feedbacks").doc(id).delete()
+                .then(() => console.log("Cloud feedback deleted."))
+                .catch(err => console.error("Cloud delete error:", err));
+        } else {
+            const feedbacks = JSON.parse(localStorage.getItem('hameethiya_feedbacks') || '[]');
+            feedbacks.splice(id, 1);
+            localStorage.setItem('hameethiya_feedbacks', JSON.stringify(feedbacks));
+            updateFeedbackDashboard();
+            renderPublicReviews();
+        }
     };
 
     // Clear All Feedbacks
@@ -407,43 +491,56 @@ document.addEventListener('DOMContentLoaded', () => {
         const badge = document.getElementById('enquiryBadge');
         if (!tableBody) return;
 
-        const enquiries = JSON.parse(localStorage.getItem('hameethiya_enquiries') || '[]');
-        badge.innerText = enquiries.length;
+        const renderEnquiries = (enquiries) => {
+            badge.innerText = enquiries.length;
+            if (enquiries.length === 0) {
+                tableBody.closest('.table-container').style.display = 'none';
+                emptyMsg.style.display = 'block';
+                return;
+            }
+            tableBody.closest('.table-container').style.display = 'block';
+            emptyMsg.style.display = 'none';
+            tableBody.innerHTML = enquiries.map((enq, index) => `
+                <tr>
+                    <td>${enq.timestamp}</td>
+                    <td><strong>${enq.name}</strong></td>
+                    <td>${enq.phone}</td>
+                    <td><span class="badge" style="background: rgba(157, 80, 187, 0.1); color: var(--primary-color);">${enq.service}</span></td>
+                    <td>${enq.time || 'N/A'}</td>
+                    <td>
+                        <button class="btn-ack" onclick="acknowledgeEnquiry('${enq.id || index}', ${!!enq.id})">
+                            <i class="fas fa-check"></i> Acknowledge
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        };
 
-        if (enquiries.length === 0) {
-            tableBody.closest('.table-container').style.display = 'none';
-            emptyMsg.style.display = 'block';
-            return;
+        if (db) {
+            db.collection("enquiries").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+                const cloudEnquiries = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderEnquiries(cloudEnquiries);
+            });
+        } else {
+            const localEnquiries = JSON.parse(localStorage.getItem('hameethiya_enquiries') || '[]');
+            renderEnquiries(localEnquiries);
         }
-
-        tableBody.closest('.table-container').style.display = 'block';
-        emptyMsg.style.display = 'none';
-
-        tableBody.innerHTML = enquiries.map((enq, index) => `
-            <tr>
-                <td>${enq.timestamp}</td>
-                <td><strong>${enq.name}</strong></td>
-                <td>${enq.phone}</td>
-                <td><span class="badge" style="background: rgba(212,175,55,0.1); color: var(--primary-color);">${enq.service}</span></td>
-                <td>${enq.time || 'N/A'}</td>
-                <td>
-                    <button class="btn-ack" onclick="acknowledgeEnquiry(${index})">
-                        <i class="fas fa-check"></i> Acknowledge
-                    </button>
-                </td>
-            </tr>
-        `).join('');
     }
 
     // Acknowledge/Close Enquiry
-    window.acknowledgeEnquiry = function(index) {
+    window.acknowledgeEnquiry = function(id, isCloud) {
         if (!confirm("Are you sure you want to acknowledge and close this enquiry?")) return;
 
-        const enquiries = JSON.parse(localStorage.getItem('hameethiya_enquiries') || '[]');
-        enquiries.splice(index, 1);
-        localStorage.setItem('hameethiya_enquiries', JSON.stringify(enquiries));
-        
-        updateEnquiryDashboard();
+        if (isCloud && db) {
+            db.collection("enquiries").doc(id).delete()
+                .then(() => console.log("Cloud enquiry deleted."))
+                .catch(err => console.error("Cloud delete error:", err));
+        } else {
+            const enquiries = JSON.parse(localStorage.getItem('hameethiya_enquiries') || '[]');
+            enquiries.splice(id, 1);
+            localStorage.setItem('hameethiya_enquiries', JSON.stringify(enquiries));
+            updateEnquiryDashboard();
+        }
     };
 
     // Clear Enquiries
@@ -459,31 +556,45 @@ document.addEventListener('DOMContentLoaded', () => {
         const listContainer = document.getElementById('uploadedPhotosList');
         if (!listContainer) return;
 
-        const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
-        
-        if (allPhotos.length === 0) {
-            listContainer.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-top: 20px;">No photos to manage.</p>';
-            return;
-        }
+        const renderItems = (allPhotos) => {
+            if (allPhotos.length === 0) {
+                listContainer.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-top: 20px;">No photos to manage.</p>';
+                return;
+            }
+            listContainer.innerHTML = allPhotos.map((photo, index) => `
+                <div style="position: relative; height: 80px; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 8px; overflow: hidden; background: #000;">
+                    <img src="${photo.url}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                    <button onclick="deletePhoto('${photo.id_cloud || index}', ${!!photo.id_cloud})" style="position: absolute; top: 5px; right: 5px; background: rgba(220, 53, 69, 0.9); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">&times;</button>
+                </div>
+            `).join('');
+        };
 
-        listContainer.innerHTML = allPhotos.map((photo, index) => `
-            <div style="position: relative; height: 80px; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 8px; overflow: hidden; background: #000;">
-                <img src="${photo.url}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
-                <button onclick="deletePhoto(${index})" style="position: absolute; top: 5px; right: 5px; background: rgba(220, 53, 69, 0.9); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">&times;</button>
-            </div>
-        `).join('');
+        if (db) {
+            db.collection("gallery").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+                const cloudPhotos = snapshot.docs.map(doc => ({ id_cloud: doc.id, ...doc.data() }));
+                renderItems(cloudPhotos);
+            });
+        } else {
+            const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
+            renderItems(allPhotos);
+        }
     }
 
     // Delete an uploaded photo
-    window.deletePhoto = function(index) {
+    window.deletePhoto = function(id, isCloud) {
         if (!confirm("Are you sure you want to delete this photo?")) return;
 
-        const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
-        allPhotos.splice(index, 1);
-        localStorage.setItem('hameethiya_photos', JSON.stringify(allPhotos));
-        
-        updateAdminPhotoList();
-        renderGallery();
+        if (isCloud && db) {
+            db.collection("gallery").doc(id).delete()
+                .then(() => console.log("Cloud photo deleted."))
+                .catch(err => console.error("Cloud delete error:", err));
+        } else {
+            const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
+            allPhotos.splice(id, 1);
+            localStorage.setItem('hameethiya_photos', JSON.stringify(allPhotos));
+            updateAdminPhotoList();
+            renderGallery();
+        }
     };
 
     // Admin Login Handling
@@ -532,23 +643,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const reader = new FileReader();
         reader.onload = function(e) {
             const imageData = e.target.result;
-            
-            // Save to dynamic storage
+            const photoData = { 
+                url: imageData, 
+                caption: caption,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Save to Firebase Cloud
+            if (db) {
+                db.collection("gallery").add(photoData)
+                    .then(() => {
+                        alert("Photo uploaded to cloud successfully!");
+                        fileInput.value = '';
+                        document.getElementById('photoCaption').value = '';
+                        updateAdminPhotoList();
+                    })
+                    .catch(err => alert("Cloud upload error: " + err.message));
+            }
+
+            // Save to dynamic local storage (fallback)
             const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
-            allPhotos.push({ url: imageData, caption: caption });
-            
+            allPhotos.push(photoData);
             try {
                 localStorage.setItem('hameethiya_photos', JSON.stringify(allPhotos));
-                alert("Photo uploaded successfully!");
-                
-                // Clear form and update gallery
-                fileInput.value = '';
-                document.getElementById('photoCaption').value = '';
-                renderGallery();
-                toggleAdminModal();
+                if (!db) {
+                    alert("Photo uploaded successfully!");
+                    fileInput.value = '';
+                    document.getElementById('photoCaption').value = '';
+                    renderGallery();
+                    updateAdminPhotoList();
+                }
             } catch (error) {
                 console.error("Storage error:", error);
-                alert("Storage is full! Please delete some photos to upload new ones.");
             }
         };
         reader.readAsDataURL(file);
