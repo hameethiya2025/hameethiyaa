@@ -612,7 +612,10 @@ document.addEventListener('DOMContentLoaded', () => {
             list.innerHTML = feedbacks.map(rev => `
                 <div class="public-review-card glass-card" data-aos="fade-up">
                     <div class="review-header">
-                        <span class="review-name">${rev.name}</span>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="review-name">${rev.name}</span>
+                            ${rev.adminReply ? `<span class="replied-badge"><i class="fas fa-check-circle"></i> Replied</span>` : ''}
+                        </div>
                         <div class="review-stars">
                             ${Array(5).fill(0).map((_, i) => `<i class="${i < rev.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}
                         </div>

@@ -235,7 +235,12 @@ document.addEventListener('DOMContentLoaded', () => {
             tableBody.innerHTML = feedbacks.map((rev, index) => `
                 <tr>
                     <td>${rev.timestamp}</td>
-                    <td><strong>${rev.name}</strong></td>
+                    <td>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <strong>${rev.name}</strong>
+                            ${rev.adminReply ? `<span class="status-badge status-completed" style="font-size: 0.65rem; width: fit-content;">Replied</span>` : `<span class="status-badge status-initiated" style="font-size: 0.65rem; width: fit-content;">Pending</span>`}
+                        </div>
+                    </td>
                     <td>
                         <div style="color: var(--primary-color);">
                             ${Array(5).fill(0).map((_, i) => `<i class="${i < rev.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}
