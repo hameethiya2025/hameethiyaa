@@ -70,21 +70,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hamburger && navLinks) {
         hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('active');
+            const icon = hamburger.querySelector('i');
             if (navLinks.classList.contains('active')) {
-                navLinks.style.display = 'flex';
-                navLinks.style.flexDirection = 'column';
-                navLinks.style.position = 'absolute';
-                navLinks.style.top = '70px';
-                navLinks.style.left = '0';
-                navLinks.style.width = '100%';
-                navLinks.style.backgroundColor = 'rgba(11, 12, 16, 0.98)';
-                navLinks.style.backdropFilter = 'blur(10px)';
-                navLinks.style.padding = '30px';
-                navLinks.style.height = '100vh';
-                navLinks.style.justifyContent = 'center';
-                navLinks.style.gap = '40px';
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+                document.body.style.overflow = 'hidden'; // Prevent scroll
             } else {
-                navLinks.style.display = 'none';
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+                document.body.style.overflow = 'auto'; // Enable scroll
             }
         });
     }
@@ -99,8 +93,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     behavior: 'smooth'
                 });
                 if (window.innerWidth <= 768 && navLinks) {
-                    navLinks.style.display = 'none';
                     navLinks.classList.remove('active');
+                    const icon = hamburger.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                    document.body.style.overflow = 'auto';
                 }
             }
         });
@@ -323,9 +322,227 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- Package Management Logic ---
+    const INITIAL_PACKAGES = {
+        'Beginner': {
+            price: '₹4,999',
+            duration: '20 Days Intensive Training',
+            features: ['Basic Controls Mastery', 'Road Sign Training', '1-on-1 Instructor', 'License Assistance'],
+            buttonId: 'pl_SuQX8TYvhdUgMT'
+        },
+        'Intermediate': {
+            price: '₹3,999',
+            duration: '15 Days Refresher + Skills',
+            features: ['Defensive Driving', 'Traffic Navigation', 'Reverse Parking Pro', 'Night Driving Session'],
+            buttonId: 'pl_SuQX8TYvhdUgMT'
+        },
+        'Professional': {
+            price: '₹6,999',
+            duration: '30 Days Advanced Mastery',
+            features: ['All Beginner Features', 'Luxury Car Handling', 'Highway Driving', 'Maintenance Basics'],
+            buttonId: 'pl_SuQX8TYvhdUgMT'
+        }
+    };
+
+    function initializePackages() {
+        if (!localStorage.getItem('hameethiya_packages')) {
+            localStorage.setItem('hameethiya_packages', JSON.stringify(INITIAL_PACKAGES));
+        }
+        renderPublicPackages();
+    }
+
+    function renderPublicPackages() {
+        const pricingGrid = document.querySelector('.pricing-grid');
+        if (!pricingGrid) return;
+
+        const packages = JSON.parse(localStorage.getItem('hameethiya_packages') || '{}');
+        
+        pricingGrid.innerHTML = Object.entries(packages).map(([id, pkg], index) => `
+            <div class="pricing-plan ${id === 'Intermediate' || pkg.isPopular ? 'featured' : ''}" data-aos="fade-up" data-aos-delay="${(index + 1) * 100}">
+                ${(id === 'Intermediate' || pkg.isPopular) ? '<div class="plan-badge">Popular</div>' : ''}
+                <div class="plan-header">
+                    <h4>${pkg.name || id}</h4>
+                    <div class="price">${pkg.price}</div>
+                    <p>${pkg.duration}</p>
+                </div>
+                <ul class="plan-features">
+                    ${pkg.features.map(f => `<li><i class="fas fa-check"></i> ${f}</li>`).join('')}
+                </ul>
+                <div class="payment-button-container" id="pay-btn-${id.replace(/\s+/g, '-')}">
+                    <button class="btn-primary pay-now-btn" onclick="triggerPayment('${pkg.name || id}', '${pkg.price}')">
+                        Enroll & Pay Now
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        // After setting HTML, manually inject Razorpay buttons if they exist
+        Object.entries(packages).forEach(([id, pkg]) => {
+            if (pkg.buttonId) {
+                const container = document.getElementById(`pay-btn-${id.replace(/\s+/g, '-')}`);
+                if (container) {
+                    container.innerHTML = ''; // Clear fallback button
+                    const form = document.createElement('form');
+                    const script = document.createElement('script');
+                    script.src = "https://checkout.razorpay.com/v1/payment-button.js";
+                    script.setAttribute('data-payment_button_id', pkg.buttonId);
+                    script.async = true;
+                    form.appendChild(script);
+                    container.appendChild(form);
+                }
+            }
+        });
+
+        // Update Admin Dropdown if it exists
+        const editSelect = document.getElementById('edit_package_id');
+        if (editSelect) {
+            const currentVal = editSelect.value;
+            editSelect.innerHTML = Object.keys(packages).map(id => `
+                <option value="${id}">${packages[id].name || id}</option>
+            `).join('');
+            if (packages[currentVal]) {
+                editSelect.value = currentVal;
+            } else if (Object.keys(packages).length > 0) {
+                editSelect.value = Object.keys(packages)[0];
+                loadPackageToForm();
+            }
+        }
+    }
+
+    window.addNewPackagePrompt = function() {
+        const name = prompt("Enter the unique ID for the new package (e.g. 'Advanced'):");
+        if (!name) return;
+        
+        const packages = JSON.parse(localStorage.getItem('hameethiya_packages') || '{}');
+        if (packages[name]) {
+            alert("A package with this ID already exists.");
+            return;
+        }
+
+        packages[name] = {
+            name: name,
+            price: '₹0',
+            duration: 'New Course',
+            features: ['Feature 1'],
+            buttonId: ''
+        };
+
+        localStorage.setItem('hameethiya_packages', JSON.stringify(packages));
+        renderPublicPackages();
+        document.getElementById('edit_package_id').value = name;
+        loadPackageToForm();
+    };
+
+    window.deletePackagePrompt = function() {
+        const id = document.getElementById('edit_package_id').value;
+        if (!id) return;
+        
+        if (!confirm(`Are you sure you want to delete the '${id}' package?`)) return;
+
+        const packages = JSON.parse(localStorage.getItem('hameethiya_packages') || '{}');
+        delete packages[id];
+
+        if (db) {
+            db.collection("packages").doc(id).delete()
+                .then(() => console.log("Package deleted from cloud."))
+                .catch(err => console.error("Cloud delete error:", err));
+        }
+
+        localStorage.setItem('hameethiya_packages', JSON.stringify(packages));
+        renderPublicPackages();
+    };
+
+    window.loadPackageToForm = function() {
+        const id = document.getElementById('edit_package_id').value;
+        const packages = JSON.parse(localStorage.getItem('hameethiya_packages') || '{}');
+        const pkg = packages[id];
+
+        if (pkg) {
+            document.getElementById('edit_package_name').value = pkg.name || id;
+            document.getElementById('edit_package_price').value = pkg.price;
+            document.getElementById('edit_package_duration').value = pkg.duration;
+            document.getElementById('edit_package_features').value = pkg.features.join('\n');
+            document.getElementById('edit_package_button').value = pkg.buttonId || '';
+            updatePackagePreview();
+        }
+    };
+
+    function updatePackagePreview() {
+        const preview = document.getElementById('packagePreview');
+        const name = document.getElementById('edit_package_name').value;
+        const price = document.getElementById('edit_package_price').value;
+        const duration = document.getElementById('edit_package_duration').value;
+        const features = document.getElementById('edit_package_features').value.split('\n').filter(f => f.trim());
+
+        preview.innerHTML = `
+            <div class="pricing-plan" style="transform: scale(0.9); margin: 0 auto; background: rgba(255,255,255,0.02); border: 1px solid var(--primary-color);">
+                <div class="plan-header">
+                    <h4>${name}</h4>
+                    <div class="price">${price}</div>
+                    <p>${duration}</p>
+                </div>
+                <ul class="plan-features">
+                    ${features.map(f => `<li><i class="fas fa-check"></i> ${f}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+
+    window.handlePackageUpdate = function(e) {
+        e.preventDefault();
+        const id = document.getElementById('edit_package_id').value;
+        const packages = JSON.parse(localStorage.getItem('hameethiya_packages') || '{}');
+
+        packages[id] = {
+            name: document.getElementById('edit_package_name').value,
+            price: document.getElementById('edit_package_price').value,
+            duration: document.getElementById('edit_package_duration').value,
+            features: document.getElementById('edit_package_features').value.split('\n').filter(f => f.trim()),
+            buttonId: document.getElementById('edit_package_button').value
+        };
+
+        // Sync to Cloud
+        if (db) {
+            db.collection("packages").doc(id).set(packages[id])
+                .then(() => alert("Package updated in cloud successfully!"))
+                .catch(err => {
+                    console.error("Cloud error:", err);
+                    alert("Cloud update failed: " + err.message);
+                });
+        }
+
+        localStorage.setItem('hameethiya_packages', JSON.stringify(packages));
+        alert("Package updated locally!");
+        renderPublicPackages();
+    };
+
+    // Sync packages from Cloud if available
+    function syncPackagesFromCloud() {
+        if (db) {
+            db.collection("packages").onSnapshot(snapshot => {
+                const cloudPackages = {};
+                snapshot.docs.forEach(doc => {
+                    cloudPackages[doc.id] = doc.data();
+                });
+                if (Object.keys(cloudPackages).length > 0) {
+                    localStorage.setItem('hameethiya_packages', JSON.stringify(cloudPackages));
+                    renderPublicPackages();
+                }
+            });
+        }
+    }
+
     // Initial Load
     initializeGallery();
     renderGallery();
+    initializePackages();
+    syncPackagesFromCloud();
+
+    // Attach input listeners for live preview
+    ['edit_package_price', 'edit_package_duration', 'edit_package_features'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updatePackagePreview);
+    });
 
     // Lightbox Logic
     window.openLightbox = function(item) {
@@ -662,7 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Simulate Photo Upload
+    // Fix Photo Upload: Add Compression to avoid Firestore limits
     window.simulateUpload = function() {
         const fileInput = document.getElementById('photoUpload');
         const file = fileInput.files[0];
@@ -678,42 +895,102 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Show loading state
+        const uploadBtn = document.querySelector('[onclick="simulateUpload()"]');
+        const originalText = uploadBtn.innerHTML;
+        uploadBtn.innerText = "Compressing & Uploading...";
+        uploadBtn.disabled = true;
+
         const reader = new FileReader();
         reader.onload = function(e) {
-            const imageData = e.target.result;
-            const photoData = { 
-                url: imageData, 
-                caption: caption,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
+            const img = new Image();
+            img.onload = function() {
+                // Canvas compression to stay under 1MB Firestore limit
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                // Max dimensions 1000px (reduced from 1200 to be safer)
+                const MAX_SIZE = 1000;
+                if (width > height) {
+                    if (width > MAX_SIZE) {
+                        height *= MAX_SIZE / width;
+                        width = MAX_SIZE;
+                    }
+                } else {
+                    if (height > MAX_SIZE) {
+                        width *= MAX_SIZE / height;
+                        height = MAX_SIZE;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Compress to JPEG with 0.6 quality (reduced from 0.7 for safety)
+                const imageData = canvas.toDataURL('image/jpeg', 0.6);
+                
+                // Check size (Firestore limit is 1MB, let's keep it under 800KB)
+                const sizeInBytes = Math.round((imageData.length * 3) / 4);
+                if (sizeInBytes > 800000) {
+                    alert("Image is too large even after compression. Please try a smaller image.");
+                    uploadBtn.innerHTML = originalText;
+                    uploadBtn.disabled = false;
+                    return;
+                }
 
-            // Save to Firebase Cloud
-            if (db) {
-                db.collection("gallery").add(photoData)
-                    .then(() => {
-                        alert("Photo uploaded to cloud successfully!");
+                const photoData = { 
+                    url: imageData, 
+                    caption: caption,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // Save to Firebase Cloud
+                if (db) {
+                    db.collection("gallery").add(photoData)
+                        .then(() => {
+                            alert("Photo uploaded successfully!");
+                            fileInput.value = '';
+                            document.getElementById('photoCaption').value = '';
+                            if (typeof updateAdminPhotoList === 'function') updateAdminPhotoList();
+                        })
+                        .catch(err => {
+                            console.error("Upload error:", err);
+                            let errorMsg = "Cloud upload failed.";
+                            if (err.code === 'permission-denied') {
+                                errorMsg += " Permission denied. Please check your Firestore security rules.";
+                            } else if (err.message && err.message.includes("size")) {
+                                errorMsg += " The image is too large for the database.";
+                            } else {
+                                errorMsg += " Error: " + err.message;
+                            }
+                            alert(errorMsg);
+                        })
+                        .finally(() => {
+                            uploadBtn.innerHTML = originalText;
+                            uploadBtn.disabled = false;
+                        });
+                } else {
+                    // Fallback to local storage
+                    const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
+                    allPhotos.push(photoData);
+                    try {
+                        localStorage.setItem('hameethiya_photos', JSON.stringify(allPhotos));
+                        alert("Photo saved locally (Cloud not configured).");
                         fileInput.value = '';
                         document.getElementById('photoCaption').value = '';
-                        updateAdminPhotoList();
-                    })
-                    .catch(err => alert("Cloud upload error: " + err.message));
-            }
-
-            // Save to dynamic local storage (fallback)
-            const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
-            allPhotos.push(photoData);
-            try {
-                localStorage.setItem('hameethiya_photos', JSON.stringify(allPhotos));
-                if (!db) {
-                    alert("Photo uploaded successfully!");
-                    fileInput.value = '';
-                    document.getElementById('photoCaption').value = '';
-                    renderGallery();
-                    updateAdminPhotoList();
+                        if (typeof renderGallery === 'function') renderGallery();
+                        if (typeof updateAdminPhotoList === 'function') updateAdminPhotoList();
+                    } catch (error) {
+                        alert("Storage full! Clear some photos or configure Firebase Cloud.");
+                    }
+                    uploadBtn.innerHTML = originalText;
+                    uploadBtn.disabled = false;
                 }
-            } catch (error) {
-                console.error("Storage error:", error);
-            }
+            };
+            img.src = e.target.result;
         };
         reader.readAsDataURL(file);
     };
