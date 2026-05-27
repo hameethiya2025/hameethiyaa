@@ -1069,29 +1069,32 @@ body:not(.aos-initialized) [data-aos] {
 
 .admin-reply {
     margin-top: 15px;
-    padding: 15px;
-    background: rgba(212, 175, 55, 0.05);
-    border-left: 3px solid var(--primary-color);
+    padding: 15px 20px;
+    background: rgba(212, 175, 55, 0.08); /* Slightly more visible */
+    border-left: 4px solid var(--primary-color); /* Thicker border */
     border-radius: 4px;
+    position: relative;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
 }
 
 .reply-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 10px;
+    margin-bottom: 10px;
     color: var(--primary-color);
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
 }
 
 .admin-reply p {
-    color: var(--text-light);
-    font-size: 0.9rem;
+    color: #e5e7eb; /* Brighter text for better readability */
+    font-size: 0.95rem;
     margin: 0;
     font-style: normal;
+    line-height: 1.6;
 }
 
 .review-date {

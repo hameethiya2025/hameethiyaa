@@ -605,23 +605,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!list) return;
 
         const renderItems = (feedbacks) => {
+            console.log("Rendering reviews:", feedbacks.length);
             if (feedbacks.length === 0) {
                 list.innerHTML = '<p style="color: #666; text-align: center; margin-top: 20px;">No reviews yet. Be the first to share your experience!</p>';
                 return;
             }
-            list.innerHTML = feedbacks.map(rev => `
+            list.innerHTML = feedbacks.map(rev => {
+                const hasReply = rev.adminReply && rev.adminReply.trim() !== "";
+                return `
                 <div class="public-review-card glass-card" data-aos="fade-up">
                     <div class="review-header">
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <span class="review-name">${rev.name}</span>
-                            ${rev.adminReply ? `<span class="replied-badge"><i class="fas fa-check-circle"></i> Replied</span>` : ''}
+                            ${hasReply ? `<span class="replied-badge"><i class="fas fa-check-circle"></i> Replied</span>` : ''}
                         </div>
                         <div class="review-stars">
                             ${Array(5).fill(0).map((_, i) => `<i class="${i < rev.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}
                         </div>
                     </div>
                     <p class="review-comment">"${rev.comment}"</p>
-                    ${rev.adminReply ? `
+                    ${hasReply ? `
                         <div class="admin-reply">
                             <div class="reply-header">
                                 <i class="fas fa-reply"></i>
@@ -632,13 +635,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     ` : ''}
                     <span class="review-date">${rev.timestamp}</span>
                 </div>
-            `).join('');
+                `;
+            }).join('');
+            
+            // Critical: Refresh AOS to recognize dynamically added elements
+            if (typeof AOS !== 'undefined') {
+                setTimeout(() => {
+                    AOS.refresh();
+                }, 100);
+            }
         };
 
         if (db) {
             db.collection("feedbacks").orderBy("createdAt", "desc").onSnapshot(snapshot => {
                 const cloudFeedbacks = snapshot.docs.map(doc => doc.data());
+                console.log("Cloud feedbacks updated:", cloudFeedbacks);
                 renderItems(cloudFeedbacks);
+            }, err => {
+                console.error("Firestore snapshot error:", err);
+                // Fallback to local on error
+                const localFeedbacks = JSON.parse(localStorage.getItem('hameethiya_feedbacks') || '[]');
+                renderItems(localFeedbacks);
             });
         } else {
             const localFeedbacks = JSON.parse(localStorage.getItem('hameethiya_feedbacks') || '[]');
