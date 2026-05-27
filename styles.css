@@ -1113,6 +1113,80 @@ h4 {
     letter-spacing: 2px;
 }
 
+/* Pricing Section */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.pricing-plan {
+    padding: 50px 30px;
+    text-align: center;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    transition: var(--transition);
+    position: relative;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.pricing-plan.featured {
+    border: 1px solid var(--primary-color);
+    background: rgba(212, 175, 55, 0.05);
+    transform: scale(1.05);
+    z-index: 2;
+}
+
+.plan-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--gold-gradient);
+    color: var(--secondary-color);
+    padding: 5px 15px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    border-radius: 20px;
+}
+
+.plan-header h4 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.plan-header .price {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 10px;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.plan-features {
+    list-style: none;
+    margin: 30px 0;
+    text-align: left;
+    padding-left: 20px;
+}
+
+.plan-features li {
+    margin-bottom: 15px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.plan-features li i {
+    color: var(--primary-color);
+    margin-right: 10px;
+}
+
+.pay-now-btn {
+    width: 100%;
+}
+
 /* Footer - Sophisticated */
 .footer {
     padding: 80px 0 40px;

@@ -228,6 +228,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Payment Logic ---
+    window.triggerPayment = function(courseName, amount) {
+        // In a real scenario, you would integrate Razorpay Checkout here.
+        // For now, we will simulate the process and log it to Firebase/LocalStorage.
+        
+        const confirmPayment = confirm(`You are about to enroll in the ${courseName} course for ₹${amount}. Proceed to secure payment?`);
+        
+        if (confirmPayment) {
+            alert("Redirecting to secure payment gateway...");
+            
+            // Log payment attempt to Firebase
+            const paymentData = {
+                course: courseName,
+                amount: amount,
+                status: 'Initiated',
+                timestamp: new Date().toLocaleString(),
+                createdAt: db ? firebase.firestore.FieldValue.serverTimestamp() : null
+            };
+
+            if (db) {
+                db.collection("payments").add(paymentData)
+                    .then(() => console.log("Payment attempt logged to cloud."))
+                    .catch(err => console.error("Cloud log error:", err));
+            }
+
+            // After simulation, you would normally see the Razorpay popup.
+            // For now, we show a success message after a short delay.
+            setTimeout(() => {
+                alert(`Success! Enrollment for ${courseName} is complete. Our team will contact you shortly.`);
+                
+                // Update status to 'Completed'
+                if (db) {
+                    // In real life, this would happen via a webhook from Razorpay
+                }
+            }, 2000);
+        }
+    };
+
     // --- Dynamic Gallery & Admin Logic ---
 
     const DEFAULT_PHOTOS = [
