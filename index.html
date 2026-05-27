@@ -93,6 +93,7 @@
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About Us</a></li>
                 <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#llr-download">LLR Download</a></li>
                 <li><a href="#pricing">Course Fees</a></li>
                 <li><a href="#reviews">Reviews</a></li>
                 <li><a href="#location">Location</a></li>
@@ -235,6 +236,33 @@
                     <h4>Elite Certification</h4>
                     <p>Join the elite group of confident drivers with our recognized professional certification.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LLR Download Section -->
+    <section id="llr-download" class="section llr-download" style="background: rgba(212, 175, 55, 0.02);">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Download LLR Copy</h2>
+                <div class="divider"></div>
+                <p>Enter your registered mobile number to retrieve your Learner's License copy.</p>
+            </div>
+
+            <div class="llr-download-container glass-card" data-aos="zoom-in" style="max-width: 600px; margin: 0 auto; padding: 40px;">
+                <form id="llrDownloadForm" onsubmit="handleLLRDownload(event)">
+                    <div class="form-group">
+                        <label for="download_mobile">Registered Mobile Number</label>
+                        <input type="tel" id="download_mobile" pattern="[0-9]{10}" required placeholder="10-digit mobile number">
+                    </div>
+                    <div id="llrErrorMsg" style="color: #ef4444; font-size: 0.85rem; margin-top: -10px; margin-bottom: 15px; display: none;"></div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">
+                        <i class="fas fa-download"></i> Verify & Download LLR
+                    </button>
+                </form>
+                <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 20px;">
+                    * Max 3 attempts per 15 minutes for security.
+                </p>
             </div>
         </div>
     </section>

@@ -666,6 +666,88 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial Render of Reviews
     renderPublicReviews();
 
+    // --- LLR Download Logic ---
+    let downloadAttempts = JSON.parse(localStorage.getItem('llr_download_attempts') || '{}');
+
+    window.handleLLRDownload = function(e) {
+        e.preventDefault();
+        const mobile = document.getElementById('download_mobile').value;
+        const errorMsg = document.getElementById('llrErrorMsg');
+        const btn = e.target.querySelector('button');
+
+        // 1. Rate Limiting Check
+        const now = Date.now();
+        const attemptInfo = downloadAttempts[mobile] || { count: 0, lastAttempt: 0 };
+        
+        // Reset count if 15 mins passed
+        if (now - attemptInfo.lastAttempt > 15 * 60 * 1000) {
+            attemptInfo.count = 0;
+        }
+
+        if (attemptInfo.count >= 3) {
+            errorMsg.innerText = "Too many attempts. Please try again after 15 minutes.";
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        btn.innerText = "Verifying...";
+        btn.disabled = true;
+        errorMsg.style.display = 'none';
+
+        const finalizeAttempt = (success) => {
+            attemptInfo.count++;
+            attemptInfo.lastAttempt = now;
+            downloadAttempts[mobile] = attemptInfo;
+            localStorage.setItem('llr_download_attempts', JSON.stringify(downloadAttempts));
+            
+            btn.innerHTML = '<i class="fas fa-download"></i> Verify & Download LLR';
+            btn.disabled = false;
+        };
+
+        const downloadFile = (doc) => {
+            const link = document.createElement('a');
+            link.href = doc.file;
+            link.download = `LLR_${doc.mobile}_${doc.llrDate}.${doc.fileType.split('/')[1] || 'pdf'}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert("LLR Download started successfully!");
+        };
+
+        if (db) {
+            db.collection("llr_documents").where("mobile", "==", mobile).get()
+                .then(snapshot => {
+                    if (snapshot.empty) {
+                        errorMsg.innerText = "No LLR record found for this mobile number.";
+                        errorMsg.style.display = 'block';
+                        finalizeAttempt(false);
+                    } else {
+                        const doc = snapshot.docs[0].data();
+                        downloadFile(doc);
+                        finalizeAttempt(true);
+                    }
+                })
+                .catch(err => {
+                    console.error("LLR fetch error:", err);
+                    errorMsg.innerText = "An error occurred. Please try again.";
+                    errorMsg.style.display = 'block';
+                    finalizeAttempt(false);
+                });
+        } else {
+            // Fallback to local
+            const local = JSON.parse(localStorage.getItem('hameethiya_llr') || '[]');
+            const doc = local.find(d => d.mobile === mobile);
+            if (doc) {
+                downloadFile(doc);
+                finalizeAttempt(true);
+            } else {
+                errorMsg.innerText = "No LLR record found locally.";
+                errorMsg.style.display = 'block';
+                finalizeAttempt(false);
+            }
+        }
+    };
+
     // Close modals on outside click
     window.onclick = function(event) {
         const lightbox = document.getElementById('lightbox');

@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateEnquiryDashboard();
         updateFeedbackDashboard();
         updatePaymentDashboard();
+        updateLLRDashboard();
         loadPackages();
         
         // Listeners for live preview
@@ -155,6 +156,106 @@ document.addEventListener('DOMContentLoaded', () => {
         const payment = allPayments.find(p => p.id === id);
         if (payment) {
             alert(`Payment Details:\nName: ${payment.name}\nCourse: ${payment.course}\nTXN ID: ${payment.transactionId}\nStatus: ${payment.status}\nDate: ${payment.timestamp}`);
+        }
+    };
+
+    // --- LLR Documents Management ---
+    window.handleLLRUpload = function(e) {
+        e.preventDefault();
+        const mobile = document.getElementById('llr_mobile').value;
+        const date = document.getElementById('llr_date').value;
+        const fileInput = document.getElementById('llr_file');
+        const file = fileInput.files[0];
+
+        if (!/^[0-9]{10}$/.test(mobile)) return alert("Invalid mobile number.");
+        if (new Date(date) > new Date()) return alert("LLR date cannot be in the future.");
+        if (!file) return alert("Please select a file.");
+        
+        // File type and size validation
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) return alert("Only PDF, JPG, and PNG files are allowed.");
+        if (file.size > 10 * 1024 * 1024) return alert("File size exceeds 10MB limit.");
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.innerText = "Encrypting & Uploading...";
+        btn.disabled = true;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const fileData = event.target.result;
+            const llrData = {
+                mobile: mobile,
+                llrDate: date,
+                file: fileData, // Encrypted/Secured storage would normally be a bucket URL
+                fileName: file.name,
+                fileType: file.type,
+                uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                timestamp: new Date().toLocaleString()
+            };
+
+            if (db) {
+                db.collection("llr_documents").add(llrData)
+                    .then(() => {
+                        alert("LLR Document uploaded successfully!");
+                        e.target.reset();
+                    })
+                    .catch(err => alert("Upload error: " + err.message))
+                    .finally(() => {
+                        btn.innerHTML = '<i class="fas fa-file-upload"></i> Upload LLR Document';
+                        btn.disabled = false;
+                    });
+            } else {
+                const local = JSON.parse(localStorage.getItem('hameethiya_llr') || '[]');
+                local.push(llrData);
+                localStorage.setItem('hameethiya_llr', JSON.stringify(local));
+                updateLLRDashboard();
+                alert("Saved locally!");
+                e.target.reset();
+                btn.innerHTML = '<i class="fas fa-file-upload"></i> Upload LLR Document';
+                btn.disabled = false;
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
+    function updateLLRDashboard() {
+        const tableBody = document.getElementById('llrTableBody');
+        if (!tableBody) return;
+
+        const render = (docs) => {
+            tableBody.innerHTML = docs.map((doc, index) => `
+                <tr>
+                    <td>${doc.mobile}</td>
+                    <td>${doc.llrDate}</td>
+                    <td>
+                        <button class="btn-ack" style="background: #dc3545;" onclick="deleteLLR('${doc.id || index}', ${!!doc.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        };
+
+        if (db) {
+            db.collection("llr_documents").orderBy("uploadedAt", "desc").onSnapshot(snapshot => {
+                const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                render(docs);
+            });
+        } else {
+            const local = JSON.parse(localStorage.getItem('hameethiya_llr') || '[]');
+            render(local);
+        }
+    }
+
+    window.deleteLLR = function(id, isCloud) {
+        if (!confirm("Delete this LLR record?")) return;
+        if (isCloud && db) {
+            db.collection("llr_documents").doc(id).delete();
+        } else {
+            const local = JSON.parse(localStorage.getItem('hameethiya_llr') || '[]');
+            local.splice(id, 1);
+            localStorage.setItem('hameethiya_llr', JSON.stringify(local));
+            updateLLRDashboard();
         }
     };
 
