@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateFeedbackDashboard();
         updatePaymentDashboard();
         updateLLRDashboard();
+        cleanupExpiredLLR(); // Auto-delete LLR older than 180 days
         loadPackages();
         
         // Listeners for live preview
@@ -258,6 +259,39 @@ document.addEventListener('DOMContentLoaded', () => {
             updateLLRDashboard();
         }
     };
+
+    function cleanupExpiredLLR() {
+        const EXPIRY_DAYS = 180;
+        const now = new Date();
+        
+        const isExpired = (llrDateStr) => {
+            const llrDate = new Date(llrDateStr);
+            const diffTime = Math.abs(now - llrDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays > EXPIRY_DAYS;
+        };
+
+        if (db) {
+            db.collection("llr_documents").get().then(snapshot => {
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (isExpired(data.llrDate)) {
+                        db.collection("llr_documents").doc(doc.id).delete()
+                            .then(() => console.log(`Auto-deleted expired LLR: ${doc.id}`))
+                            .catch(err => console.error("Auto-delete error:", err));
+                    }
+                });
+            });
+        } else {
+            const local = JSON.parse(localStorage.getItem('hameethiya_llr') || '[]');
+            const filtered = local.filter(doc => !isExpired(doc.llrDate));
+            if (filtered.length !== local.length) {
+                localStorage.setItem('hameethiya_llr', JSON.stringify(filtered));
+                updateLLRDashboard();
+                console.log("Auto-deleted expired LLR records from LocalStorage");
+            }
+        }
+    }
 
     // --- Enquiries Management ---
     function updateEnquiryDashboard() {
