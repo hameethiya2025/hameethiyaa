@@ -229,39 +229,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Payment Logic ---
     window.triggerPayment = function(courseName, amount) {
-        // In a real scenario, you would integrate Razorpay Checkout here.
-        // For now, we will simulate the process and log it to Firebase/LocalStorage.
-        
-        const confirmPayment = confirm(`You are about to enroll in the ${courseName} course for ₹${amount}. Proceed to secure payment?`);
+        const customerName = prompt("Please enter your name for enrollment:");
+        if (!customerName) return;
+
+        const confirmPayment = confirm(`Hello ${customerName}, you are about to enroll in the ${courseName} course for ${amount}. Proceed to secure payment?`);
         
         if (confirmPayment) {
             alert("Redirecting to secure payment gateway...");
             
+            const transactionId = 'TXN' + Math.floor(Math.random() * 1000000000);
+            
             // Log payment attempt to Firebase
             const paymentData = {
+                name: customerName,
                 course: courseName,
                 amount: amount,
-                status: 'Initiated',
+                status: 'Completed', // For simulation purposes
+                transactionId: transactionId,
                 timestamp: new Date().toLocaleString(),
-                createdAt: db ? firebase.firestore.FieldValue.serverTimestamp() : null
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
             if (db) {
                 db.collection("payments").add(paymentData)
-                    .then(() => console.log("Payment attempt logged to cloud."))
+                    .then(() => console.log("Payment logged to cloud."))
                     .catch(err => console.error("Cloud log error:", err));
             }
 
-            // After simulation, you would normally see the Razorpay popup.
-            // For now, we show a success message after a short delay.
             setTimeout(() => {
-                alert(`Success! Enrollment for ${courseName} is complete. Our team will contact you shortly.`);
-                
-                // Update status to 'Completed'
-                if (db) {
-                    // In real life, this would happen via a webhook from Razorpay
-                }
-            }, 2000);
+                alert(`Success! Enrollment for ${courseName} is complete. Transaction ID: ${transactionId}. Our team will contact you shortly.`);
+            }, 1500);
         }
     };
 
@@ -538,12 +535,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initializePackages();
     syncPackagesFromCloud();
 
-    // Attach input listeners for live preview
-    ['edit_package_price', 'edit_package_duration', 'edit_package_features'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', updatePackagePreview);
-    });
-
     // Lightbox Logic
     window.openLightbox = function(item) {
         const lightbox = document.getElementById('lightbox');
@@ -556,8 +547,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.closeLightbox = function() {
-        document.getElementById('lightbox').style.display = 'none';
-        document.body.style.overflow = 'auto'; // Enable scroll
+        const lightbox = document.getElementById('lightbox');
+        if (lightbox) {
+            lightbox.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Enable scroll
+        }
     };
 
     // --- Feedback & Reviews Logic ---
@@ -590,7 +584,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(() => {
                     console.log("Feedback synced to cloud.");
                     renderPublicReviews();
-                    updateFeedbackDashboard();
                 })
                 .catch(err => console.error("Cloud sync error:", err));
         }
@@ -603,7 +596,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('feedbackForm').reset();
         if (!db) {
             renderPublicReviews();
-            updateFeedbackDashboard();
         }
     };
 
@@ -626,6 +618,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                     <p class="review-comment">"${rev.comment}"</p>
+                    ${rev.adminReply ? `
+                        <div class="admin-reply">
+                            <div class="reply-header">
+                                <i class="fas fa-reply"></i>
+                                <span>Response from Hameethiya Admin</span>
+                            </div>
+                            <p>${rev.adminReply}</p>
+                        </div>
+                    ` : ''}
                     <span class="review-date">${rev.timestamp}</span>
                 </div>
             `).join('');
@@ -642,366 +643,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Update Admin Feedback Dashboard
-    function updateFeedbackDashboard() {
-        const tableBody = document.getElementById('feedbackTableBody');
-        const emptyMsg = document.getElementById('feedbackEmptyMsg');
-        const badge = document.getElementById('feedbackBadge');
-        if (!tableBody) return;
-
-        const renderItems = (feedbacks) => {
-            badge.innerText = feedbacks.length;
-            if (feedbacks.length === 0) {
-                tableBody.closest('.table-container').style.display = 'none';
-                emptyMsg.style.display = 'block';
-                return;
-            }
-            tableBody.closest('.table-container').style.display = 'block';
-            emptyMsg.style.display = 'none';
-            tableBody.innerHTML = feedbacks.map((rev, index) => `
-                <tr>
-                    <td>${rev.timestamp}</td>
-                    <td><strong>${rev.name}</strong></td>
-                    <td>
-                        <div style="color: var(--primary-color);">
-                            ${Array(5).fill(0).map((_, i) => `<i class="${i < rev.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}
-                        </div>
-                    </td>
-                    <td style="max-width: 300px; white-space: normal;">${rev.comment}</td>
-                    <td>
-                        <button class="btn-ack" style="background: #dc3545;" onclick="deleteFeedback('${rev.id_cloud || index}', ${!!rev.id_cloud})">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        };
-
-        if (db) {
-            db.collection("feedbacks").orderBy("createdAt", "desc").onSnapshot(snapshot => {
-                const cloudFeedbacks = snapshot.docs.map(doc => ({ id_cloud: doc.id, ...doc.data() }));
-                renderItems(cloudFeedbacks);
-            });
-        } else {
-            const localFeedbacks = JSON.parse(localStorage.getItem('hameethiya_feedbacks') || '[]');
-            renderItems(localFeedbacks);
-        }
-    }
-
-    // Delete Feedback
-    window.deleteFeedback = function(id, isCloud) {
-        if (!confirm("Are you sure you want to delete this review?")) return;
-
-        if (isCloud && db) {
-            db.collection("feedbacks").doc(id).delete()
-                .then(() => console.log("Cloud feedback deleted."))
-                .catch(err => console.error("Cloud delete error:", err));
-        } else {
-            const feedbacks = JSON.parse(localStorage.getItem('hameethiya_feedbacks') || '[]');
-            feedbacks.splice(id, 1);
-            localStorage.setItem('hameethiya_feedbacks', JSON.stringify(feedbacks));
-            updateFeedbackDashboard();
-            renderPublicReviews();
-        }
-    };
-
-    // Clear All Feedbacks
-    window.clearAllFeedbacks = function() {
-        if (confirm("Are you sure you want to clear ALL customer feedback?")) {
-            localStorage.removeItem('hameethiya_feedbacks');
-            updateFeedbackDashboard();
-            renderPublicReviews();
-        }
-    };
-
     // Initial Render of Reviews
     renderPublicReviews();
 
-    // Admin Modal Toggle
-    window.toggleAdminModal = function() {
-        const modal = document.getElementById('adminModal');
-        const isOpening = modal.style.display !== 'flex';
-        modal.style.display = isOpening ? 'flex' : 'none';
-        
-        if (isOpening) {
-            updateAdminPhotoList();
-            updateEnquiryDashboard();
-            updateFeedbackDashboard();
-        }
-    };
-
-    // Tab Switching Logic
-    window.switchAdminTab = function(tabName) {
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        
-        document.getElementById(`tab-${tabName}`).classList.add('active');
-        event.currentTarget.classList.add('active');
-    };
-
-    // Update Enquiry Dashboard
-    function updateEnquiryDashboard() {
-        const tableBody = document.getElementById('enquiryTableBody');
-        const emptyMsg = document.getElementById('enquiryEmptyMsg');
-        const badge = document.getElementById('enquiryBadge');
-        if (!tableBody) return;
-
-        const renderEnquiries = (enquiries) => {
-            badge.innerText = enquiries.length;
-            if (enquiries.length === 0) {
-                tableBody.closest('.table-container').style.display = 'none';
-                emptyMsg.style.display = 'block';
-                return;
-            }
-            tableBody.closest('.table-container').style.display = 'block';
-            emptyMsg.style.display = 'none';
-            tableBody.innerHTML = enquiries.map((enq, index) => `
-                <tr>
-                    <td>${enq.timestamp}</td>
-                    <td><strong>${enq.name}</strong></td>
-                    <td>${enq.phone}</td>
-                    <td><span class="badge" style="background: rgba(157, 80, 187, 0.1); color: var(--primary-color);">${enq.service}</span></td>
-                    <td>${enq.time || 'N/A'}</td>
-                    <td>
-                        <button class="btn-ack" onclick="acknowledgeEnquiry('${enq.id || index}', ${!!enq.id})">
-                            <i class="fas fa-check"></i> Acknowledge
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        };
-
-        if (db) {
-            db.collection("enquiries").orderBy("createdAt", "desc").onSnapshot(snapshot => {
-                const cloudEnquiries = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderEnquiries(cloudEnquiries);
-            });
-        } else {
-            const localEnquiries = JSON.parse(localStorage.getItem('hameethiya_enquiries') || '[]');
-            renderEnquiries(localEnquiries);
-        }
-    }
-
-    // Acknowledge/Close Enquiry
-    window.acknowledgeEnquiry = function(id, isCloud) {
-        if (!confirm("Are you sure you want to acknowledge and close this enquiry?")) return;
-
-        if (isCloud && db) {
-            db.collection("enquiries").doc(id).delete()
-                .then(() => console.log("Cloud enquiry deleted."))
-                .catch(err => console.error("Cloud delete error:", err));
-        } else {
-            const enquiries = JSON.parse(localStorage.getItem('hameethiya_enquiries') || '[]');
-            enquiries.splice(id, 1);
-            localStorage.setItem('hameethiya_enquiries', JSON.stringify(enquiries));
-            updateEnquiryDashboard();
-        }
-    };
-
-    // Clear Enquiries
-    window.clearAllEnquiries = function() {
-        if (confirm("Are you sure you want to clear all lead records?")) {
-            localStorage.removeItem('hameethiya_enquiries');
-            updateEnquiryDashboard();
-        }
-    };
-
-    // Update the list of uploaded photos in the admin panel
-    function updateAdminPhotoList() {
-        const listContainer = document.getElementById('uploadedPhotosList');
-        if (!listContainer) return;
-
-        const renderItems = (allPhotos) => {
-            if (allPhotos.length === 0) {
-                listContainer.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-top: 20px;">No photos to manage.</p>';
-                return;
-            }
-            listContainer.innerHTML = allPhotos.map((photo, index) => `
-                <div style="position: relative; height: 80px; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 8px; overflow: hidden; background: #000;">
-                    <img src="${photo.url}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
-                    <button onclick="deletePhoto('${photo.id_cloud || index}', ${!!photo.id_cloud})" style="position: absolute; top: 5px; right: 5px; background: rgba(220, 53, 69, 0.9); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">&times;</button>
-                </div>
-            `).join('');
-        };
-
-        if (db) {
-            db.collection("gallery").orderBy("createdAt", "desc").onSnapshot(snapshot => {
-                const cloudPhotos = snapshot.docs.map(doc => ({ id_cloud: doc.id, ...doc.data() }));
-                renderItems(cloudPhotos);
-            });
-        } else {
-            const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
-            renderItems(allPhotos);
-        }
-    }
-
-    // Delete an uploaded photo
-    window.deletePhoto = function(id, isCloud) {
-        if (!confirm("Are you sure you want to delete this photo?")) return;
-
-        if (isCloud && db) {
-            db.collection("gallery").doc(id).delete()
-                .then(() => console.log("Cloud photo deleted."))
-                .catch(err => console.error("Cloud delete error:", err));
-        } else {
-            const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
-            allPhotos.splice(id, 1);
-            localStorage.setItem('hameethiya_photos', JSON.stringify(allPhotos));
-            updateAdminPhotoList();
-            renderGallery();
-        }
-    };
-
-    // Admin Login Handling
-    window.handleAdminLogin = function(e) {
-        e.preventDefault();
-        const user = document.getElementById('admin_user').value;
-        const pass = document.getElementById('admin_pass').value;
-
-        // Simple mock authentication
-        if (user === "admin" && pass === "hameethiya123") {
-            document.getElementById('adminLoginForm').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            document.querySelector('.modal-content h3').style.display = 'none'; // Hide the static header
-        } else {
-            alert("Invalid credentials. Please try again.");
-        }
-    };
-
-    // Admin Logout
-    window.adminLogout = function() {
-        if (confirm("Are you sure you want to logout from the Admin Dashboard?")) {
-            document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('adminLoginForm').style.display = 'block';
-            document.querySelector('.modal-content h3').style.display = 'block'; // Show static header again
-            document.getElementById('admin_user').value = '';
-            document.getElementById('admin_pass').value = '';
-        }
-    };
-
-    // Fix Photo Upload: Add Compression to avoid Firestore limits
-    window.simulateUpload = function() {
-        const fileInput = document.getElementById('photoUpload');
-        const file = fileInput.files[0];
-        const caption = document.getElementById('photoCaption').value;
-
-        if (!file) {
-            alert("Please select a photo to upload.");
-            return;
-        }
-
-        if (!caption) {
-            alert("Please provide a caption.");
-            return;
-        }
-
-        // Show loading state
-        const uploadBtn = document.querySelector('[onclick="simulateUpload()"]');
-        const originalText = uploadBtn.innerHTML;
-        uploadBtn.innerText = "Compressing & Uploading...";
-        uploadBtn.disabled = true;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = new Image();
-            img.onload = function() {
-                // Canvas compression to stay under 1MB Firestore limit
-                const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
-                
-                // Max dimensions 1000px (reduced from 1200 to be safer)
-                const MAX_SIZE = 1000;
-                if (width > height) {
-                    if (width > MAX_SIZE) {
-                        height *= MAX_SIZE / width;
-                        width = MAX_SIZE;
-                    }
-                } else {
-                    if (height > MAX_SIZE) {
-                        width *= MAX_SIZE / height;
-                        height = MAX_SIZE;
-                    }
-                }
-                
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                // Compress to JPEG with 0.6 quality (reduced from 0.7 for safety)
-                const imageData = canvas.toDataURL('image/jpeg', 0.6);
-                
-                // Check size (Firestore limit is 1MB, let's keep it under 800KB)
-                const sizeInBytes = Math.round((imageData.length * 3) / 4);
-                if (sizeInBytes > 800000) {
-                    alert("Image is too large even after compression. Please try a smaller image.");
-                    uploadBtn.innerHTML = originalText;
-                    uploadBtn.disabled = false;
-                    return;
-                }
-
-                const photoData = { 
-                    url: imageData, 
-                    caption: caption,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                // Save to Firebase Cloud
-                if (db) {
-                    db.collection("gallery").add(photoData)
-                        .then(() => {
-                            alert("Photo uploaded successfully!");
-                            fileInput.value = '';
-                            document.getElementById('photoCaption').value = '';
-                            if (typeof updateAdminPhotoList === 'function') updateAdminPhotoList();
-                        })
-                        .catch(err => {
-                            console.error("Upload error:", err);
-                            let errorMsg = "Cloud upload failed.";
-                            if (err.code === 'permission-denied') {
-                                errorMsg += " Permission denied. Please check your Firestore security rules.";
-                            } else if (err.message && err.message.includes("size")) {
-                                errorMsg += " The image is too large for the database.";
-                            } else {
-                                errorMsg += " Error: " + err.message;
-                            }
-                            alert(errorMsg);
-                        })
-                        .finally(() => {
-                            uploadBtn.innerHTML = originalText;
-                            uploadBtn.disabled = false;
-                        });
-                } else {
-                    // Fallback to local storage
-                    const allPhotos = JSON.parse(localStorage.getItem('hameethiya_photos') || '[]');
-                    allPhotos.push(photoData);
-                    try {
-                        localStorage.setItem('hameethiya_photos', JSON.stringify(allPhotos));
-                        alert("Photo saved locally (Cloud not configured).");
-                        fileInput.value = '';
-                        document.getElementById('photoCaption').value = '';
-                        if (typeof renderGallery === 'function') renderGallery();
-                        if (typeof updateAdminPhotoList === 'function') updateAdminPhotoList();
-                    } catch (error) {
-                        alert("Storage full! Clear some photos or configure Firebase Cloud.");
-                    }
-                    uploadBtn.innerHTML = originalText;
-                    uploadBtn.disabled = false;
-                }
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    };
-
     // Close modals on outside click
     window.onclick = function(event) {
-        const adminModal = document.getElementById('adminModal');
         const lightbox = document.getElementById('lightbox');
-        if (event.target == adminModal) {
-            toggleAdminModal();
-        }
         if (event.target == lightbox) {
             closeLightbox();
         }

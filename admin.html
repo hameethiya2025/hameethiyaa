@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal | Hameethiya Driving School</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: var(--bg-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .admin-container {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        #adminLoginForm {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            text-align: center;
+        }
+        #adminPanel {
+            display: none;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .admin-header h2 {
+            margin: 0;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-group label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .filter-group input {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            color: white;
+            font-size: 0.9rem;
+        }
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-completed { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .status-initiated { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .status-failed { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+        .back-to-site {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .back-to-site:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-to-site">
+        <i class="fas fa-arrow-left"></i> Back to Website
+    </a>
+
+    <div class="admin-container">
+        <!-- Login Form -->
+        <div id="adminLoginForm">
+            <div class="logo-icon" style="margin: 0 auto 20px;">H</div>
+            <h3 style="margin-bottom: 25px; font-family: 'Cinzel', serif; color: var(--primary-color);">Admin Login</h3>
+            <form onsubmit="handleAdminLogin(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="admin_user" required placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="admin_pass" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn-submit" style="width: 100%; margin-top: 10px;">Login to Dashboard</button>
+            </form>
+        </div>
+
+        <!-- Dashboard Panel -->
+        <div id="adminPanel">
+            <div class="admin-header">
+                <h2>Admin Dashboard</h2>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <span id="adminGreeting" style="color: var(--text-muted); font-size: 0.9rem;">Welcome, Admin</span>
+                    <button class="btn-logout" onclick="adminLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="switchAdminTab('payments')">Payments</button>
+                <button class="tab-btn" onclick="switchAdminTab('photos')">Photos</button>
+                <button class="tab-btn" onclick="switchAdminTab('packages')">Packages</button>
+                <button class="tab-btn" onclick="switchAdminTab('enquiries')">Enquiries <span id="enquiryBadge" class="badge">0</span></button>
+                <button class="tab-btn" onclick="switchAdminTab('feedbacks')">Feedbacks <span id="feedbackBadge" class="badge">0</span></button>
+            </div>
+
+            <!-- Payments Section -->
+            <div id="tab-payments" class="tab-content active">
+                <div class="filter-bar">
+                    <div class="filter-group search-input">
+                        <label><i class="fas fa-search"></i> Search Name</label>
+                        <input type="text" id="paymentSearch" placeholder="Search by customer name..." oninput="filterPayments()">
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-calendar-alt"></i> Filter Date</label>
+                        <input type="date" id="paymentDateFilter" onchange="filterPayments()">
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn-primary" style="padding: 8px 15px; font-size: 0.8rem;" onclick="resetPaymentFilters()">Reset Filters</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Customer Name</th>
+                                <th>Course</th>
+                                <th>Transaction ID</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentTableBody">
+                            <!-- Rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="paymentEmptyMsg" style="text-align: center; padding: 60px; color: var(--text-muted); display: none;">
+                    <i class="fas fa-credit-card" style="font-size: 3rem; margin-bottom: 20px; display: block; opacity: 0.3;"></i>
+                    No payment records found matching your criteria.
+                </div>
+            </div>
+
+            <!-- Photos Section -->
+            <div id="tab-photos" class="tab-content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
+                    <div class="glass-card" style="padding: 30px; border: 1px solid rgba(255,255,255,0.05) !important;">
+                        <h4>Upload New Photo</h4>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>Select Image</label>
+                            <input type="file" id="photoUpload" accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label>Caption</label>
+                            <input type="text" id="photoCaption" placeholder="e.g. Recent Event">
+                        </div>
+                        <button class="btn-primary" style="width: 100%; margin-top: 10px;" onclick="simulateUpload()">
+                            <i class="fas fa-cloud-upload-alt"></i> Upload to Gallery
+                        </button>
+                    </div>
+                    
+                    <div class="glass-card" style="padding: 30px; border: 1px solid rgba(255,255,255,0.05) !important; height: 100%; display: flex; flex-direction: column;">
+                        <h4>Manage Uploaded Photos</h4>
+                        <div id="uploadedPhotosList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin-top: 20px; flex: 1; overflow-y: auto; max-height: 400px; padding-right: 10px;">
+                            <!-- Uploaded items will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Packages Section -->
+            <div id="tab-packages" class="tab-content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <div class="glass-card" style="padding: 30px; border: 1px solid rgba(255,255,255,0.05) !important;">
+                        <h4>Update Package Details</h4>
+                        <form id="packageEditForm" onsubmit="handlePackageUpdate(event)" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label>Select Course</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <select id="edit_package_id" onchange="loadPackageToForm()" required style="flex: 1;">
+                                        <!-- Options injected by JS -->
+                                    </select>
+                                    <button type="button" class="btn-primary" style="padding: 0 15px;" onclick="addNewPackagePrompt()" title="Add New Package">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button type="button" class="btn-primary" style="padding: 0 15px; background: #dc3545;" onclick="deletePackagePrompt()" title="Delete Package">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Package Name (Display Name)</label>
+                                <input type="text" id="edit_package_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Display Price (e.g. ₹4,999)</label>
+                                <input type="text" id="edit_package_price" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Course Duration / Tagline</label>
+                                <input type="text" id="edit_package_duration" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Features (One per line)</label>
+                                <textarea id="edit_package_features" rows="5" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Razorpay Button ID (Optional)</label>
+                                <input type="text" id="edit_package_button" placeholder="pl_SuQX8TYvhdUgMT">
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%;">
+                                <i class="fas fa-save"></i> Save Package Changes
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="glass-card" style="padding: 30px; border: 1px solid rgba(255,255,255,0.05) !important;">
+                        <h4>Live Preview</h4>
+                        <div id="packagePreview" style="margin-top: 20px;">
+                            <!-- Preview will appear here -->
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 20px;">
+                            * Changes will be reflected on the homepage instantly after saving.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enquiries Section -->
+            <div id="tab-enquiries" class="tab-content">
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Customer Name</th>
+                                <th>Phone</th>
+                                <th>Interest</th>
+                                <th>Preferred Time</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="enquiryTableBody">
+                            <!-- Rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="enquiryEmptyMsg" style="text-align: center; padding: 60px; color: var(--text-muted); display: none;">
+                    <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 20px; display: block; opacity: 0.3;"></i>
+                    No active enquiries found.
+                </div>
+                <div style="margin-top: 30px;">
+                    <button class="btn-primary" style="background: #444; padding: 10px 20px; font-size: 0.8rem;" onclick="clearAllEnquiries()">Clear History</button>
+                </div>
+            </div>
+
+            <!-- Feedbacks Section -->
+            <div id="tab-feedbacks" class="tab-content">
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Customer Name</th>
+                                <th>Rating</th>
+                                <th>Feedback</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedbackTableBody">
+                            <!-- Rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="feedbackEmptyMsg" style="text-align: center; padding: 60px; color: var(--text-muted); display: none;">
+                    <i class="fas fa-comments" style="font-size: 3rem; margin-bottom: 20px; display: block; opacity: 0.3;"></i>
+                    No customer feedbacks found.
+                </div>
+                <div style="margin-top: 30px;">
+                    <button class="btn-primary" style="background: #444; padding: 10px 20px; font-size: 0.8rem;" onclick="clearAllFeedbacks()">Clear Feedbacks</button>
+                </div>
+            </div>
+            
+            <p style="font-size: 0.8rem; color: #888; margin-top: 20px; text-align: center;">Hameethiya Driving School Admin Portal &copy; 2024</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <script src="admin.js"></script>
+</body>
+</html>
