@@ -65,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Dashboard Initialization ---
     function initDashboard() {
         updateAdminPhotoList();
-        updateEnquiryDashboard();
         updateFeedbackDashboard();
         updatePaymentDashboard();
         updateLLRDashboard();
@@ -205,7 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
         tableBody.innerHTML = filtered.map((reg, index) => `
                 <tr>
                     <td>${reg.timestamp}</td>
-                    <td><strong>${reg.name}</strong></td>
+                    <td>
+                        <div style="display: flex; flex-direction: column;">
+                            <strong>${reg.name}</strong>
+                            <small style="color: var(--text-muted);">${reg.studentId || 'No ID Assigned'}</small>
+                        </div>
+                    </td>
                     <td>${reg.email}</td>
                     <td>${reg.mobile}</td>
                     <td><span class="badge" style="background: rgba(212, 175, 55, 0.1); color: var(--primary-color);">${reg.course}</span></td>
@@ -229,21 +233,32 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.processRegistration = function(id, mobile, isCloud) {
+        // Generate a Student ID if not already present
+        const year = new Date().getFullYear();
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        const newStudentId = `HM-${year}-${randomNum}`;
+
         // Switch to Documents tab and pre-fill mobile
         switchAdminTab('documents');
         document.getElementById('llr_mobile').value = mobile;
         
-        // Update status in database
+        // Update status and studentId in database
         if (isCloud && db) {
             db.collection("registrations").doc(id).update({
-                status: 'Processing'
+                status: 'Processing',
+                studentId: newStudentId
+            }).then(() => {
+                alert(`Registration processing started. Student User ID assigned: ${newStudentId}`);
             });
         } else {
             const regs = JSON.parse(localStorage.getItem('hameethiya_registrations') || '[]');
-            if (regs[id]) {
-                regs[id].status = 'Processing';
+            const index = isCloud ? -1 : id; // Local storage uses index
+            if (regs[index]) {
+                regs[index].status = 'Processing';
+                regs[index].studentId = newStudentId;
                 localStorage.setItem('hameethiya_registrations', JSON.stringify(regs));
                 updateRegistrationDashboard();
+                alert(`Local Registration processing started. Student User ID assigned: ${newStudentId}`);
             }
         }
     };

@@ -201,7 +201,6 @@
                 <button class="tab-btn" onclick="switchAdminTab('documents')">Documents</button>
                 <button class="tab-btn" onclick="switchAdminTab('photos')">Photos</button>
                 <button class="tab-btn" onclick="switchAdminTab('packages')">Packages</button>
-                <button class="tab-btn" onclick="switchAdminTab('enquiries')">Enquiries <span id="enquiryBadge" class="badge">0</span></button>
                 <button class="tab-btn" onclick="switchAdminTab('feedbacks')">Feedbacks <span id="feedbackBadge" class="badge">0</span></button>
             </div>
 
@@ -403,34 +402,6 @@
                             * Changes will be reflected on the homepage instantly after saving.
                         </p>
                     </div>
-                </div>
-            </div>
-
-            <!-- Enquiries Section -->
-            <div id="tab-enquiries" class="tab-content">
-                <div class="table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Customer Name</th>
-                                <th>Phone</th>
-                                <th>Interest</th>
-                                <th>Preferred Time</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="enquiryTableBody">
-                            <!-- Rows will be injected here -->
-                        </tbody>
-                    </table>
-                </div>
-                <div id="enquiryEmptyMsg" style="text-align: center; padding: 60px; color: var(--text-muted); display: none;">
-                    <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 20px; display: block; opacity: 0.3;"></i>
-                    No active enquiries found.
-                </div>
-                <div style="margin-top: 30px;">
-                    <button class="btn-primary" style="background: #444; padding: 10px 20px; font-size: 0.8rem;" onclick="clearAllEnquiries()">Clear History</button>
                 </div>
             </div>
 

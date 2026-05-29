@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal | Hameethiya Driving School</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: var(--bg-dark);
+            min-height: 100vh;
+        }
+        .portal-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        #studentLoginForm {
+            max-width: 450px;
+            margin: 100px auto;
+            padding: 50px;
+            text-align: center;
+        }
+        #studentDashboard {
+            display: none;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .profile-card {
+            padding: 30px;
+            text-align: center;
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--secondary-color);
+        }
+        .llr-status-card {
+            padding: 30px;
+        }
+        .date-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .date-item:last-child { border-bottom: none; }
+        .date-label { color: var(--text-muted); font-size: 0.9rem; }
+        .date-value { font-weight: 600; color: var(--primary-color); }
+        
+        .warning-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .maturity-info {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Site</a>
+
+    <div class="portal-container">
+        <!-- Student Login -->
+        <div id="studentLoginForm" class="glass-card">
+            <div class="logo-icon" style="margin: 0 auto 20px;">H</div>
+            <h2 style="margin-bottom: 30px; color: var(--primary-color);">Student Login</h2>
+            <form onsubmit="handleStudentLogin(event)">
+                <div class="form-group" style="text-align: left;">
+                    <label>Student User ID</label>
+                    <input type="text" id="student_id" required placeholder="Enter your User ID">
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Mobile Number</label>
+                    <input type="tel" id="student_mobile" required placeholder="Enter registered mobile">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px;">Login to Portal</button>
+            </form>
+            <p style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted);">
+                Don't have a User ID? Contact the office after registration.
+            </p>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="studentDashboard">
+            <div class="admin-header">
+                <h2>Welcome, <span id="display_name">Student</span></h2>
+                <button class="btn-logout" onclick="studentLogout()">Logout</button>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Profile Card -->
+                <div class="profile-card glass-card">
+                    <div class="profile-avatar"><i class="fas fa-user"></i></div>
+                    <h3 id="profile_name" style="color: var(--primary-color);">Full Name</h3>
+                    <p id="profile_id" style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px;">ID: HM-2024-001</p>
+                    
+                    <div style="text-align: left; margin-top: 20px;">
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Email</p>
+                        <p id="profile_email" style="font-size: 0.9rem; margin-bottom: 10px;">email@example.com</p>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Mobile</p>
+                        <p id="profile_mobile" style="font-size: 0.9rem; margin-bottom: 10px;">+91 9876543210</p>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Course</p>
+                        <p id="profile_course" style="font-size: 0.9rem;"><span class="badge">Beginner</span></p>
+                    </div>
+                </div>
+
+                <!-- LLR Status Card -->
+                <div class="llr-status-card glass-card">
+                    <h3 style="margin-bottom: 25px; color: var(--primary-color);">LLR Document & Timeline</h3>
+                    
+                    <div id="llr_content">
+                        <!-- LLR Data will be injected here -->
+                        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <i class="fas fa-file-invoice" style="font-size: 3rem; margin-bottom: 20px; display: block; opacity: 0.3;"></i>
+                            Your LLR document is being processed. Please check back later.
+                        </div>
+                    </div>
+
+                    <div id="llr_timeline" style="display: none;">
+                        <div class="date-item">
+                            <span class="date-label">LLR Issued Date</span>
+                            <span class="date-value" id="val_llr_date">-</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="date-label">Maturity Date (30 Days)</span>
+                            <span class="date-value" id="val_maturity_date">-</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="date-label">Expiry Date (180 Days)</span>
+                            <span class="date-value" id="val_expiry_date">-</span>
+                        </div>
+
+                        <div id="maturity_notice" class="maturity-info" style="display: none;">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Maturity reached! Please contact Office 9442182628 for your driving test.</span>
+                        </div>
+
+                        <div id="expiry_warning" class="warning-box" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>LLR going to Expire, Please contact Office 9442182628 immediately.</span>
+                        </div>
+
+                        <button id="download_btn" class="btn-primary" style="width: 100%; margin-top: 30px;">
+                            <i class="fas fa-download"></i> Download LLR Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <script src="student.js"></script>
+</body>
+</html>

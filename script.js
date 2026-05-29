@@ -65,13 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mobile Menu Toggle
     const hamburger = document.querySelector('.hamburger');
-    const navLinks = document.querySelector('.nav-links');
+    const navRight = document.querySelector('.nav-right');
 
-    if (hamburger && navLinks) {
+    if (hamburger && navRight) {
         hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
+            navRight.classList.toggle('active');
             const icon = hamburger.querySelector('i');
-            if (navLinks.classList.contains('active')) {
+            if (navRight.classList.contains('active')) {
                 icon.classList.remove('fa-bars');
                 icon.classList.add('fa-times');
                 document.body.style.overflow = 'hidden'; // Prevent scroll
@@ -92,8 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 target.scrollIntoView({
                     behavior: 'smooth'
                 });
-                if (window.innerWidth <= 768 && navLinks) {
-                    navLinks.classList.remove('active');
+                if (window.innerWidth <= 1150 && navRight) {
+                    navRight.classList.remove('active');
                     const icon = hamburger.querySelector('i');
                     if (icon) {
                         icon.classList.remove('fa-times');
@@ -796,11 +796,104 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- Unified Portal Login Logic ---
+    window.openLoginModal = function() {
+        const modal = document.getElementById('loginModal');
+        if (modal) modal.style.display = 'flex';
+    };
+
+    window.closeLoginModal = function() {
+        const modal = document.getElementById('loginModal');
+        if (modal) modal.style.display = 'none';
+    };
+
+    window.switchLoginRole = function(role) {
+        const studentTab = document.getElementById('studentTab');
+        const adminTab = document.getElementById('adminTab');
+        const studentForm = document.getElementById('studentLoginForm');
+        const adminForm = document.getElementById('adminLoginForm');
+
+        if (role === 'student') {
+            studentTab.classList.add('active');
+            adminTab.classList.remove('active');
+            studentForm.style.display = 'block';
+            adminForm.style.display = 'none';
+        } else {
+            adminTab.classList.add('active');
+            studentTab.classList.remove('active');
+            adminForm.style.display = 'block';
+            studentForm.style.display = 'none';
+        }
+    };
+
+    window.handleUnifiedLogin = function(e, role) {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        const originalText = btn.innerText;
+
+        if (role === 'student') {
+            const studentId = document.getElementById('uni_student_id').value.toUpperCase();
+            const mobile = document.getElementById('uni_student_mobile').value;
+
+            btn.innerText = "Verifying...";
+            btn.disabled = true;
+
+            if (db) {
+                db.collection("registrations")
+                  .where("studentId", "==", studentId)
+                  .where("mobile", "==", mobile)
+                  .get()
+                  .then(snapshot => {
+                      if (snapshot.empty) {
+                          alert("Invalid User ID or Mobile Number. Please check with the office.");
+                      } else {
+                          const studentData = snapshot.docs[0].data();
+                          sessionStorage.setItem('hameethiya_student_logged_in', 'true');
+                          sessionStorage.setItem('hameethiya_student_data', JSON.stringify(studentData));
+                          window.location.href = 'student.html';
+                      }
+                  })
+                  .catch(err => alert("Login error: " + err.message))
+                  .finally(() => {
+                      btn.innerText = originalText;
+                      btn.disabled = false;
+                  });
+            } else {
+                // Local Fallback
+                const local = JSON.parse(localStorage.getItem('hameethiya_registrations') || '[]');
+                const student = local.find(r => r.studentId === studentId && r.mobile === mobile);
+                if (student) {
+                    sessionStorage.setItem('hameethiya_student_logged_in', 'true');
+                    sessionStorage.setItem('hameethiya_student_data', JSON.stringify(student));
+                    window.location.href = 'student.html';
+                } else {
+                    alert("Invalid credentials.");
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            }
+        } else if (role === 'admin') {
+            const user = document.getElementById('uni_admin_user').value;
+            const pass = document.getElementById('uni_admin_pass').value;
+
+            if (user === "admin" && pass === "hameethiya123") {
+                sessionStorage.setItem('hameethiya_admin_logged_in', 'true');
+                window.location.href = 'admin.html';
+            } else {
+                alert("Invalid Admin credentials.");
+            }
+        }
+    };
+
     // Close modals on outside click
     window.onclick = function(event) {
         const lightbox = document.getElementById('lightbox');
+        const loginModal = document.getElementById('loginModal');
         if (event.target == lightbox) {
             closeLightbox();
+        }
+        if (event.target == loginModal) {
+            closeLoginModal();
         }
     };
 });

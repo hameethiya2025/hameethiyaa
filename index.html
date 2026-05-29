@@ -89,17 +89,18 @@
                     <span class="logo-tagline">Driving School</span>
                 </div>
             </a>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#register" class="btn-primary">Register Now</a></li>
-                <li><a href="#gallery">Gallery</a></li>
-                <li><a href="#llr-download">LLR Download</a></li>
-                <li><a href="#pricing">Course Fees</a></li>
-                <li><a href="#reviews">Reviews</a></li>
-                <li><a href="#location">Location</a></li>
-                <li><a href="#contact" class="btn-primary">Enquire Now</a></li>
-            </ul>
+            <div class="nav-right">
+                <div class="nav-links">
+                    <a href="#home">Home</a>
+                    <a href="#about">About Us</a>
+                    <a href="#register">Register</a>
+                    <a href="#gallery">Gallery</a>
+                    <a href="#llr-download">LLR Download</a>
+                    <a href="#pricing">Course Fees</a>
+                    <a href="#reviews">Reviews</a>
+                    <a href="#location">Location</a>
+                </div>
+            </div>
             <div class="hamburger">
                 <i class="fas fa-bars"></i>
             </div>
@@ -113,8 +114,9 @@
         <div class="container hero-content">
             <h1 data-aos="fade-down">Master the Art of Driving</h1>
             <p data-aos="fade-up" data-aos-delay="200">Experience premium driving education with personalized attention and luxury vehicles.</p>
-            <div data-aos="zoom-in" data-aos-delay="400">
-                <a href="#contact" class="btn-primary">Start Your Journey</a>
+            <div class="hero-btns" data-aos="zoom-in" data-aos-delay="400">
+                <a href="#register" class="btn-primary">Register Now</a>
+                <button onclick="openLoginModal()" class="btn-secondary"><i class="fas fa-sign-in-alt"></i> Portal Login</button>
             </div>
         </div>
     </header>
@@ -497,67 +499,34 @@
         </div>
     </section>
 
-    <!-- Enquiry & Signup Section -->
+    <!-- Contact & Register Section -->
     <section id="contact" class="section contact">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <h2>Get Started</h2>
+                <h2>Ready to Start?</h2>
                 <div class="divider"></div>
-                <p>Choose between a quick enquiry or a full registration.</p>
+                <p>Register now or visit our office to begin your professional driving training.</p>
             </div>
             
-            <div class="forms-container">
-                <!-- Quick Enquiry Form -->
-                <div class="contact-card" data-aos="fade-right">
-                    <h3>Quick Enquiry</h3>
-                    <form id="enquiryForm" class="enquiry-form">
-                        <div class="hp-field">
-                            <input type="text" name="honeypot" id="enquiry_hp">
-                        </div>
-                        <div class="form-group">
-                            <label for="name">Full Name</label>
-                            <input type="text" id="name" name="name" required placeholder="Your Name">
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone" required placeholder="+91 00000 00000">
-                        </div>
-                        <div class="form-group">
-                            <label for="service">Service</label>
-                            <select id="service" name="service">
-                                <option value="General Inquiry">General Inquiry</option>
-                                <option value="Course Details">Course Details</option>
-                                <option value="Fee Structure">Fee Structure</option>
-                                <option value="License Help">License Help</option>
-                            </select>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn-submit">Submit Enquiry</button>
-                            <button type="button" class="btn-whatsapp" onclick="handleFormSubmission('enquiry', true)">
-                                <i class="fab fa-whatsapp"></i> Chat on WhatsApp
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
+            <div class="forms-container" style="display: flex; justify-content: center;">
                 <!-- Customer Signup Form -->
-                <div class="contact-card" data-aos="fade-left">
+                <div class="contact-card" data-aos="fade-up" style="max-width: 600px; width: 100%;">
                     <h3>Customer Registration</h3>
                     <form id="signupForm" class="enquiry-form">
                         <div class="hp-field">
                             <input type="text" name="honeypot" id="signup_hp">
                         </div>
                         <div class="form-group">
-                            <label for="reg_name">Full Name</label>
-                            <input type="text" id="reg_name" name="name" required placeholder="Full Name">
+                            <label for="reg_name_full">Full Name</label>
+                            <input type="text" id="reg_name_full" name="name" required placeholder="Full Name">
                         </div>
                         <div class="form-group">
-                            <label for="reg_phone">Phone Number</label>
-                            <input type="tel" id="reg_phone" name="phone" required placeholder="+91 00000 00000">
+                            <label for="reg_phone_num">Phone Number</label>
+                            <input type="tel" id="reg_phone_num" name="phone" required placeholder="+91 00000 00000">
                         </div>
                         <div class="form-group">
-                            <label for="reg_course">Selected Course</label>
-                            <select id="reg_course" name="course">
+                            <label for="reg_course_select">Selected Course</label>
+                            <select id="reg_course_select" name="course">
                                 <option value="Beginner (20 Days)">Beginner (20 Days)</option>
                                 <option value="Intermediate (15 Days)">Intermediate (15 Days)</option>
                                 <option value="Refresher (7 Days)">Refresher (7 Days)</option>
@@ -565,8 +534,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="reg_time">Preferred Time</label>
-                            <select id="reg_time" name="time">
+                            <label for="reg_time_pref">Preferred Time</label>
+                            <select id="reg_time_pref" name="time">
                                 <option value="Morning (6AM - 9AM)">Morning (6AM - 9AM)</option>
                                 <option value="Noon (11AM - 2PM)">Noon (11AM - 2PM)</option>
                                 <option value="Evening (4PM - 7PM)">Evening (4PM - 7PM)</option>
@@ -598,7 +567,7 @@
                     <a href="#gallery">Gallery</a>
                     <a href="#location">Location</a>
                     <a href="#contact">Contact</a>
-                    <a href="admin.html" class="admin-link"><i class="fas fa-lock"></i> Admin</a>
+                    <a href="javascript:void(0)" onclick="openLoginModal()" class="admin-link"><i class="fas fa-lock"></i> Portal Login</a>
                 </div>
                 <div class="social-links">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -611,6 +580,51 @@
             </div>
         </div>
     </footer>
+
+    <!-- Unified Portal Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-modal" onclick="closeLoginModal()">&times;</span>
+            <div class="login-toggle">
+                <button id="studentTab" class="tab-btn active" onclick="switchLoginRole('student')">Student Login</button>
+                <button id="adminTab" class="tab-btn" onclick="switchLoginRole('admin')">Admin Login</button>
+            </div>
+
+            <!-- Student Login Form -->
+            <div id="studentLoginForm" class="login-form-container">
+                <div class="logo-icon" style="margin: 0 auto 15px; width: 40px; height: 40px; font-size: 1.2rem;">H</div>
+                <h3 style="margin-bottom: 20px; color: var(--primary-color);">Student Portal</h3>
+                <form onsubmit="handleUnifiedLogin(event, 'student')">
+                    <div class="form-group">
+                        <label>Student User ID</label>
+                        <input type="text" id="uni_student_id" required placeholder="Enter User ID">
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input type="tel" id="uni_student_mobile" required placeholder="Registered Mobile">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Login as Student</button>
+                </form>
+            </div>
+
+            <!-- Admin Login Form -->
+            <div id="adminLoginForm" class="login-form-container" style="display: none;">
+                <div class="logo-icon" style="margin: 0 auto 15px; width: 40px; height: 40px; font-size: 1.2rem;">H</div>
+                <h3 style="margin-bottom: 20px; color: var(--primary-color);">Admin Access</h3>
+                <form onsubmit="handleUnifiedLogin(event, 'admin')">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="uni_admin_user" required placeholder="Admin username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="uni_admin_pass" required placeholder="Admin password">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Login as Admin</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Lightbox Modal -->
     <div id="lightbox" class="lightbox" onclick="closeLightbox()">
