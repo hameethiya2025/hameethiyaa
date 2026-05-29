@@ -70,14 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hamburger && navRight) {
         hamburger.addEventListener('click', () => {
             navRight.classList.toggle('active');
-            const icon = hamburger.querySelector('i');
             if (navRight.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
                 document.body.style.overflow = 'hidden'; // Prevent scroll
             } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
                 document.body.style.overflow = 'auto'; // Enable scroll
             }
         });
@@ -94,11 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 if (window.innerWidth <= 1150 && navRight) {
                     navRight.classList.remove('active');
-                    const icon = hamburger.querySelector('i');
-                    if (icon) {
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }
                     document.body.style.overflow = 'auto';
                 }
             }

@@ -99,6 +99,31 @@
             align-items: center;
             gap: 8px;
         }
+
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .portal-container {
+                padding: 60px 15px 20px;
+            }
+            #studentLoginForm {
+                padding: 30px 20px;
+                margin-top: 50px;
+            }
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .back-link {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
     </style>
 </head>
 <body>
