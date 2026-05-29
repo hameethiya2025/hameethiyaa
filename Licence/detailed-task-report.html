@@ -188,6 +188,13 @@
         }
 
         async function loadTaskDetails() {
+            // Check Auth
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user || (!user.moduleAccess?.license && user.role !== 'admin')) { 
+                window.location.href = '../user/Login.html'; 
+                return; 
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             const taskId = urlParams.get('id');
             
@@ -221,9 +228,13 @@
             const detailsContainer = document.getElementById('taskDetails');
             const maturityDate = task.llrDate ? calculateMaturityDate(task.llrDate) : '-';
             const expiryDate = task.llrDate ? calculateExpiryDate(task.llrDate) : '-';
+            
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const isAdmin = user && user.role === 'admin';
 
             const details = [
                 { label: 'Name', value: task.applicantName },
+                ...(isAdmin ? [{ label: 'Student User ID', value: task.studentId || 'NOT ASSIGNED' }] : []),
                 { label: 'Roll Number', value: task.rollNumber || '-' },
                 { label: 'Mobile', value: task.mobile },
                 { label: 'DOB', value: formatDate(task.dob) },

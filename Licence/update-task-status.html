@@ -780,10 +780,19 @@
                                 .get();
                             
                             if (!regSnapshot.empty) {
-                                await db.collection("registrations").doc(regSnapshot.docs[0].id).update({
+                                const regDoc = regSnapshot.docs[0];
+                                const updateData = {
                                     status: newStatus,
                                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                                });
+                                };
+
+                                // If status is Test Completed or Expired, delete the studentId to revoke access
+                                if (newStatus === 'Test Completed' || newStatus === 'Expired') {
+                                    updateData.studentId = firebase.firestore.FieldValue.delete();
+                                    updateData.loginExpired = true; // Mark as expired for login notification
+                                }
+
+                                await db.collection("registrations").doc(regDoc.id).update(updateData);
                                 console.log(`Student dashboard updated with status: ${newStatus}`);
                             }
                         } catch (regErr) {

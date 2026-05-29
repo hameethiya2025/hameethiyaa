@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.adminLogout = function() {
         if (confirm("Are you sure you want to logout?")) {
             sessionStorage.removeItem('hameethiya_admin_logged_in');
-            window.location.reload();
+            window.location.href = 'Login.html';
         }
     };
 
@@ -190,8 +190,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const tableBody = document.getElementById('regTableBody');
         const emptyMsg = document.getElementById('regEmptyMsg');
 
+        // Only show Pending registrations in the main list
         const filtered = allRegistrations.filter(r => 
-            r.name.toLowerCase().includes(search)
+            r.name.toLowerCase().includes(search) && 
+            (r.status === 'Pending' || !r.status)
         );
 
         if (filtered.length === 0) {

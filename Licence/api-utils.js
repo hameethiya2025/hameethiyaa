@@ -1,19 +1,29 @@
 const apiUtils = {
+    _onlineCache: null,
+    _lastCheck: 0,
+
     async isOnline() {
+        const now = Date.now();
+        if (this._onlineCache !== null && (now - this._lastCheck < 10000)) {
+            return { online: this._onlineCache, cached: true };
+        }
+
         try {
             const url = await this.getApiUrl('health');
-            console.log('Checking server health at:', url);
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
             
             const res = await fetch(url, { signal: controller.signal });
             clearTimeout(timeoutId);
             
             const data = await res.json();
-            return { online: data.status.toLowerCase() === 'ok', url };
+            this._onlineCache = data.status.toLowerCase() === 'ok';
+            this._lastCheck = now;
+            return { online: this._onlineCache, url };
         } catch (err) {
-            console.error('Health check failed:', err);
-            return { online: false, error: err.message, url: await this.getApiUrl('health') };
+            this._onlineCache = false;
+            this._lastCheck = now;
+            return { online: false, error: err.message };
         }
     },
 
@@ -60,73 +70,62 @@ const apiUtils = {
     },
 
     async getTasks() {
-        const sortTasks = (tasks) => {
-            const parseDate = (dateStr, timeStr) => {
-                if (!dateStr) return new Date(0);
-                let datePart = dateStr;
-                if (dateStr.includes('/')) {
-                    const parts = dateStr.split('/');
-                    if (parts.length === 3) {
-                        datePart = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-                    }
-                }
-                return new Date(`${datePart} ${timeStr || '00:00:00'}`);
-            };
-
-            return tasks.sort((a, b) => {
-                const dateA = parseDate(a.creationDate, a.creationTime);
-                const dateB = parseDate(b.creationDate, b.creationTime);
-                if (dateB - dateA !== 0) return dateB - dateA;
-                // Stable tie-breaker using ID
-                return String(b.id).localeCompare(String(a.id));
-            });
-        };
-
-        const deduplicateTasks = (tasks) => {
-            const uniqueTasks = new Map();
-            tasks.forEach(t => {
-                // Ensure mobile property consistency
-                t.mobile = t.mobile || t.mobileNumber || '';
-                t.mobileNumber = t.mobile || t.mobileNumber || '';
-
-                const key = String(t.id);
-                const existing = uniqueTasks.get(key);
-                
-                if (!existing) {
-                    uniqueTasks.set(key, t);
-                } else {
-                    // If same ID exists, pick the one with more status history
-                    if ((t.statusHistory?.length || 0) > (existing.statusHistory?.length || 0)) {
-                        uniqueTasks.set(key, t);
-                    }
-                }
-            });
-            return Array.from(uniqueTasks.values());
-        };
-
-        const status = await this.isOnline();
-        if (status.online) {
-            try {
-                const url = await this.getApiUrl('tasks');
-                const res = await fetch(url);
-                if (!res.ok) throw new Error('Failed to fetch from server');
-                let serverTasks = await res.json();
-                
-                // Server data is authoritative. 
-                // Overwrite local storage to match server state exactly.
-                let tasks = deduplicateTasks(serverTasks);
-                tasks = sortTasks(tasks);
-                
-                localStorage.setItem('freshLicenseTasks', JSON.stringify(tasks));
-                return tasks;
-            } catch (error) {
-                console.error('Error fetching tasks from server:', error);
-            }
-        }
-        
-        console.warn('Using local storage fallback');
         const localTasks = JSON.parse(localStorage.getItem('freshLicenseTasks') || '[]');
-        return sortTasks(deduplicateTasks(localTasks)) || [];
+        const sortedLocal = this._sortTasks(this._deduplicateTasks(localTasks));
+
+        // Start fetching from server in background
+        this.isOnline().then(async status => {
+            if (status.online) {
+                try {
+                    const url = await this.getApiUrl('tasks');
+                    const res = await fetch(url);
+                    if (res.ok) {
+                        const serverTasks = await res.json();
+                        const tasks = this._sortTasks(this._deduplicateTasks(serverTasks));
+                        localStorage.setItem('freshLicenseTasks', JSON.stringify(tasks));
+                    }
+                } catch (error) {
+                    console.error('Background fetch failed:', error);
+                }
+            }
+        });
+
+        return sortedLocal;
+    },
+
+    _sortTasks(tasks) {
+        const parseDate = (dateStr, timeStr) => {
+            if (!dateStr) return new Date(0);
+            let datePart = dateStr;
+            if (dateStr.includes('/')) {
+                const parts = dateStr.split('/');
+                if (parts.length === 3) {
+                    datePart = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                }
+            }
+            return new Date(`${datePart} ${timeStr || '00:00:00'}`);
+        };
+
+        return tasks.sort((a, b) => {
+            const dateA = parseDate(a.creationDate, a.creationTime);
+            const dateB = parseDate(b.creationDate, b.creationTime);
+            if (dateB - dateA !== 0) return dateB - dateA;
+            return String(b.id).localeCompare(String(a.id));
+        });
+    },
+
+    _deduplicateTasks(tasks) {
+        const uniqueTasks = new Map();
+        tasks.forEach(t => {
+            t.mobile = t.mobile || t.mobileNumber || '';
+            t.mobileNumber = t.mobile || t.mobileNumber || '';
+            const key = String(t.id);
+            const existing = uniqueTasks.get(key);
+            if (!existing || (t.statusHistory?.length || 0) > (existing.statusHistory?.length || 0)) {
+                uniqueTasks.set(key, t);
+            }
+        });
+        return Array.from(uniqueTasks.values());
     },
 
     async saveTask(task) {
@@ -209,71 +208,61 @@ const apiUtils = {
     },
 
     async getLicenseHolderServices() {
+        const localServices = JSON.parse(localStorage.getItem('licenseHolderServices') || '[]');
+        const sortedLocal = this._sortServices(this._deduplicateServices(localServices));
+
+        // Start fetching from server in background
+        this.isOnline().then(async status => {
+            if (status.online) {
+                try {
+                    const url = await this.getApiUrl('license-holder-services');
+                    const res = await fetch(url);
+                    if (res.ok) {
+                        const serverServices = await res.json();
+                        const services = this._sortServices(this._deduplicateServices(serverServices));
+                        localStorage.setItem('licenseHolderServices', JSON.stringify(services));
+                    }
+                } catch (error) {
+                    console.error('Background fetch failed:', error);
+                }
+            }
+        });
+
+        return sortedLocal;
+    },
+
+    _sortServices(services) {
         const parseDate = (dateStr, timeStr) => {
             if (!dateStr) return new Date(0);
             let datePart = dateStr;
             if (dateStr.includes('/')) {
                 const parts = dateStr.split('/');
                 if (parts.length === 3) {
-                    // Assuming DD/MM/YYYY
                     datePart = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
                 }
             }
-            // If timeStr is not provided, use midnight
             return new Date(`${datePart} ${timeStr || '00:00:00'}`);
         };
 
-        const sortServices = (services) => {
-            return services.sort((a, b) => {
-                const dateA = parseDate(a.date);
-                const dateB = parseDate(b.date);
-                return dateB - dateA; // Sort descending (newest first)
-            });
-        };
+        return services.sort((a, b) => {
+            const dateA = parseDate(a.date);
+            const dateB = parseDate(b.date);
+            return dateB - dateA;
+        });
+    },
 
-        const deduplicateServices = (services) => {
-            const unique = new Map();
-            services.forEach(s => {
-                // Ensure mobile property consistency
-                s.mobile = s.mobile || s.mobileNumber || '';
-                s.mobileNumber = s.mobile || s.mobileNumber || '';
-
-                const key = String(s.id || s.licenseNumber);
-                const existing = unique.get(key);
-                
-                if (!existing) {
-                    unique.set(key, s);
-                } else {
-                    // If same ID/license exists, pick the one with more status history
-                    if ((s.statusHistory?.length || 0) > (existing.statusHistory?.length || 0)) {
-                        unique.set(key, s);
-                    }
-                }
-            });
-            return Array.from(unique.values());
-        };
-
-        const status = await this.isOnline();
-        if (status.online) {
-            try {
-                const url = await this.getApiUrl('license-holder-services');
-                const res = await fetch(url);
-                if (!res.ok) throw new Error('Failed to fetch from server');
-                let serverServices = await res.json();
-                
-                // Server data is authoritative.
-                let services = deduplicateServices(serverServices);
-                services = sortServices(services);
-                
-                localStorage.setItem('licenseHolderServices', JSON.stringify(services));
-                return services;
-            } catch (error) {
-                console.error('Error fetching license holder services from server:', error);
+    _deduplicateServices(services) {
+        const unique = new Map();
+        services.forEach(s => {
+            s.mobile = s.mobile || s.mobileNumber || '';
+            s.mobileNumber = s.mobile || s.mobileNumber || '';
+            const key = String(s.id || s.licenseNumber);
+            const existing = unique.get(key);
+            if (!existing || (s.statusHistory?.length || 0) > (existing.statusHistory?.length || 0)) {
+                unique.set(key, s);
             }
-        }
-        
-        const localServices = JSON.parse(localStorage.getItem('licenseHolderServices') || '[]');
-        return sortServices(deduplicateServices(localServices));
+        });
+        return Array.from(unique.values());
     },
 
     async saveLicenseHolderService(service) {

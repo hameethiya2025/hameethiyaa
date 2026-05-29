@@ -517,8 +517,16 @@
                 const mobile = document.getElementById('mobile').value.trim();
                 const applicantName = document.getElementById('applicantName').value.trim().toUpperCase();
                 
+                const vehicleSelect = document.getElementById('vehicleClass');
+                const selectedClasses = Array.from(vehicleSelect.selectedOptions).map(opt => opt.value);
+                const courseInfo = selectedClasses.join(', ');
+
                 // --- Student ID Generation & Registration Update ---
                 let studentId = null;
+                const year = new Date().getFullYear();
+                const randomNum = Math.floor(1000 + Math.random() * 9000);
+                const generatedId = `HM-${year}-${randomNum}`;
+
                 if (db) {
                     try {
                         const regSnapshot = await db.collection("registrations")
@@ -529,31 +537,39 @@
                             const regDoc = regSnapshot.docs[0];
                             const regData = regDoc.data();
                             
-                            if (regData.studentId) {
-                                studentId = regData.studentId;
-                            } else {
-                                // Generate new Student ID if not present
-                                const year = new Date().getFullYear();
-                                const randomNum = Math.floor(1000 + Math.random() * 9000);
-                                studentId = `HM-${year}-${randomNum}`;
-                            }
+                            studentId = regData.studentId || generatedId;
 
-                            // Update registration with new status and studentId
+                            // Update existing registration
                             await db.collection("registrations").doc(regDoc.id).update({
                                 status: 'New Application',
                                 studentId: studentId,
                                 processedAt: firebase.firestore.FieldValue.serverTimestamp()
                             });
                             console.log(`Updated registration for ${mobile} with status: New Application`);
+                        } else {
+                            // CREATE NEW REGISTRATION RECORD FOR LOGIN
+                            studentId = generatedId;
+                            await db.collection("registrations").add({
+                                name: applicantName,
+                                mobile: mobile,
+                                studentId: studentId,
+                                status: 'New Application',
+                                course: courseInfo,
+                                email: '-',
+                                timestamp: new Date().toLocaleString(),
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                processedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                            console.log(`Created new registration record for student login: ${studentId}`);
                         }
                     } catch (err) {
-                        console.error("Error updating registration:", err);
+                        console.error("Error handling registration record:", err);
+                        studentId = generatedId;
                     }
+                } else {
+                    studentId = generatedId; // Fallback if no db
                 }
 
-                const vehicleSelect = document.getElementById('vehicleClass');
-                const selectedClasses = Array.from(vehicleSelect.selectedOptions).map(opt => opt.value);
-                
                 const isPriority = document.getElementById('isPriority').checked;
                 const drivingOption = document.getElementById('drivingOption').value.toUpperCase();
 

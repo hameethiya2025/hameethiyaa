@@ -790,8 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Unified Portal Login Logic ---
     window.openLoginModal = function() {
-        const modal = document.getElementById('loginModal');
-        if (modal) modal.style.display = 'flex';
+        window.location.href = 'Login.html';
     };
 
     window.closeLoginModal = function() {

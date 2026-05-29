@@ -26,29 +26,56 @@ document.addEventListener('DOMContentLoaded', () => {
         const mobile = document.getElementById('student_mobile').value;
 
         if (db) {
+            // First check if a registration exists for this mobile
             db.collection("registrations")
-              .where("studentId", "==", studentId)
               .where("mobile", "==", mobile)
               .get()
               .then(snapshot => {
                   if (snapshot.empty) {
-                      alert("Invalid User ID or Mobile Number. Please check with the office.");
-                  } else {
-                      const studentData = snapshot.docs[0].data();
+                      alert("Invalid Mobile Number. Please check with the office.");
+                      return;
+                  }
+                  
+                  const regDoc = snapshot.docs[0].data();
+                  
+                  // If studentId matches, check if it's expired
+                  if (regDoc.studentId === studentId) {
+                      if (regDoc.loginExpired === true) {
+                          alert("Your login has Expired");
+                          return;
+                      }
+                      
                       sessionStorage.setItem('hameethiya_student_logged_in', 'true');
-                      sessionStorage.setItem('hameethiya_student_data', JSON.stringify(studentData));
-                      showDashboard(studentData);
+                      sessionStorage.setItem('hameethiya_student_data', JSON.stringify(regDoc));
+                      showDashboard(regDoc);
+                  } else {
+                      // ID doesn't match, check if it was expired (studentId would be deleted)
+                      if (regDoc.loginExpired === true) {
+                          alert("Your login has Expired");
+                      } else {
+                          alert("Invalid User ID. Please check with the office.");
+                      }
                   }
               })
               .catch(err => alert("Login error: " + err.message));
         } else {
             // Local Fallback
             const local = JSON.parse(localStorage.getItem('hameethiya_registrations') || '[]');
-            const student = local.find(r => r.studentId === studentId && r.mobile === mobile);
+            const student = local.find(r => r.mobile === mobile);
             if (student) {
-                sessionStorage.setItem('hameethiya_student_logged_in', 'true');
-                sessionStorage.setItem('hameethiya_student_data', JSON.stringify(student));
-                showDashboard(student);
+                if (student.studentId === studentId) {
+                    if (student.loginExpired === true) {
+                        alert("Your login has Expired");
+                    } else {
+                        sessionStorage.setItem('hameethiya_student_logged_in', 'true');
+                        sessionStorage.setItem('hameethiya_student_data', JSON.stringify(student));
+                        showDashboard(student);
+                    }
+                } else if (student.loginExpired === true) {
+                    alert("Your login has Expired");
+                } else {
+                    alert("Invalid credentials.");
+                }
             } else {
                 alert("Invalid credentials.");
             }
@@ -56,9 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.studentLogout = function() {
-        sessionStorage.removeItem('hameethiya_student_logged_in');
-        sessionStorage.removeItem('hameethiya_student_data');
-        window.location.reload();
+        if (confirm("Are you sure you want to logout?")) {
+            sessionStorage.removeItem('hameethiya_student_logged_in');
+            sessionStorage.removeItem('hameethiya_student_data');
+            window.location.href = 'Login.html';
+        }
     };
 
     function checkAuth() {
@@ -84,6 +113,32 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('profile_status').innerHTML = `<span class="status-badge status-${status.toLowerCase().replace(/\s+/g, '-')}">${status.toUpperCase()}</span>`;
 
         fetchLLRData(data.mobile);
+        fetchPaymentData(data.mobile);
+    }
+
+    // --- Payment Logic ---
+    async function fetchPaymentData(mobile) {
+        try {
+            // Get task details to find commitment and payments
+            const tasks = await apiUtils.getTasks();
+            const task = tasks.find(t => (t.mobile || t.mobileNumber) === mobile);
+            
+            if (task) {
+                const commitment = Number(task.declaredPayment || 0);
+                const advance = Number(task.advancePayment || 0);
+                const regularPayments = (task.payments || [])
+                    .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+                
+                const totalPaid = advance + regularPayments;
+                const balance = commitment - totalPaid;
+
+                document.getElementById('payment_commitment').innerText = `₹${commitment.toLocaleString()}`;
+                document.getElementById('payment_paid').innerText = `₹${totalPaid.toLocaleString()}`;
+                document.getElementById('payment_balance').innerText = `₹${balance.toLocaleString()}`;
+            }
+        } catch (err) {
+            console.error("Error fetching payment data:", err);
+        }
     }
 
     // --- LLR & Timeline Logic ---
