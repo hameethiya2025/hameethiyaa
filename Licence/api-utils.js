@@ -873,10 +873,6 @@ const apiUtils = {
     async syncData() {
         if (!(await this.isOnline())) return;
         
-        // Removed: Automatic pushing of all local tasks to the server.
-        // This was causing deleted tasks to reappear when other users opened the app.
-        // Tasks should be saved to the server immediately via saveTask() when online.
-        
         // Sync settings
         const keys = ['freshLicenseStatuses', 'vehicleClasses', 'createLicenseVehicleClasses', 'lastDrivingRollNumber', 'users'];
         for (const key of keys) {
@@ -888,6 +884,54 @@ const apiUtils = {
                     await this.saveSettings(key, val);
                 }
             }
+        }
+    },
+
+    async syncAllDataFromServer() {
+        const status = await this.isOnline();
+        if (!status.online) return { success: false, message: 'Server offline' };
+
+        try {
+            console.log('Starting full sync from server...');
+            
+            // Fetch all modules
+            await Promise.all([
+                this.getTasks(),
+                this.getLicenseHolderServices(),
+                this.getRcTasks(),
+                this.getPayments(),
+                this.getTaxVehicles(),
+                this.getCustomers(),
+                this.getMaintenanceVehicles(),
+                this.getLicenses(),
+                this.getPermits(),
+                this.getMaintenanceAccounts(),
+                this.getUsers()
+            ]);
+
+            // Fetch specific settings
+            const settingsKeys = [
+                'freshLicenseStatuses', 
+                'vehicleClasses', 
+                'createLicenseVehicleClasses', 
+                'lastDrivingRollNumber',
+                'rcVehicleClasses',
+                'rcStatuses',
+                'rcWorkItems',
+                'financiers',
+                'bills',
+                'TaxVehicleClassesList'
+            ];
+
+            for (const key of settingsKeys) {
+                await this.getSettings(key);
+            }
+
+            console.log('Full sync complete');
+            return { success: true };
+        } catch (error) {
+            console.error('Full sync failed:', error);
+            return { success: false, error: error.message };
         }
     },
 

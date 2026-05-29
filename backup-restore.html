@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup & Restore | Hameethiya Driving School</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary: var(--primary-color);
+            --primary-dark: #b8860b;
+            --bg-main: var(--bg-dark);
+            --bg-card: var(--glass-bg);
+            --text-main: var(--text-light);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-premium: var(--glass-shadow);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
+            --border-light: var(--glass-border);
+            --font-serif: 'Cinzel', serif;
+        }
+
+        body {
+            background-image: var(--navy-gradient);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 50px;
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-premium);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: var(--glass-bg);
+            color: var(--text-main);
+            padding: 12px 25px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: var(--radius-md);
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+
+        .action-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .grid-two {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            align-items: center;
+        }
+
+        .button {
+            background: var(--gold-gradient);
+            color: var(--secondary-color);
+            border: none;
+            padding: 15px 30px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .button-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .button-sync {
+            background: #10b981;
+            color: white;
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-badge.offline {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .status.success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .status.error { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+        .status-log {
+            margin-top: 15px;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+        }
+
+        .entry { margin-bottom: 5px; }
+
+        input[type="file"] {
+            margin: 20px 0;
+            width: 100%;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <a href="admin.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+    
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+            <h1 style="margin: 0; font-size: 2.5rem; font-family: var(--font-serif);">System Backup</h1>
+            <div id="onlineStatusBadge" class="status-badge offline">
+                <i class="fas fa-circle"></i> Server Offline
+            </div>
+        </div>
+
+        <div class="action-card">
+            <h2><i class="fas fa-sync-alt" style="margin-right: 15px;"></i>Server Synchronization</h2>
+            <p>Ensure your local data matches the live server before creating a backup or after a restore.</p>
+            <div class="grid-two">
+                <button class="button button-sync" onclick="syncWithServer()" id="syncBtn">
+                    <i class="fas fa-cloud-download-alt"></i> Sync from Server
+                </button>
+                <div style="color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center;">
+                    <i class="fas fa-info-circle" style="margin-right: 10px;"></i>
+                    Last sync: <span id="lastSyncTime">Never</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-card">
+            <h2><i class="fas fa-file-export" style="margin-right: 15px;"></i>Download Backup</h2>
+            <p>Download a secure JSON snapshot of all modules (Licence, RC, Maintenance) from the live server.</p>
+            <div class="grid-two">
+                <button class="button" onclick="createBackup()" id="backupBtn">
+                    <i class="fas fa-download"></i> Create & Download
+                </button>
+                <div style="display: flex; align-items: center;">
+                    <input type="checkbox" id="syncBeforeBackup" checked style="margin-right: 10px; accent-color: var(--primary);">
+                    <label for="syncBeforeBackup" style="font-size: 0.9rem;">Sync with server first</label>
+                </div>
+            </div>
+            <div id="backupStatus" class="status"></div>
+            <div id="backupLog" class="status-log"></div>
+        </div>
+
+        <div class="action-card">
+            <h2><i class="fas fa-file-import" style="margin-right: 15px;"></i>Restore Database</h2>
+            <p>Upload a backup file to restore system data. You can restore locally or push to the live server.</p>
+            
+            <input type="file" id="restoreFile" accept=".json">
+            
+            <div style="margin: 20px 0; display: flex; align-items: center;">
+                <input type="checkbox" id="forceRestore" style="margin-right: 10px; accent-color: var(--primary);">
+                <label for="forceRestore" style="font-size: 0.9rem; color: #ef4444;">Bypass Integrity Check (Force Restore)</label>
+            </div>
+            
+            <div class="grid-two">
+                <button class="button button-outline" onclick="restoreData()">
+                    <i class="fas fa-laptop"></i> Local Only
+                </button>
+                <button class="button" onclick="restoreDataOnline()" id="restoreOnlineBtn">
+                    <i class="fas fa-server"></i> Push to Server
+                </button>
+            </div>
+            <div id="restoreStatus" class="status"></div>
+            <div id="restoreLog" class="status-log"></div>
+        </div>
+    </div>
+
+    <script src="Licence/api-utils.js"></script>
+    <script>
+        window.onload = () => {
+            checkServerStatus();
+            setInterval(checkServerStatus, 5000);
+            
+            const lastSync = localStorage.getItem('lastFullSync');
+            if (lastSync) document.getElementById('lastSyncTime').innerText = new Date(lastSync).toLocaleString();
+        };
+
+        async function checkServerStatus() {
+            const status = await apiUtils.isOnline();
+            const badge = document.getElementById('onlineStatusBadge');
+            const syncBtn = document.getElementById('syncBtn');
+            const restoreBtn = document.getElementById('restoreOnlineBtn');
+            
+            if (status.online) {
+                badge.className = 'status-badge';
+                badge.innerHTML = '<i class="fas fa-circle"></i> Server Online';
+                syncBtn.disabled = false;
+                restoreBtn.disabled = false;
+            } else {
+                badge.className = 'status-badge offline';
+                badge.innerHTML = '<i class="fas fa-circle"></i> Server Offline';
+                syncBtn.disabled = true;
+                restoreBtn.disabled = true;
+            }
+        }
+
+        async function syncWithServer() {
+            const btn = document.getElementById('syncBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing...';
+
+            try {
+                const result = await apiUtils.syncAllDataFromServer();
+                if (result.success) {
+                    const now = new Date();
+                    localStorage.setItem('lastFullSync', now.toISOString());
+                    document.getElementById('lastSyncTime').innerText = now.toLocaleString();
+                    alert('Data successfully synchronized from server');
+                } else {
+                    alert('Sync failed: ' + result.message);
+                }
+            } catch (err) {
+                alert('Error during sync: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function createBackup() {
+            if (document.getElementById('syncBeforeBackup').checked) {
+                await syncWithServer();
+            }
+
+            const log = document.getElementById('backupLog');
+            log.innerHTML = '';
+            log.innerHTML += `<div class="entry">Starting System Backup...</div>`;
+            
+            try {
+                const snapshot = collectDataSnapshot();
+                log.innerHTML += `<div class="entry">Local snapshot collected.</div>`;
+
+                const backup = {
+                    meta: {
+                        createdAt: new Date().toISOString(),
+                        schemaVersion: 4,
+                        module: 'Full System',
+                        counts: {
+                            freshLicenseTasks: snapshot.freshLicenseTasks?.length || 0,
+                            rcTasks: snapshot.tasks?.length || 0,
+                            maintenance: snapshot.maintenanceVehicles?.length || 0
+                        }
+                    },
+                    sections: {
+                        licence: {
+                            freshLicenseTasks: snapshot.freshLicenseTasks || [],
+                            licenseHolders: snapshot.licenseHolders || [],
+                            licenseHolderServices: snapshot.licenseHolderServices || [],
+                            licensePayments: snapshot.licensePayments || [],
+                            freshLicenseStatuses: snapshot.freshLicenseStatuses || [],
+                            vehicleClasses: snapshot.vehicleClasses || [],
+                            createLicenseVehicleClasses: snapshot.createLicenseVehicleClasses || [],
+                            lastDrivingRollNumber: snapshot.lastDrivingRollNumber || '0'
+                        },
+                        rc: {
+                            tasks: snapshot.tasks || [],
+                            customers: snapshot.customers || [],
+                            payments: snapshot.payments || [],
+                            dispatches: snapshot.dispatches || [],
+                            rcVehicleClasses: snapshot.rcVehicleClasses || [],
+                            rcStatuses: snapshot.rcStatuses || [],
+                            rcWorkItems: snapshot.rcWorkItems || [],
+                            financiers: snapshot.financiers || [],
+                            bills: snapshot.bills || [],
+                            taxVehicles: snapshot.taxVehicles || [],
+                            TaxVehicleClassesList: snapshot.TaxVehicleClassesList || []
+                        },
+                        maintenance: {
+                            maintenanceVehicles: snapshot.maintenanceVehicles || [],
+                            licenses: snapshot.licenses || [],
+                            permits: snapshot.permits || [],
+                            maintenanceAccounts: snapshot.maintenanceAccounts || []
+                        },
+                        users: snapshot.users || []
+                    }
+                };
+
+                backup.meta.checksum = await computeChecksum(backup.sections);
+                
+                const blob = new Blob([JSON.stringify(backup)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `hameethiya_backup_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                log.innerHTML += `<div class="entry" style="color: #10b981;">Backup completed and downloaded.</div>`;
+                showStatus('backupStatus', 'Backup created successfully', 'success');
+            } catch (err) {
+                log.innerHTML += `<div class="entry" style="color: #ef4444;">Error: ${err.message}</div>`;
+                showStatus('backupStatus', 'Backup failed', 'error');
+            }
+        }
+
+        async function restoreData() {
+            const file = document.getElementById('restoreFile').files[0];
+            if (!file) {
+                showStatus('restoreStatus', 'Please select a backup file', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const backup = JSON.parse(e.target.result);
+                    const s = backup.sections;
+                    
+                    if (s.licence) Object.keys(s.licence).forEach(k => localStorage.setItem(k, JSON.stringify(s.licence[k])));
+                    if (s.rc) Object.keys(s.rc).forEach(k => localStorage.setItem(k, JSON.stringify(s.rc[k])));
+                    if (s.maintenance) Object.keys(s.maintenance).forEach(k => localStorage.setItem(k, JSON.stringify(s.maintenance[k])));
+                    if (s.users) localStorage.setItem('users', JSON.stringify(s.users));
+
+                    showStatus('restoreStatus', 'Local storage restored', 'success');
+                    setTimeout(() => window.location.reload(), 1500);
+                } catch (err) {
+                    showStatus('restoreStatus', 'Restore failed: ' + err.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function restoreDataOnline() {
+            const file = document.getElementById('restoreFile').files[0];
+            if (!file) {
+                showStatus('restoreStatus', 'Please select a backup file', 'error');
+                return;
+            }
+
+            const restoreLog = document.getElementById('restoreLog');
+            restoreLog.innerHTML = `<div class="entry">Processing restore to live server...</div>`;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const backup = JSON.parse(e.target.result);
+                    const result = await apiUtils.restoreBackup(backup);
+                    if (result.success) {
+                        restoreLog.innerHTML += `<div class="entry" style="color: #10b981;">Server database updated successfully.</div>`;
+                        await apiUtils.syncAllDataFromServer();
+                        showStatus('restoreStatus', 'Live database restored successfully', 'success');
+                    } else {
+                        restoreLog.innerHTML += `<div class="entry" style="color: #ef4444;">Server Error: ${result.message}</div>`;
+                        showStatus('restoreStatus', 'Restore failed on server', 'error');
+                    }
+                } catch (error) {
+                    restoreLog.innerHTML += `<div class="entry" style="color: #ef4444;">Error: ${error.message}</div>`;
+                    showStatus('restoreStatus', 'Invalid file format', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function computeChecksum(obj) {
+            const str = JSON.stringify(obj);
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return hash.toString(16);
+        }
+
+        function collectDataSnapshot() {
+            const keys = [
+                'freshLicenseTasks', 'licenseHolders', 'licenseHolderServices', 'licensePayments',
+                'freshLicenseStatuses', 'vehicleClasses', 'createLicenseVehicleClasses', 
+                'lastDrivingRollNumber', 'tasks', 'customers', 'payments', 'dispatches', 
+                'rcVehicleClasses', 'rcStatuses', 'rcWorkItems', 'financiers', 'bills', 
+                'taxVehicles', 'TaxVehicleClassesList', 'maintenanceVehicles', 'licenses', 
+                'permits', 'maintenanceAccounts', 'users'
+            ];
+            const snapshot = {};
+            keys.forEach(k => {
+                const val = localStorage.getItem(k);
+                try { snapshot[k] = JSON.parse(val); } catch(e) { snapshot[k] = val; }
+            });
+            return snapshot;
+        }
+
+        function showStatus(id, msg, type) {
+            const el = document.getElementById(id);
+            el.innerText = msg;
+            el.className = `status ${type}`;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+    </script>
+</body>
+</html>
