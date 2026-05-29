@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (hamburger && navRight) {
         hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
             navRight.classList.toggle('active');
             if (navRight.classList.contains('active')) {
                 document.body.style.overflow = 'hidden'; // Prevent scroll
@@ -88,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     behavior: 'smooth'
                 });
                 if (window.innerWidth <= 1150 && navRight) {
+                    hamburger.classList.remove('active');
                     navRight.classList.remove('active');
                     document.body.style.overflow = 'auto';
                 }

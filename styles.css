@@ -226,12 +226,16 @@ body:not(.aos-initialized) [data-aos] {
     font-weight: 500;
 }
 
-/* Steering Wheel Hamburger */
-.steering-toggle {
-    display: none; /* Desktop hidden */
+/* Hamburger Menu - Steering Wheel Style */
+.hamburger {
+    display: none;
     cursor: pointer;
     z-index: 1001;
     transition: var(--transition);
+    width: 50px;
+    height: 50px;
+    align-items: center;
+    justify-content: center;
 }
 
 .steering-wheel {
@@ -244,18 +248,18 @@ body:not(.aos-initialized) [data-aos] {
     filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
 }
 
-.steering-toggle:hover .steering-wheel {
+.hamburger:hover .steering-wheel {
     transform: rotate(45deg);
 }
 
-.nav-right.active + .steering-toggle .steering-wheel {
+.hamburger.active .steering-wheel {
     transform: rotate(180deg);
     color: #fff;
 }
 
 @media (max-width: 1150px) {
-    .steering-toggle {
-        display: block;
+    .hamburger {
+        display: flex;
     }
 }
 
@@ -413,9 +417,6 @@ body:not(.aos-initialized) [data-aos] {
     .nav-links {
         display: none; /* Hide standard links */
     }
-    .hamburger {
-        display: block; /* Show hamburger */
-    }
     .navbar .btn-primary {
         display: none; /* Hide main button on mid-size if needed, or keep it */
     }
@@ -488,13 +489,6 @@ body:not(.aos-initialized) [data-aos] {
 
 .btn-primary:hover::after {
     opacity: 0.15;
-}
-
-.hamburger {
-    display: none;
-    font-size: 1.5rem;
-    color: var(--primary-color);
-    cursor: pointer;
 }
 
 /* Hero Section - Refined */
