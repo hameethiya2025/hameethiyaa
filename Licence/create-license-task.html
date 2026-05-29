@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create License Task | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(212, 175, 55, 0.04) 0%, transparent 35%),
+                radial-gradient(circle at 95% 95%, rgba(212, 175, 55, 0.04) 0%, transparent 35%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            padding: 3rem;
+            border-radius: 32px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lux);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .header-section {
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            letter-spacing: 0.02em;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-button {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .back-button:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateX(-5px);
+        }
+
+        /* Form Layout */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding-left: 0.25rem;
+        }
+
+        .form-group input, 
+        .form-group select {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 0.9rem 1.25rem;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .form-group select option {
+            background: var(--bg-accent);
+            color: var(--text-main);
+        }
+
+        .form-group input[readonly] {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: transparent;
+        }
+
+        /* Priority Toggle */
+        .priority-section {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 1.25rem 1.5rem;
+            border-radius: 18px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .priority-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+
+        .priority-toggle input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--gold);
+        }
+
+        .priority-toggle span {
+            font-weight: 600;
+            color: var(--gold);
+            letter-spacing: 0.05em;
+        }
+
+        /* Priority Date Container */
+        #priorityDateContainer {
+            margin-bottom: 1.5rem;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Multi-select Styling */
+        select[multiple] {
+            height: 120px !important;
+            padding: 0.5rem !important;
+        }
+
+        select[multiple] option {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 2px;
+            transition: var(--transition);
+        }
+
+        select[multiple] option:checked {
+            background: var(--gold) !important;
+            color: var(--bg-dark) !important;
+            font-weight: 600;
+        }
+
+        /* Submit Button */
+        .submit-button {
+            background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+            color: var(--bg-dark);
+            border: none;
+            padding: 1.25rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 2rem;
+            transition: var(--transition);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+        }
+
+        .submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1.25rem 2.5rem;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            animation: fadeInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .form-container { padding: 2rem; }
+            .form-row { grid-template-columns: 1fr; gap: 1rem; }
+            .header-section { flex-direction: column; gap: 1.5rem; align-items: flex-start; }
+            .header-section h2 { font-size: 1.75rem; }
+            .back-button { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="header-section">
+            <button class="back-button" onclick="window.location.href='fresh-license.html'">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <h2>Create License Task</h2>
+        </div>
+
+        <form id="createTaskForm" onsubmit="createNewTask(event)">
+            <!-- Priority Toggle -->
+            <div class="priority-section">
+                <label class="priority-toggle">
+                    <input type="checkbox" id="isPriority" name="isPriority" onchange="togglePriorityDate()">
+                    <span><i class="fas fa-star"></i> PRIORITY TASK</span>
+                </label>
+            </div>
+
+            <div id="priorityDateContainer" class="form-group" style="display: none;">
+                <label for="priorityDate">Follow-up Date for Priority Task</label>
+                <input type="date" id="priorityDate">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="drivingOption">Driving Option</label>
+                    <select id="drivingOption" required>
+                        <option value="">Select Option</option>
+                        <option value="WITH DRIVING">WITH DRIVING</option>
+                        <option value="WITHOUT DRIVING">WITHOUT DRIVING</option>
+                        <option value="SPECIAL">SPECIAL</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="applicationMode">Application Mode</label>
+                    <select id="applicationMode" required>
+                        <option value="">Select Mode</option>
+                        <option value="FACELESS">FACELESS</option>
+                        <option value="DIRECT">DIRECT</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="applicantName">Applicant Name</label>
+                    <input type="text" id="applicantName" required style="text-transform: uppercase;">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fatherName">Father's Name</label>
+                    <input type="text" id="fatherName" required style="text-transform: uppercase;">
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" required onchange="checkAgeEligibility()">
+                </div>
+                <div class="form-group">
+                    <label for="mobile">Mobile Number</label>
+                    <input type="tel" id="mobile" pattern="[0-9]{10}" maxlength="10"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
+                           title="10-digit mobile number" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="secondaryMobile">Secondary Mobile (Optional)</label>
+                    <input type="tel" id="secondaryMobile" pattern="[0-9]{10}" maxlength="10"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
+                           placeholder="Enter secondary number">
+                </div>
+                <div class="form-group">
+                    <label for="reference">Reference</label>
+                    <input type="text" id="reference" required style="text-transform: uppercase;">
+                </div>
+                <div class="form-group">
+                    <label for="declaredPayment">Declared Payment</label>
+                    <input type="number" id="declaredPayment" min="0" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="advancePayment">Advance Payment</label>
+                    <input type="number" id="advancePayment" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="vehicleClass">Vehicle Class (Ctrl/Cmd + Click)</label>
+                    <select id="vehicleClass" multiple required>
+                        <option value="">Select Classes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <input type="text" id="notes" placeholder="Additional details..." style="text-transform: uppercase;">
+                </div>
+            </div>
+
+            <div class="form-row" style="margin-top: 2rem; border-top: 1px solid var(--glass-border); padding-top: 2rem;">
+                <div class="form-group">
+                    <label>Creation Date & Time</label>
+                    <input type="text" id="creationDateTime" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Created By</label>
+                    <input type="text" id="createdBy" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Initial Status</label>
+                    <input type="text" value="NEW APPLICATION" readonly>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-button">Create Task</button>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="api-utils.js"></script>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAY8aW7751YUvDdv4xZYnXSF5AZevOBIxI",
+            authDomain: "hameethiya.firebaseapp.com",
+            projectId: "hameethiya",
+            storageBucket: "hameethiya.firebasestorage.app",
+            messagingSenderId: "206037846",
+            appId: "1:206037846:web:0bcbcfd67f6989e46d6cf7",
+            measurementId: "G-8ZQ1Y0CPQZ"
+        };
+        
+        let db = null;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.firestore();
+        } catch (e) {
+            console.warn("Firebase failed to initialize:", e);
+        }
+
+        let eligibilityNotification = null;
+
+        function showNotification(message, type = 'success', persist = false) {
+            if (eligibilityNotification && type === 'error') {
+                eligibilityNotification.remove();
+                eligibilityNotification = null;
+            }
+
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.backgroundColor = type === 'success' ? 'rgba(16, 185, 129, 0.9)' : 'rgba(239, 68, 68, 0.9)';
+            notification.style.backdropFilter = 'blur(10px)';
+            notification.style.border = type === 'success' ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(239, 68, 68, 0.2)';
+            document.body.appendChild(notification);
+            
+            if (!persist) {
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(30px)';
+                    setTimeout(() => notification.remove(), 400);
+                }, 3000);
+            } else {
+                return notification;
+            }
+        }
+
+        function checkAgeEligibility() {
+            const dobInput = document.getElementById('dob');
+            const submitBtn = document.querySelector('.submit-button');
+            const dobValue = dobInput.value;
+            
+            if (eligibilityNotification) {
+                eligibilityNotification.remove();
+                eligibilityNotification = null;
+            }
+
+            if (!dobValue) {
+                submitBtn.disabled = false;
+                return true;
+            }
+
+            const dob = new Date(dobValue);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+            
+            if (age < 18) {
+                eligibilityNotification = showNotification('Applicant must be at least 18 years old.', 'error', true);
+                submitBtn.disabled = true;
+                return false;
+            }
+
+            submitBtn.disabled = false;
+            return true;
+        }
+
+        function updateDateTime() {
+            document.getElementById('creationDateTime').value = new Date().toLocaleString();
+        }
+
+        function togglePriorityDate() {
+            const isPriority = document.getElementById('isPriority').checked;
+            const container = document.getElementById('priorityDateContainer');
+            const dateInput = document.getElementById('priorityDate');
+            
+            container.style.display = isPriority ? 'flex' : 'none';
+            dateInput.required = isPriority;
+            if (isPriority && !dateInput.value) dateInput.valueAsDate = new Date();
+        }
+
+        async function createNewTask(event) {
+            event.preventDefault();
+            if (!checkAgeEligibility()) return;
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+            
+            try {
+                const mobile = document.getElementById('mobile').value.trim();
+                const applicantName = document.getElementById('applicantName').value.trim().toUpperCase();
+                
+                // --- Student ID Generation & Registration Update ---
+                let studentId = null;
+                if (db) {
+                    try {
+                        const regSnapshot = await db.collection("registrations")
+                            .where("mobile", "==", mobile)
+                            .get();
+                        
+                        if (!regSnapshot.empty) {
+                            const regDoc = regSnapshot.docs[0];
+                            const regData = regDoc.data();
+                            
+                            if (regData.studentId) {
+                                studentId = regData.studentId;
+                            } else {
+                                // Generate new Student ID if not present
+                                const year = new Date().getFullYear();
+                                const randomNum = Math.floor(1000 + Math.random() * 9000);
+                                studentId = `HM-${year}-${randomNum}`;
+                            }
+
+                            // Update registration with new status and studentId
+                            await db.collection("registrations").doc(regDoc.id).update({
+                                status: 'New Application',
+                                studentId: studentId,
+                                processedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                            console.log(`Updated registration for ${mobile} with status: New Application`);
+                        }
+                    } catch (err) {
+                        console.error("Error updating registration:", err);
+                    }
+                }
+
+                const vehicleSelect = document.getElementById('vehicleClass');
+                const selectedClasses = Array.from(vehicleSelect.selectedOptions).map(opt => opt.value);
+                
+                const isPriority = document.getElementById('isPriority').checked;
+                const drivingOption = document.getElementById('drivingOption').value.toUpperCase();
+
+                let rollNumber = null;
+                if (drivingOption === 'WITH DRIVING') {
+                    const lastRoll = parseInt(await apiUtils.getSettings('lastDrivingRollNumber', '0'));
+                    rollNumber = lastRoll + 1;
+                    await apiUtils.saveSettings('lastDrivingRollNumber', rollNumber.toString());
+                }
+
+                const task = {
+                    id: Date.now().toString(),
+                    studentId, // Added studentId to task
+                    isPriority,
+                    priorityDate: isPriority ? document.getElementById('priorityDate').value : null,
+                    reminderDate: new Date().toISOString().split('T')[0],
+                    rollNumber,
+                    applicantName,
+                    fatherName: document.getElementById('fatherName').value.trim().toUpperCase(),
+                    dob: document.getElementById('dob').value,
+                    mobile,
+                    secondaryMobile: document.getElementById('secondaryMobile').value.trim() || '',
+                    reference: document.getElementById('reference').value.trim().toUpperCase(),
+                    vehicleClass: selectedClasses.join(', '),
+                    declaredPayment: document.getElementById('declaredPayment').value,
+                    advancePayment: document.getElementById('advancePayment').value || '0',
+                    drivingOption,
+                    applicationMode: document.getElementById('applicationMode').value.toUpperCase(),
+                    creationDate: new Date().toLocaleDateString(),
+                    creationTime: new Date().toLocaleTimeString(),
+                    status: 'New Application',
+                    createdBy: document.getElementById('createdBy').value,
+                    notes: document.getElementById('notes').value.trim().toUpperCase() || '',
+                    statusHistory: [{
+                        status: 'New Application',
+                        date: new Date().toLocaleDateString(),
+                        time: new Date().toLocaleTimeString(),
+                        note: 'Task Created'
+                    }],
+                    intimations: [],
+                    payments: [],
+                    details: {},
+                    applicationNumber: '',
+                    appointmentDate: null,
+                    llrDate: null,
+                    maturityDate: null,
+                    expiryDate: null,
+                    testStatus: 'Pending'
+                };
+
+                const result = await apiUtils.saveTask(task);
+                if (result.success) {
+                    showNotification('Task created successfully! User ID: ' + (studentId || 'N/A'));
+                    document.getElementById('createTaskForm').reset();
+                    setTimeout(() => window.location.href = 'fresh-license.html', 1500);
+                } else {
+                    showNotification(result.error || 'Failed to save task', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Create Task';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('An error occurred: ' + error.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Task';
+            }
+        }
+
+        async function updateVehicleClasses() {
+            const vehicleSelect = document.getElementById('vehicleClass');
+            const classes = await apiUtils.getSettings('createLicenseVehicleClasses', ['LMV', 'MCWG', 'MCWOG', 'TRANS', 'HMV']);
+            vehicleSelect.innerHTML = classes.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+
+        async function checkAuth() {
+            // Check if user is already logged in as Admin in the main portal
+            const adminSession = sessionStorage.getItem('hameethiya_admin_logged_in');
+            
+            if (adminSession === 'true') {
+                // If admin session exists, ensure currentUser is set in localStorage
+                localStorage.setItem('currentUser', JSON.stringify({
+                    username: 'admin',
+                    role: 'admin',
+                    moduleAccess: { license: true }
+                }));
+                return true;
+            }
+
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                // If no admin session and no license user, redirect to main page or admin login
+                alert('Please login as admin to access this page.');
+                window.location.href = '../admin.html';
+                return false;
+            }
+            return true;
+        }
+
+        window.onload = async function() {
+            if (!(await checkAuth())) return;
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+            // Pre-fill from enquiry if exists
+            const enquiry = JSON.parse(localStorage.getItem('currentEnquiry') || 'null');
+            if (enquiry) {
+                document.getElementById('applicantName').value = enquiry.name;
+                document.getElementById('mobile').value = enquiry.mobile;
+                localStorage.removeItem('currentEnquiry');
+            }
+
+            // Pre-fill from URL parameters if exists (from admin process button)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('name') || urlParams.has('mobile')) {
+                const name = urlParams.get('name');
+                const mobile = urlParams.get('mobile');
+                const course = urlParams.get('course');
+
+                if (name) document.getElementById('applicantName').value = name;
+                if (mobile) document.getElementById('mobile').value = mobile;
+                if (course) {
+                    document.getElementById('notes').value = `COURSE: ${course}`.toUpperCase();
+                }
+                
+                // Clear URL parameters without refreshing to keep it "in the webpage"
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+
+            document.getElementById('createdBy').value = currentUser.username || 'System';
+            await updateVehicleClasses();
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matured LLR Tasks | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(212, 175, 55, 0.03) 0%, transparent 35%),
+                radial-gradient(circle at 95% 95%, rgba(212, 175, 55, 0.03) 0%, transparent 35%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        /* Header Section */
+        .header-section {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .header-title h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .task-count-badge {
+            background: var(--gold-muted);
+            color: var(--gold);
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 1px solid var(--gold);
+        }
+
+        .back-button {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateX(-5px);
+        }
+
+        /* Filters Section */
+        .report-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .report-filters {
+            background: var(--bg-accent);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-lux);
+        }
+
+        .report-filters input, 
+        .report-filters select,
+        textarea.report-filters {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            padding: 0.9rem 1.25rem;
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            min-width: 250px;
+            flex: 1;
+            transition: var(--transition);
+        }
+
+        .report-filters input:focus, 
+        .report-filters select:focus,
+        textarea.report-filters:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .report-filters select option {
+            background: var(--bg-accent);
+            color: var(--text-main);
+        }
+
+        /* Task Cards */
+        .matured-task {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .matured-task:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold-muted);
+            box-shadow: var(--shadow-lux);
+        }
+
+        /* Critical / Priority Highlight */
+        .critical-task {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.1);
+        }
+
+        .marked-priority {
+            background: rgba(245, 158, 11, 0.05);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .with-driving-matured {
+            background: rgba(16, 185, 129, 0.05);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        /* Highlight No Intimation Warning more */
+        .no-intimation-alert {
+            background: #ef4444 !important;
+            color: white !important;
+            font-weight: 800 !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 10px !important;
+            animation: blink 1.5s infinite !important;
+            border: 1px solid white !important;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.4) !important;
+            font-size: 0.75rem !important;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+
+        .btn-filter-lux {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.9rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-filter-lux.active {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: white;
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-filter-lux:hover:not(.active) {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+        }
+
+        .task-details {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1.25rem;
+        }
+
+        .task-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .info-block {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.6rem 0.8rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .info-block strong {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-block span {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Action Buttons */
+        .task-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            min-width: 200px;
+        }
+
+        .btn-action {
+            padding: 0.75rem;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            width: 100%;
+            font-size: 0.8rem;
+        }
+
+        .btn-intimation { background: var(--glass); color: var(--gold); border: 1px solid var(--gold-muted); }
+        .btn-test { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .btn-commit { background: linear-gradient(135deg, var(--gold), var(--gold-bright)); color: var(--bg-dark); }
+
+        .btn-action:hover {
+            transform: scale(1.02) translateX(3px);
+            filter: brightness(1.1);
+        }
+
+        /* Dynamic Input Sections */
+        .expand-section {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.25rem;
+            border-radius: 18px;
+            border: 1px solid var(--glass-border);
+            display: none;
+            flex-direction: column;
+            gap: 1.25rem;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .status-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 0.6rem;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .status-pill:hover { background: rgba(212, 175, 55, 0.1); border-color: var(--gold); }
+        .status-pill.selected { background: var(--gold); color: var(--bg-dark); }
+
+        /* Badges */
+        .badge-lux {
+            padding: 0.4rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.75rem;
+        }
+
+        .warning-badge { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .critical-badge { background: #ef4444; color: white; animation: pulse 2s infinite; }
+        .commitment-badge { background: var(--gold-muted); color: var(--gold); border: 1px solid var(--gold); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
+        }
+
+        /* Modal Premium */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 650px;
+            padding: 3rem;
+            border-radius: 32px;
+            box-shadow: var(--shadow-lux);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover { color: var(--gold); transform: rotate(90deg); }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1.25rem;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1.25rem 2.5rem;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            z-index: 3000;
+            box-shadow: var(--shadow-lux);
+            display: none;
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+            background: rgba(16, 185, 129, 0.9);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Links */
+        .history-link {
+            color: var(--gold-bright);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .history-link:hover { color: var(--gold); text-decoration: underline; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .task-details { grid-template-columns: 1fr; }
+            .task-actions { flex-direction: row; flex-wrap: wrap; }
+            .btn-action { flex: 1; min-width: 150px; }
+            .payment-summary-box { position: static; margin-top: 1rem; }
+        }
+
+        /* Payment Summary Box */
+        .payment-summary-box {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem 1rem;
+            border-radius: 14px;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .payment-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            text-align: right;
+        }
+
+        .payment-item strong {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .payment-item span {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-section">
+        <div class="header-title">
+            <button class="back-button" onclick="window.location.href='fresh-license.html'">
+                <i class="fas fa-chevron-left"></i> Back
+            </button>
+            <h2>Matured LLR Tasks</h2>
+            <span id="taskCount" class="task-count-badge">0</span>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <div class="report-container">
+        <div class="report-filters">
+            <input type="text" id="searchInput" placeholder="Search applicant, mobile, or ID..." oninput="filterTasks()">
+            <select id="intimationFilter" onchange="filterTasks()">
+                <option value="all">All Intimation Status</option>
+                <option value="noInformed">Not Informed Warning</option>
+                <option value="none">No Intimation</option>
+                <option value="Informed">Informed</option>
+                <option value="Not Attend">Not Attend</option>
+                <option value="Not Reachable">Not Reachable</option>
+                <option value="Not in Use">Not in Use</option>
+            </select>
+            <select id="dateFilter" onchange="filterTasks()">
+                <option value="all">All Dates</option>
+                <option value="today">Matured Today</option>
+                <option value="week">Last 7 Days</option>
+                <option value="month">Last 30 Days</option>
+            </select>
+            <select id="testStatusFilter" onchange="filterTasks()">
+                <option value="all">All Test Status</option>
+                <option value="pending">Test Not Applied</option>
+                <option value="applied">Test Applied</option>
+            </select>
+            <button id="criticalFilterBtn" class="btn-filter-lux" onclick="toggleCriticalFilter()">
+                <i class="fas fa-exclamation-circle"></i> Critical Tasks
+            </button>
+        </div>
+
+        <div id="maturedTaskList">
+            <!-- Tasks injected here -->
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 2rem; color: var(--gold);">Status History</h2>
+            <div id="historyList" style="max-height: 400px; overflow-y: auto; padding-right: 1rem;">
+                <!-- History items injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="api-utils.js"></script>
+    <script>
+        // Core Logic Preserved
+        let allTasks = [];
+        let showOnlyCritical = false;
+
+        function toggleCriticalFilter() {
+            showOnlyCritical = !showOnlyCritical;
+            const btn = document.getElementById('criticalFilterBtn');
+            if (showOnlyCritical) btn.classList.add('active');
+            else btn.classList.remove('active');
+            filterTasks();
+        }
+
+        function showNotification(message) {
+            const el = document.getElementById('notification');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+
+        async function loadTasks() {
+            allTasks = await apiUtils.getTasks();
+            filterTasks();
+        }
+
+        function calculateMaturityDate(llrDate) {
+            if (!llrDate) return '';
+            const parse = (s) => s.includes('/') ? new Date(`${s.split('/')[2]}-${s.split('/')[1]}-${s.split('/')[0]}`) : new Date(s);
+            const d = parse(llrDate);
+            d.setDate(d.getDate() + 30);
+            return d.toISOString().split('T')[0];
+        }
+
+        function calculateExpiryDate(llrDate) {
+            if (!llrDate) return '';
+            const parse = (s) => s.includes('/') ? new Date(`${s.split('/')[2]}-${s.split('/')[1]}-${s.split('/')[0]}`) : new Date(s);
+            const d = parse(llrDate);
+            d.setMonth(d.getMonth() + 6);
+            return d.toISOString().split('T')[0];
+        }
+
+        function filterTasks() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const intimation = document.getElementById('intimationFilter').value;
+            const dateF = document.getElementById('dateFilter').value;
+            const testF = document.getElementById('testStatusFilter').value;
+
+            const filtered = allTasks.filter(task => {
+                // 4. Expired lrr, test completed, and test application generated should be disappear.
+                if (task.status === 'Test Completed' || task.status === 'Expired' || task.status === 'Test Application Generated') return false;
+                
+                // Calculate total paid including additional payments
+                const commitment = parseFloat(task.declaredPayment || 0);
+                const additionalPaid = (task.payments || []).reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+                const advance = parseFloat(task.advancePayment || 0);
+                const totalPaid = advance + additionalPaid;
+                const balance = commitment - totalPaid;
+
+                // 1. when payment balance becomes zero that task should be displayed in matured llr unless test application generated.
+                const isBalanceZero = balance <= 0;
+
+                // Show tasks that are matured LLR, Committed, or Engagged OR if balance is zero
+                const isValidStatus = task.status === 'LLR Issued' || task.status === 'Committed' || task.status === 'Engagged';
+                
+                if (!isValidStatus && !isBalanceZero) return false;
+                
+                const llrDate = task.llrDate ? (task.llrDate.includes('/') ? new Date(`${task.llrDate.split('/')[2]}-${task.llrDate.split('/')[1]}-${task.llrDate.split('/')[0]}`) : new Date(task.llrDate)) : null;
+                const maturityDate = new Date(calculateMaturityDate(task.llrDate));
+                const expiryDate = new Date(calculateExpiryDate(task.llrDate));
+                
+                // 5. matured llr task should be displayed here
+                // Must be matured (today >= maturityDate) and not yet expired (today < expiryDate)
+                const today = new Date();
+                if (isNaN(maturityDate.getTime()) || today < maturityDate || today >= expiryDate) return false;
+
+                // Critical Logic: 150 days from LLR issuance
+                const daysSinceLLR = llrDate ? Math.floor((today - llrDate) / (1000 * 60 * 60 * 24)) : 0;
+                const isCritical = daysSinceLLR >= 150;
+
+                if (showOnlyCritical && !isCritical) return false;
+
+                const matchSearch = task.applicantName?.toLowerCase().includes(search) || 
+                                  task.mobile?.includes(search) || 
+                                  String(task.id).includes(search);
+
+                const latestIntimation = task.intimations?.length > 0 ? task.intimations[task.intimations.length-1].status : 'none';
+                let matchIntimation = intimation === 'all' || latestIntimation === intimation;
+                if (intimation === 'noInformed') matchIntimation = latestIntimation !== 'Informed';
+
+                today.setHours(0,0,0,0);
+                let matchDate = true;
+                if (dateF === 'today') matchDate = maturityDate.getTime() === today.getTime();
+                else if (dateF === 'week') matchDate = (today - maturityDate) <= 7 * 24 * 60 * 60 * 1000;
+                else if (dateF === 'month') matchDate = (today - maturityDate) <= 30 * 24 * 60 * 60 * 1000;
+
+                const matchTest = testF === 'all' || 
+                                (testF === 'pending' && task.status !== 'Test Application Generated') ||
+                                (testF === 'applied' && task.status === 'Test Application Generated');
+
+                return matchSearch && matchIntimation && matchDate && matchTest;
+            });
+
+            document.getElementById('taskCount').textContent = filtered.length;
+            displayTasks(filtered);
+        }
+
+        function displayTasks(tasks) {
+            const list = document.getElementById('maturedTaskList');
+            list.innerHTML = '';
+
+            tasks.forEach(task => {
+                const llrDateObj = task.llrDate ? (task.llrDate.includes('/') ? new Date(`${task.llrDate.split('/')[2]}-${task.llrDate.split('/')[1]}-${task.llrDate.split('/')[0]}`) : new Date(task.llrDate)) : null;
+                const maturityDate = calculateMaturityDate(task.llrDate);
+                const expiryDate = calculateExpiryDate(task.llrDate);
+                const daysSinceMaturity = Math.floor((new Date() - new Date(maturityDate)) / (1000 * 60 * 60 * 24));
+                const daysSinceLLR = llrDateObj ? Math.floor((new Date() - llrDateObj) / (1000 * 60 * 60 * 24)) : 0;
+                const latestIntimation = task.intimations?.length > 0 ? task.intimations[task.intimations.length-1] : null;
+
+                // Critical Logic: 150 days from LLR issuance
+                const isCritical = daysSinceLLR >= 150;
+
+                // 2. should show commitment payment, paid, balance in the task.
+                const commitment = parseFloat(task.declaredPayment || 0);
+                const additionalPaid = (task.payments || []).reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+                const advance = parseFloat(task.advancePayment || 0);
+                const totalPaid = advance + additionalPaid;
+                const balance = commitment - totalPaid;
+
+                const card = document.createElement('div');
+                card.className = `matured-task ${isCritical ? 'critical-task' : ''} ${task.isPriority ? 'marked-priority' : ''} ${task.drivingOption === 'WITH DRIVING' ? 'with-driving-matured' : ''}`;
+                
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <span class="history-link" onclick="viewHistory('${task.id}')"><i class="fas fa-history"></i> View History</span>
+                            ${task.isPriority ? `<div class="badge-lux marked-priority" style="margin-left: 1rem;"><i class="fas fa-star"></i> PRIORITY</div>` : ''}
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">ID: #${String(task.id).padStart(4, '0')}</span>
+                        </div>
+                    </div>
+
+                    <div class="task-details">
+                        <div class="task-info">
+                            <div class="info-block"><strong>Applicant</strong><span>${task.applicantName.toUpperCase()}</span></div>
+                            <div class="info-block"><strong>Father Name</strong><span>${(task.fatherName || '-').toUpperCase()}</span></div>
+                            <div class="info-block"><strong>Mobile</strong><span>${task.mobile}</span></div>
+                            <div class="info-block"><strong>Driving Option</strong><span>${(task.drivingOption || '-').toUpperCase()}</span></div>
+                            <div class="info-block"><strong>Mode</strong><span>${(task.applicationMode || '-').toUpperCase()}</span></div>
+                            <div class="info-block"><strong>Reference</strong><span>${(task.reference || '-').toUpperCase()}</span></div>
+                            <div class="info-block"><strong>Classes</strong><span>${task.vehicleClass.toUpperCase()}</span></div>
+                            <div class="info-block"><strong>LLR Date</strong><span>${task.llrDate}</span></div>
+                            <div class="info-block"><strong>Maturity</strong><span style="color: var(--gold);">${maturityDate}</span></div>
+                            <div class="info-block"><strong>Expiry</strong><span style="color: #ef4444;">${expiryDate}</span></div>
+                        </div>
+
+                        <div class="task-actions">
+                            <button class="btn-action btn-intimation" onclick="toggleIntimation('${task.id}')">
+                                <i class="fas fa-phone"></i> Record Intimation
+                            </button>
+                            <button class="btn-action btn-test" onclick="toggleAppointment('${task.id}')">
+                                <i class="fas fa-file-signature"></i> Test Applied
+                            </button>
+                            <button class="btn-action btn-commit" onclick="commitTask('${task.id}')">
+                                <i class="fas fa-check-circle"></i> Commit Task
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="intimation-expand-${task.id}" class="expand-section">
+                        <div class="status-options-grid">
+                            ${['Informed', 'Not Attend', 'Not Reachable', 'Not in Use', 'Call Later', 'Wrong Number'].map(s => 
+                                `<div class="status-pill" onclick="selectStatus(this, '${task.id}', '${s}')">${s}</div>`
+                            ).join('')}
+                        </div>
+                        <textarea id="remarks-${task.id}" class="report-filters" style="min-height: 80px; width: 100%; margin: 0;" placeholder="Add remarks..."></textarea>
+                        <button class="btn-action btn-commit" style="width: auto; align-self: flex-end;" onclick="saveIntimation('${task.id}')">Save Intimation</button>
+                    </div>
+
+                    <div id="appointment-expand-${task.id}" class="expand-section">
+                        <input type="date" id="appt-date-${task.id}" class="report-filters" style="margin: 0;">
+                        <button class="btn-action btn-test" style="width: auto; align-self: flex-end;" onclick="saveTestApplication('${task.id}')">Confirm Application</button>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; padding-right: 280px;">
+                        ${latestIntimation ? `
+                            <div class="badge-lux commitment-badge" style="flex-direction: column; align-items: flex-start; gap: 0.2rem; min-width: 220px;">
+                                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Latest: ${latestIntimation.status.toUpperCase()} (${latestIntimation.date})
+                                </div>
+                                ${latestIntimation.remarks && latestIntimation.remarks !== 'No remarks' ? `
+                                    <div style="margin-top: 0.25rem; font-size: 0.8rem; border-top: 1px solid var(--gold-muted); padding-top: 0.25rem; color: var(--text-main); font-weight: 500; width: 100%;">
+                                        <i class="fas fa-comment-alt" style="font-size: 0.7rem; margin-right: 0.4rem; color: var(--gold-bright);"></i>${latestIntimation.remarks}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : `
+                            <div class="badge-lux no-intimation-alert">
+                                <i class="fas fa-exclamation-triangle"></i> NO INTIMATION WARNING
+                            </div>
+                        `}
+                        ${isCritical ? `<div class="badge-lux critical-badge"><i class="fas fa-exclamation-triangle"></i> CRITICAL: ${daysSinceLLR} Days Since LLR Issued</div>` : ''}
+                        ${!isCritical && daysSinceMaturity > 0 ? `<div class="badge-lux warning-badge"><i class="fas fa-clock"></i> Matured ${daysSinceMaturity} days ago</div>` : ''}
+                    </div>
+
+                    <div class="payment-summary-box">
+                        <div class="payment-item">
+                            <strong>Commitment</strong>
+                            <span style="color: var(--gold);">₹${commitment}</span>
+                        </div>
+                        <div class="payment-item">
+                            <strong>Paid</strong>
+                            <span style="color: #10b981;">₹${totalPaid}</span>
+                        </div>
+                        <div class="payment-item">
+                            <strong>Balance</strong>
+                            <span style="color: #ef4444;">₹${balance}</span>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // Action Handlers
+        function toggleIntimation(id) {
+            const el = document.getElementById(`intimation-expand-${id}`);
+            el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
+            document.getElementById(`appointment-expand-${id}`).style.display = 'none';
+        }
+
+        function toggleAppointment(id) {
+            const el = document.getElementById(`appointment-expand-${id}`);
+            el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
+            document.getElementById(`intimation-expand-${id}`).style.display = 'none';
+        }
+
+        function selectStatus(el, taskId, status) {
+            el.parentElement.querySelectorAll('.status-pill').forEach(p => p.classList.remove('selected'));
+            el.classList.add('selected');
+            el.dataset.selectedStatus = status;
+        }
+
+        async function saveIntimation(id) {
+            const statusEl = document.querySelector(`#intimation-expand-${id} .status-pill.selected`);
+            if (!statusEl) return alert('Select a status');
+            
+            const status = statusEl.dataset.selectedStatus;
+            const remarks = document.getElementById(`remarks-${id}`).value;
+            const task = allTasks.find(t => String(t.id) === String(id));
+            
+            if (!task.intimations) task.intimations = [];
+            task.intimations.push({
+                status,
+                remarks: remarks || 'No remarks',
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString(),
+                by: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System'
+            });
+
+            await apiUtils.saveTask(task);
+            showNotification('Intimation recorded!');
+            loadTasks();
+        }
+
+        async function saveTestApplication(id) {
+            const date = document.getElementById(`appt-date-${id}`).value;
+            if (!date) return alert('Select appointment date');
+            
+            const task = allTasks.find(t => String(t.id) === String(id));
+            task.status = 'Test Application Generated';
+            task.appointmentDate = date;
+            
+            if (!task.statusHistory) task.statusHistory = [];
+            task.statusHistory.push({
+                status: 'Test Application Generated',
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString(),
+                updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System',
+                notes: `Appointment set for ${date}`
+            });
+
+            await apiUtils.saveTask(task);
+            showNotification('Test application recorded!');
+            loadTasks();
+        }
+
+        async function commitTask(id) {
+            if (!confirm('Commit this task?')) return;
+            const task = allTasks.find(t => String(t.id) === String(id));
+            task.status = 'Committed';
+            
+            if (!task.statusHistory) task.statusHistory = [];
+            task.statusHistory.push({
+                status: 'Committed',
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString(),
+                updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System',
+                notes: 'Manually committed'
+            });
+
+            await apiUtils.saveTask(task);
+            showNotification('Task committed successfully!');
+            loadTasks();
+        }
+
+        async function viewHistory(id) {
+            const task = allTasks.find(t => String(t.id) === String(id));
+            const list = document.getElementById('historyList');
+            list.innerHTML = (task.statusHistory || []).reverse().map(h => `
+                <div class="history-item">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <strong style="color: var(--gold);">${h.status}</strong>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">${h.date} ${h.time}</span>
+                    </div>
+                    <p style="font-size: 0.9rem;">${h.notes || 'No notes'}</p>
+                    <small style="color: var(--text-muted);">By: ${h.updatedBy || 'System'}</small>
+                </div>
+            `).join('') || '<p>No history available</p>';
+            document.getElementById('historyModal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('historyModal').style.display = 'none'; }
+        window.onclick = (e) => { if (e.target.id === 'historyModal') closeModal(); };
+
+        window.onload = loadTasks;
+    </script>
+</body>
+</html>

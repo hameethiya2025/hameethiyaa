@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Verification | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 95% 95%, rgba(212, 175, 55, 0.03) 0%, transparent 40%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .header-title h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .back-button {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .back-button:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateX(-5px);
+        }
+
+        /* Filter Section */
+        .controls-panel {
+            background: var(--bg-accent);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lux);
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .filter-group input {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            padding: 0.8rem 1.25rem;
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .btn-filter {
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            background: var(--glass);
+        }
+
+        .btn-filter:hover {
+            border-color: var(--gold);
+            background: var(--gold-muted);
+        }
+
+        .btn-filter.primary {
+            background: var(--gold);
+            color: var(--bg-dark);
+            border-color: var(--gold);
+        }
+
+        /* Table Premium Styles */
+        .table-container {
+            background: var(--glass);
+            border-radius: 28px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            box-shadow: var(--shadow-lux);
+        }
+
+        .feedback-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .feedback-table th {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 1.5rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+            letter-spacing: 0.02em;
+        }
+
+        .feedback-table td {
+            padding: 1.25rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            transition: var(--transition);
+        }
+
+        .feedback-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .feedback-table tr:hover td {
+            background: rgba(212, 175, 55, 0.03);
+        }
+
+        .remarks-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem;
+            border-radius: 10px;
+            color: var(--text-main);
+            min-height: 60px;
+            resize: vertical;
+            transition: var(--transition);
+        }
+
+        .remarks-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .badge {
+            background: var(--gold-muted);
+            color: var(--gold);
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid var(--gold);
+        }
+
+        .review-button {
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            color: white;
+            margin-right: 0.4rem;
+        }
+
+        .review-positive { background: #10b981; }
+        .review-positive:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-2px); }
+        .review-negative { background: #ef4444; }
+        .review-negative:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-2px); }
+        .review-button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .header { flex-direction: column; align-items: flex-start; }
+            .controls-panel { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-title">
+                <button class="back-button" onclick="window.location.href='fresh-license.html'">
+                    <i class="fas fa-chevron-left"></i> Back
+                </button>
+                <h1>Feedback Verification</h1>
+            </div>
+        </div>
+
+        <div class="controls-panel">
+            <div class="filter-group">
+                <label for="fromDate">From Date</label>
+                <input type="date" id="fromDate" onchange="renderTasks()">
+            </div>
+            <div class="filter-group">
+                <label for="toDate">To Date</label>
+                <input type="date" id="toDate" onchange="renderTasks()">
+            </div>
+            <button class="btn-filter primary" onclick="applyLastTwoWeeks()">Last 2 Weeks</button>
+            <button class="btn-filter" onclick="clearDateFilters()">Clear</button>
+        </div>
+
+        <div class="table-container">
+            <table class="feedback-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Applicant</th>
+                        <th>Mobile</th>
+                        <th>Test Completed</th>
+                        <th>Remarks</th>
+                        <th>Verified</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="feedbackTableBody"></tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display:none;">No Test Completed tasks found</div>
+        </div>
+    </div>
+
+    <!-- API Utils -->
+    <script src="api-utils.js"></script>
+
+    <script>
+        function parseDateValue(dateValue, timeValue) {
+            if (!dateValue) return null;
+            const combined = timeValue ? `${dateValue} ${timeValue}` : dateValue;
+            let parsed = new Date(combined);
+            if (!isNaN(parsed.getTime())) return parsed;
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+                return new Date(`${dateValue}T${timeValue || '00:00:00'}`);
+            }
+            const parts = dateValue.split(/[\/\-]/).map(part => parseInt(part, 10));
+            if (parts.length === 3 && parts.every(part => !Number.isNaN(part))) {
+                const [first, second, year] = parts;
+                const isDayFirst = first > 12;
+                const day = isDayFirst ? first : second;
+                const month = isDayFirst ? second : first;
+                const timeParts = (timeValue || '').split(':');
+                const hours = parseInt(timeParts[0] || '0', 10);
+                const minutes = parseInt(timeParts[1] || '0', 10);
+                const seconds = parseInt(timeParts[2] || '0', 10);
+                parsed = new Date(year, month - 1, day, hours, minutes, seconds);
+                if (!isNaN(parsed.getTime())) return parsed;
+            }
+            return null;
+        }
+
+        function getTestCompletedInfo(task) {
+            const history = task.statusHistory || [];
+            const entry = history.find(item => item.status === 'Test Completed');
+            if (!entry) return '-';
+            const date = entry.date || '-';
+            const time = entry.time || '';
+            return time ? `${date} ${time}` : date;
+        }
+
+        function getTestCompletedDate(task) {
+            const history = task.statusHistory || [];
+            const entry = history.find(item => item.status === 'Test Completed');
+            if (!entry) return null;
+            return parseDateValue(entry.date, entry.time);
+        }
+
+        async function applyLastTwoWeeks() {
+            const toDate = new Date();
+            const fromDate = new Date();
+            fromDate.setDate(toDate.getDate() - 13);
+            document.getElementById('fromDate').value = fromDate.toISOString().slice(0, 10);
+            document.getElementById('toDate').value = toDate.toISOString().slice(0, 10);
+            await renderTasks();
+        }
+
+        async function clearDateFilters() {
+            document.getElementById('fromDate').value = '';
+            document.getElementById('toDate').value = '';
+            await renderTasks();
+        }
+
+        async function renderTasks() {
+            const [freshTasks, holderServices] = await Promise.all([
+                apiUtils.getTasks(),
+                apiUtils.getLicenseHolderServices()
+            ]);
+
+            const allTasks = [
+                ...freshTasks.map(t => ({ ...t, source: 'tasks' })),
+                ...holderServices.map(s => ({
+                    ...s,
+                    id: s.id || s.licenseNumber,
+                    applicantName: s.name,
+                    mobile: s.mobileNumber,
+                    source: 'license_holder_services'
+                }))
+            ];
+
+            const uniqueMap = new Map();
+            allTasks.forEach(task => {
+                const key = `${task.applicantName}-${task.mobile}`;
+                if (!uniqueMap.has(key)) {
+                    uniqueMap.set(key, task);
+                } else {
+                    const existing = uniqueMap.get(key);
+                    if ((task.statusHistory?.length || 0) > (existing.statusHistory?.length || 0)) {
+                        uniqueMap.set(key, task);
+                    }
+                }
+            });
+
+            const tasks = Array.from(uniqueMap.values()).sort((a, b) => {
+                const dateA = getTestCompletedDate(a);
+                const dateB = getTestCompletedDate(b);
+                if (!dateA) return 1;
+                if (!dateB) return -1;
+                return dateB - dateA;
+            });
+
+            const fromValue = document.getElementById('fromDate').value;
+            const toValue = document.getElementById('toDate').value;
+            const fromDate = fromValue ? new Date(`${fromValue}T00:00:00`) : null;
+            const toDate = toValue ? new Date(`${toValue}T23:59:59`) : null;
+            
+            const completedTasks = tasks.filter(task => {
+                const status = (task.status || '').toLowerCase();
+                if (status !== 'test completed' && status !== 'completed') return false;
+                if (task.feedbackVerified) return false;
+                if (!fromDate && !toDate) return true;
+                const completedDate = getTestCompletedDate(task);
+                if (!completedDate) return false;
+                if (fromDate && completedDate < fromDate) return false;
+                if (toDate && completedDate > toDate) return false;
+                return true;
+            });
+
+            const tableBody = document.getElementById('feedbackTableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (!completedTasks.length) {
+                tableBody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            tableBody.innerHTML = completedTasks.map(task => {
+                const isVerified = task.feedbackVerified === true;
+                const remarksValue = task.feedbackRemarks || '';
+                const verifiedInfo = isVerified
+                    ? `<span class="badge">Verified</span><div style="margin-top:0.4rem;font-size:0.8rem;color:var(--text-muted);">${task.feedbackVerifiedAt || '-'}${task.feedbackVerifiedBy ? ` • ${task.feedbackVerifiedBy}` : ''}</div>`
+                    : '-';
+                const taskId = String(task.id);
+                return `
+                    <tr>
+                        <td style="color:var(--text-muted);">#${taskId.padStart(4, '0')}</td>
+                        <td style="font-weight:600;color:var(--gold-bright);">${task.applicantName || '-'}</td>
+                        <td>${task.mobile || '-'}</td>
+                        <td>${getTestCompletedInfo(task)}</td>
+                        <td>
+                            <textarea class="remarks-input" id="remarks-${taskId}" ${isVerified ? 'disabled' : ''} placeholder="Add feedback remarks...">${remarksValue}</textarea>
+                        </td>
+                        <td>${verifiedInfo}</td>
+                        <td>
+                            <div style="display:flex;">
+                                <button class="review-button review-positive" onclick="verifyFeedback('${taskId}', 'Positive')" ${isVerified ? 'disabled' : ''}>Positive</button>
+                                <button class="review-button review-negative" onclick="verifyFeedback('${taskId}', 'Negative')" ${isVerified ? 'disabled' : ''}>Negative</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function verifyFeedback(taskId, reviewType) {
+            const [freshTasks, holderServices] = await Promise.all([
+                apiUtils.getTasks(),
+                apiUtils.getLicenseHolderServices()
+            ]);
+
+            let taskToUpdate = freshTasks.find(t => String(t.id) === String(taskId));
+            let source = 'tasks';
+
+            if (!taskToUpdate) {
+                taskToUpdate = holderServices.find(s => String(s.id || s.licenseNumber) === String(taskId));
+                source = 'license_holder_services';
+            }
+
+            if (!taskToUpdate || taskToUpdate.feedbackVerified) return;
+
+            const remarksInput = document.getElementById(`remarks-${taskId}`);
+            const remarks = remarksInput ? remarksInput.value.trim() : '';
+            const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+            
+            taskToUpdate.feedbackVerified = true;
+            taskToUpdate.feedbackRemarks = remarks;
+            taskToUpdate.feedbackReview = reviewType || 'Positive';
+            taskToUpdate.feedbackVerifiedAt = new Date().toLocaleString();
+            taskToUpdate.feedbackVerifiedBy = currentUser.username || 'Admin';
+            
+            if (!taskToUpdate.statusHistory) taskToUpdate.statusHistory = [];
+            taskToUpdate.statusHistory.push({
+                status: 'Feedback Verified',
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString(),
+                updatedBy: currentUser.username || 'Admin',
+                note: remarks || 'No remarks',
+                reviewType: reviewType || 'Positive'
+            });
+
+            if (source === 'tasks') await apiUtils.saveTask(taskToUpdate);
+            else await apiUtils.saveLicenseHolderService(taskToUpdate);
+            
+            await renderTasks();
+        }
+
+        window.onload = async function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) { window.location.href = 'hameethiya.html'; return; }
+            await renderTasks();
+        }
+    </script>
+</body>
+</html>

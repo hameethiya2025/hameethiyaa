@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Task Status | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --radius: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(212, 175, 55, 0.04) 0%, transparent 35%),
+                radial-gradient(circle at 95% 95%, rgba(212, 175, 55, 0.04) 0%, transparent 35%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 2rem 3rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lux);
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: 0.02em;
+        }
+
+        .count-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--gold-muted);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            border: 1px solid var(--gold);
+        }
+
+        .count-label { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--gold); }
+        .count-number { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--gold);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 800;
+            border: 2px solid var(--bg-dark);
+        }
+
+        .btn-header {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+        }
+
+        .btn-header:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Search Section */
+        .search-container {
+            background: var(--bg-accent);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lux);
+            flex-wrap: wrap;
+        }
+
+        .search-input, .status-select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            padding: 1.1rem 1.5rem;
+            border-radius: 16px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-input:focus, .status-select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .status-select option {
+            background: var(--bg-accent);
+            color: var(--text-main);
+        }
+
+        /* Task Cards */
+        #taskContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.25rem;
+            align-items: stretch;
+        }
+
+        .task-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 1.75rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            border-left: 4px solid var(--gold);
+            height: 100%;
+        }
+
+        .task-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold-muted);
+            box-shadow: var(--shadow-lux);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+        }
+
+        .task-header h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 1.25rem;
+            margin: 0;
+        }
+
+        .task-info {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .task-info strong {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .collapsible-content {
+            display: none;
+            padding-top: 1rem;
+            border-top: 1px solid var(--glass-border);
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .task-card.expanded .collapsible-content {
+            display: flex;
+        }
+
+        /* Action Controls */
+        .update-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: var(--bg-accent);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-group label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .appointment-date {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            color: var(--text-main);
+            font-family: inherit;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-update { background: linear-gradient(135deg, var(--gold), var(--gold-bright)); color: var(--bg-dark); }
+        .btn-intimate { background: var(--glass); color: var(--gold); border: 1px solid var(--gold-muted); }
+        .btn-edit { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 800px;
+            padding: 3rem;
+            border-radius: 32px;
+            box-shadow: var(--shadow-lux);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--glass);
+        }
+
+        .close-btn:hover {
+            color: var(--gold);
+            background: var(--gold-muted);
+            transform: rotate(90deg);
+        }
+
+        .history-section {
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .history-title {
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+
+        .history-item {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        .history-item:last-child { border-bottom: none; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--gold-muted);
+            color: var(--gold);
+            border: 1px solid var(--gold-muted);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header { padding: 1.5rem; flex-direction: column; gap: 1.5rem; text-align: center; }
+            .header-title-group { flex-direction: column; }
+            .search-container { padding: 1.5rem; }
+            #taskContainer { grid-template-columns: 1fr; }
+            .modal-content { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-title-group">
+                <h1>Update Status</h1>
+                <div class="count-indicator">
+                    <span class="count-label">Total Tasks</span>
+                    <span class="count-number" id="taskCount">0</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="notification-btn" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationCount">0</span>
+                </button>
+                <button class="btn-header" onclick="showManageStatus()">
+                    <i class="fas fa-cog"></i> Status Types
+                </button>
+                <button class="btn-header" onclick="location.href='../LicenceHolder/license-holder-Services.html'">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by name, license number or mobile..." oninput="filterTasks()">
+            <select id="statusFilter" class="status-select" onchange="filterTasks()">
+                <option value="all">All Statuses</option>
+            </select>
+        </div>
+
+        <div id="taskContainer"></div>
+    </div>
+
+    <!-- Modals -->
+    <div id="manageStatusModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeManageStatus()">&times;</span>
+            <h2>Manage Status Types</h2>
+            <div class="update-controls" style="margin-bottom: 2rem;">
+                <div class="control-group">
+                    <label>New Status Name</label>
+                    <input type="text" id="newStatusName" class="search-input" placeholder="Enter status name...">
+                </div>
+                <button class="btn-action btn-update" onclick="addStatus()">Add New Status</button>
+            </div>
+            <div id="statusList" class="history-section"></div>
+        </div>
+    </div>
+
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Task Details</h2>
+            <div class="history-section">
+                <h3 class="history-title">Status History</h3>
+                <div id="statusHistory"></div>
+            </div>
+            <div class="history-section">
+                <h3 class="history-title">Intimation History</h3>
+                <div id="intimationHistory"></div>
+            </div>
+            <div class="history-section">
+                <h3 class="history-title">Payment History</h3>
+                <div id="paymentHistory"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Task Details</h2>
+            <div class="update-controls">
+                <div class="control-group">
+                    <label>Applicant Name</label>
+                    <input type="text" id="editName" class="search-input">
+                </div>
+                <div class="control-group">
+                    <label>Mobile Number</label>
+                    <input type="text" id="editMobile" class="search-input">
+                </div>
+                <div class="control-group">
+                    <label>Reference</label>
+                    <input type="text" id="editReference" class="search-input">
+                </div>
+                <div class="control-group">
+                    <label>Creation Date</label>
+                    <input type="date" id="editCreationDate" class="search-input">
+                </div>
+                <div class="control-group">
+                    <label>Service Type</label>
+                    <input type="text" id="editServiceType" class="search-input">
+                </div>
+                <div class="control-group">
+                    <label>Commitment Amount</label>
+                    <input type="number" id="editCommitment" class="search-input">
+                </div>
+                <div class="control-group">
+                    <label>Advance Amount</label>
+                    <input type="number" id="editAdvance" class="search-input">
+                </div>
+                <div class="control-group">
+                    <label>Notes</label>
+                    <textarea id="editNotes" class="search-input" style="height: 100px;"></textarea>
+                </div>
+                <button class="btn-action btn-update" onclick="saveEditTask()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="../api-utils.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAY8aW7751YUvDdv4xZYnXSF5AZevOBIxI",
+            authDomain: "hameethiya.firebaseapp.com",
+            projectId: "hameethiya",
+            storageBucket: "hameethiya.firebasestorage.app",
+            messagingSenderId: "206037846",
+            appId: "1:206037846:web:0bcbcfd67f6989e46d6cf7",
+            measurementId: "G-8ZQ1Y0CPQZ"
+        };
+        
+        let db = null;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.firestore();
+        } catch (e) {
+            console.warn("Firebase failed to initialize:", e);
+        }
+
+        let currentEditingTask = null;
+        let allTasks = [];
+        let availableStatuses = ['pending', 'processing', 'completed', 'appointment fixed', 'test application generated'];
+
+        async function init() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) { window.location.href = '../hameethiya.html'; return; }
+            
+            await updateAvailableStatuses();
+            await updateStatusDropdowns();
+            await loadTasks();
+            await updateNotificationCount();
+        }
+
+        async function updateAvailableStatuses() {
+            const customStatuses = await apiUtils.getSettings('licenseHolderStatuses') || [];
+            const defaultStatuses = ['pending', 'processing', 'completed', 'appointment fixed', 'test application generated'];
+            const customNames = customStatuses.map(s => s.name.toLowerCase());
+            availableStatuses = [...new Set([...defaultStatuses, ...customNames])];
+        }
+
+        async function loadTasks() {
+            const all = await apiUtils.getLicenseHolderServices();
+            // Hide completed tasks from the main update view
+            allTasks = all.filter(task => task.status?.toLowerCase() !== 'completed');
+            document.getElementById('taskCount').textContent = allTasks.length;
+            renderTasks(allTasks);
+        }
+
+        function renderTasks(tasks) {
+            const container = document.getElementById('taskContainer');
+            container.innerHTML = tasks.length === 0 ? 
+                '<div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">No tasks found.</div>' :
+                tasks.map(task => `
+                    <div class="task-card" id="task-${task.licenseNumber}">
+                        <div class="task-header" onclick="toggleCard('${task.licenseNumber}')">
+                            <h3>${task.name}</h3>
+                            <span class="status-badge">${task.status || 'Pending'}</span>
+                        </div>
+                        <div class="task-info">
+                            <strong>Mobile</strong>
+                            <span>${task.mobile || task.mobileNumber || ''}</span>
+                            <strong>License #</strong>
+                            <span>${task.licenseNumber}</span>
+                            <strong>Reference</strong>
+                            <span>${task.reference || 'N/A'}</span>
+                            <strong>Creation Date</strong>
+                            <span>${task.creationDate || 'N/A'}</span>
+                            <strong>Service</strong>
+                            <span>${task.serviceType}</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="update-controls">
+                                <div class="control-group">
+                                    <label>Update Status</label>
+                                    <select class="status-select" id="status-select-${task.licenseNumber}" onchange="toggleDateInput('${task.licenseNumber}')">
+                                        ${getStatusOptions(task.status)}
+                                    </select>
+                                </div>
+                                <div class="control-group" id="date-group-${task.licenseNumber}" style="display: none;">
+                                    <label>Appointment Date</label>
+                                    <input type="date" class="appointment-date" id="date-${task.licenseNumber}">
+                                </div>
+                                <div class="btn-group">
+                                    <button class="btn-action btn-update" onclick="updateTaskStatus('${task.licenseNumber}', event)">
+                                        <i class="fas fa-check"></i> Update
+                                    </button>
+                                    <button class="btn-action btn-intimate" onclick="intimateUser('${task.licenseNumber}', event)">
+                                        <i class="fas fa-paper-plane"></i> Intimate
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <button class="btn-action btn-edit" onclick="openEditModal('${task.licenseNumber}')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn-action btn-intimate" onclick="showHistory('${task.licenseNumber}')">
+                                        <i class="fas fa-history"></i> History
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        function toggleCard(licenseNumber) {
+            const card = document.getElementById(`task-${licenseNumber}`);
+            card.classList.toggle('expanded');
+        }
+
+        function toggleDateInput(licenseNumber) {
+            const select = document.getElementById(`status-select-${licenseNumber}`);
+            const dateGroup = document.getElementById(`date-group-${licenseNumber}`);
+            const status = select.value.toLowerCase();
+            dateGroup.style.display = ['appointment fixed', 'test application generated'].includes(status) ? 'flex' : 'none';
+        }
+
+        async function updateTaskStatus(licenseNumber, event) {
+            const select = document.getElementById(`status-select-${licenseNumber}`);
+            const dateInput = document.getElementById(`date-${licenseNumber}`);
+            const newStatus = select.value;
+            
+            if (['appointment fixed', 'test application generated'].includes(newStatus.toLowerCase()) && !dateInput.value) {
+                alert('Please select an appointment date');
+                return;
+            }
+
+            const updateBtn = event ? event.currentTarget : null;
+            const originalText = updateBtn ? updateBtn.innerHTML : 'Update';
+            
+            if (updateBtn) {
+                updateBtn.disabled = true;
+                updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+            }
+
+            try {
+                // Find task in local cache
+                const serviceIdx = allTasks.findIndex(s => s.licenseNumber === licenseNumber);
+                if (serviceIdx === -1) {
+                    throw new Error('Task not found in system cache. Please refresh.');
+                }
+
+                const service = { ...allTasks[serviceIdx] };
+                const oldStatus = service.status;
+                
+                service.status = newStatus;
+                if (dateInput.value) service.appointmentDate = dateInput.value;
+                
+                if (!service.statusHistory) service.statusHistory = [];
+                service.statusHistory.push({
+                    from: oldStatus,
+                    to: newStatus,
+                    date: new Date().toISOString(),
+                    appointmentDate: dateInput.value || null
+                });
+
+                const result = await apiUtils.saveLicenseHolderService(service);
+                if (result.success) {
+                    // --- Update Student Dashboard ---
+                    if (db) {
+                        try {
+                            const regSnapshot = await db.collection("registrations")
+                                .where("mobile", "==", service.mobile || service.mobileNumber)
+                                .get();
+                            
+                            if (!regSnapshot.empty) {
+                                await db.collection("registrations").doc(regSnapshot.docs[0].id).update({
+                                    status: newStatus,
+                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            }
+                        } catch (regErr) {
+                            console.error("Error updating student dashboard:", regErr);
+                        }
+                    }
+
+                    allTasks[serviceIdx] = service;
+                    alert('Status updated successfully');
+                    // Refresh filtered view
+                    filterTasks();
+                } else {
+                    throw new Error(result.error || 'Failed to save to server');
+                }
+            } catch (error) {
+                console.error('Update Error:', error);
+                alert('Error: ' + error.message);
+            } finally {
+                if (updateBtn) {
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = originalText;
+                }
+            }
+        }
+
+        async function intimateUser(licenseNumber, event) {
+            const remarks = prompt('Enter intimation remarks:');
+            if (remarks === null) return;
+
+            const updateBtn = event ? event.currentTarget : null;
+            const originalText = updateBtn ? updateBtn.innerHTML : 'Intimate';
+            
+            if (updateBtn) {
+                updateBtn.disabled = true;
+                updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            }
+
+            try {
+                const serviceIdx = allTasks.findIndex(s => s.licenseNumber === licenseNumber);
+                if (serviceIdx === -1) throw new Error('Task not found.');
+
+                const service = { ...allTasks[serviceIdx] };
+                if (!service.intimationHistory) service.intimationHistory = [];
+                service.intimationHistory.push({
+                    remarks,
+                    date: new Date().toISOString()
+                });
+
+                const result = await apiUtils.saveLicenseHolderService(service);
+                if (result.success) {
+                    allTasks[serviceIdx] = service;
+                    alert('Intimation recorded');
+                } else {
+                    throw new Error(result.error || 'Failed to record intimation');
+                }
+            } catch (error) {
+                console.error('Intimation Error:', error);
+                alert('Error: ' + error.message);
+            } finally {
+                if (updateBtn) {
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = originalText;
+                }
+            }
+        }
+
+        function getStatusOptions(currentStatus) {
+            return availableStatuses.map(s => `
+                <option value="${s}" ${currentStatus?.toLowerCase() === s ? 'selected' : ''}>
+                    ${s.charAt(0).toUpperCase() + s.slice(1)}
+                </option>
+            `).join('');
+        }
+
+        async function showHistory(licenseNumber) {
+            const task = allTasks.find(t => t.licenseNumber === licenseNumber);
+            if (!task) return;
+
+            document.getElementById('modalTitle').textContent = `History for ${task.name}`;
+            
+            const renderHistory = (items, type) => {
+                if (!items || items.length === 0) return '<div class="history-item">No records found.</div>';
+                return items.map(item => `
+                    <div class="history-item">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: var(--gold); font-weight: 600;">${new Date(item.date).toLocaleString()}</span>
+                            ${item.to ? `<span class="status-badge">${item.to}</span>` : ''}
+                        </div>
+                        <div style="color: var(--text-muted);">${item.remarks || `Status changed from ${item.from || 'None'} to ${item.to}`}</div>
+                        ${item.appointmentDate ? `<div style="margin-top: 0.5rem; color: var(--gold-bright);">📅 Appointment: ${item.appointmentDate}</div>` : ''}
+                    </div>
+                `).join('');
+            };
+
+            document.getElementById('statusHistory').innerHTML = renderHistory(task.statusHistory);
+            document.getElementById('intimationHistory').innerHTML = renderHistory(task.intimationHistory);
+            document.getElementById('paymentHistory').innerHTML = renderHistory(task.payments);
+
+            document.getElementById('detailsModal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('detailsModal').style.display = 'none'; }
+
+        async function filterTasks() {
+            const search = (document.getElementById('searchInput').value || '').toLowerCase();
+            const status = (document.getElementById('statusFilter').value || 'all').toLowerCase();
+            
+            const filtered = allTasks.filter(task => {
+                const name = (task.name || '').toLowerCase();
+                const license = (task.licenseNumber || '').toLowerCase();
+                const mobile = (task.mobile || task.mobileNumber || '').toLowerCase();
+                
+                const matchesSearch = name.includes(search) || 
+                                    license.includes(search) ||
+                                    mobile.includes(search);
+                const matchesStatus = status === 'all' || task.status?.toLowerCase() === status;
+                return matchesSearch && matchesStatus;
+            });
+            
+            renderTasks(filtered);
+        }
+
+        // Manage Status logic
+        async function showManageStatus() {
+            document.getElementById('manageStatusModal').style.display = 'flex';
+            await updateStatusList();
+        }
+
+        function closeManageStatus() { document.getElementById('manageStatusModal').style.display = 'none'; }
+
+        async function updateStatusList() {
+            const statuses = await apiUtils.getSettings('licenseHolderStatuses') || [];
+            const list = document.getElementById('statusList');
+            list.innerHTML = statuses.length === 0 ? 
+                '<div class="history-item">No custom statuses added.</div>' :
+                statuses.map(s => `
+                    <div class="history-item" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>${s.name}</span>
+                        <button class="btn-action btn-intimate" onclick="deleteStatus(${s.id})" style="padding: 0.4rem 0.8rem;">Delete</button>
+                    </div>
+                `).join('');
+        }
+
+        async function addStatus() {
+            const name = document.getElementById('newStatusName').value.trim();
+            if (!name) return;
+            const statuses = await apiUtils.getSettings('licenseHolderStatuses') || [];
+            statuses.push({ name, id: Date.now() });
+            await apiUtils.saveSettings('licenseHolderStatuses', statuses);
+            document.getElementById('newStatusName').value = '';
+            await updateAvailableStatuses();
+            await updateStatusList();
+            await updateStatusDropdowns();
+            await loadTasks();
+        }
+
+        async function deleteStatus(id) {
+            const statuses = await apiUtils.getSettings('licenseHolderStatuses') || [];
+            const updated = statuses.filter(s => s.id !== id);
+            await apiUtils.saveSettings('licenseHolderStatuses', updated);
+            await updateAvailableStatuses();
+            await updateStatusList();
+            await updateStatusDropdowns();
+            await loadTasks();
+        }
+
+        async function updateStatusDropdowns() {
+            const statuses = await apiUtils.getSettings('licenseHolderStatuses') || [];
+            // Filter out 'completed' from the update view's filter dropdown
+            const defaultStatuses = ['pending', 'processing', 'appointment fixed', 'test application generated'];
+            const all = [...new Set([...defaultStatuses, ...statuses.map(s => s.name.toLowerCase())])].filter(s => s !== 'completed');
+            const filter = document.getElementById('statusFilter');
+            filter.innerHTML = '<option value="all">All Active Statuses</option>' + all.map(s => `
+                <option value="${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</option>
+            `).join('');
+        }
+
+        // Notifications
+        async function updateNotificationCount() {
+            const services = await apiUtils.getLicenseHolderServices();
+            const today = new Date().toISOString().split('T')[0];
+            const count = services.filter(s => s.reminderDate === today).length;
+            document.getElementById('notificationCount').textContent = count;
+        }
+
+        async function showNotifications() {
+            const services = await apiUtils.getLicenseHolderServices();
+            const today = new Date().toISOString().split('T')[0];
+            const due = services.filter(s => s.reminderDate === today);
+            
+            if (due.length === 0) {
+                alert('No reminders for today.');
+                return;
+            }
+            
+            alert(`Today's Reminders:\n${due.map(s => `- ${s.name}: ${s.serviceType}`).join('\n')}`);
+        }
+
+        // Edit Modal
+        function openEditModal(licenseNumber) {
+            currentEditingTask = allTasks.find(t => t.licenseNumber === licenseNumber);
+            if (!currentEditingTask) return;
+            
+            document.getElementById('editName').value = currentEditingTask.name;
+            document.getElementById('editMobile').value = currentEditingTask.mobile || currentEditingTask.mobileNumber || '';
+            document.getElementById('editReference').value = currentEditingTask.reference || '';
+            document.getElementById('editCreationDate').value = currentEditingTask.creationDate || '';
+            document.getElementById('editServiceType').value = currentEditingTask.serviceType;
+            document.getElementById('editCommitment').value = currentEditingTask.commitmentPayment || currentEditingTask.commitmentAmount || 0;
+            document.getElementById('editAdvance').value = currentEditingTask.advancePayment || currentEditingTask.advanceAmount || 0;
+            document.getElementById('editNotes').value = currentEditingTask.notes || '';
+            
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
+
+        async function saveEditTask() {
+            const services = await apiUtils.getLicenseHolderServices();
+            const idx = services.findIndex(s => s.licenseNumber === currentEditingTask.licenseNumber);
+            
+            if (idx !== -1) {
+                const updatedService = {
+                    ...services[idx],
+                    name: document.getElementById('editName').value,
+                    mobile: document.getElementById('editMobile').value,
+                    mobileNumber: document.getElementById('editMobile').value,
+                    reference: document.getElementById('editReference').value.trim().toUpperCase(),
+                    creationDate: document.getElementById('editCreationDate').value,
+                    serviceType: document.getElementById('editServiceType').value,
+                    commitmentPayment: Number(document.getElementById('editCommitment').value),
+                    advancePayment: Number(document.getElementById('editAdvance').value),
+                    notes: document.getElementById('editNotes').value
+                };
+                
+                const result = await apiUtils.saveLicenseHolderService(updatedService);
+                if (result.success) {
+                    alert('Task updated successfully');
+                    closeEditModal();
+                    loadTasks();
+                } else {
+                    alert('Failed to update task: ' + result.error);
+                }
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

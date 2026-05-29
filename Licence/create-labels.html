@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Labels (PDF)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #fff;
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .title {
+      font-size: 2rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+    .back-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      padding: 0.8rem 1.4rem;
+      border-radius: 12px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+    .panel {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 2px solid rgba(255,255,255,0.2);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      outline: none;
+    }
+    .form-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    .btn {
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      transition: transform 0.1s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-add { background: rgba(61, 235, 176, 0.9); color: #0b1020; }
+    .btn-create { background: rgba(253, 187, 45, 0.95); color: #0b1020; }
+    .btn-clear { background: rgba(255, 255, 255, 0.75); color: #0b1020; }
+    .list {
+      margin-top: 1rem;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 1rem;
+    }
+    .list h3 { margin-bottom: 0.75rem; }
+    .entry {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem 1rem;
+      align-items: center;
+      padding: 0.5rem 0.6rem;
+      border-bottom: 1px dashed rgba(255,255,255,0.25);
+    }
+    .entry:last-child { border-bottom: none; }
+    .entry .meta { font-size: 0.95rem; opacity: 0.95; }
+    .delete-btn {
+      background: rgba(255, 99, 99, 0.95);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.5rem 0.8rem;
+      cursor: pointer;
+    }
+  </style>
+  <!-- jsPDF UMD -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">Create Labels (PDF)</div>
+      <button class="back-btn" onclick="window.location.href='./license-services.html'">← Back</button>
+    </div>
+
+    <div class="panel">
+      <div class="grid">
+        <div class="form-group">
+          <label for="vehicleName">Vehicle Name</label>
+          <input type="text" id="vehicleName" placeholder="e.g., Maruti Swift" />
+        </div>
+        <div class="form-group">
+          <label for="branch">Branch</label>
+          <input type="text" id="branch" placeholder="e.g., Main Branch" />
+        </div>
+        <div class="form-group">
+          <label for="cov">Cov</label>
+          <input type="text" id="cov" placeholder="e.g., MCWG" />
+        </div>
+        <div class="form-group">
+          <label for="formNumber">Form Number</label>
+          <input type="text" id="formNumber" list="formNumberOptions" placeholder="e.g., Form 4" />
+          <datalist id="formNumberOptions">
+            <option value="Form 14"></option>
+            <option value="Form 15"></option>
+            <option value="Form 5"></option>
+            <option value="Form 4"></option>
+            <option value="Form 8"></option>
+            <option value="Form 9"></option>
+            <option value="Form 20"></option>
+          </datalist>
+        </div>
+        <div class="form-group">
+          <label for="startNumber">Starting Number</label>
+          <input type="number" id="startNumber" placeholder="e.g., 1" />
+        </div>
+        <div class="form-group">
+          <label for="closeNumber">Closing Number</label>
+          <input type="number" id="closeNumber" placeholder="e.g., 50" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-add" onclick="addEntry()">Add</button>
+        <button class="btn btn-clear" onclick="clearForm()">Clear</button>
+        <button class="btn btn-create" onclick="createPDF()">Create PDF</button>
+      </div>
+
+      <div class="list" id="entryList">
+        <h3>Entries</h3>
+        <div id="entries"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const entries = [];
+
+    function getInputValue(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function clearForm() {
+      ['vehicleName','branch','cov','formNumber','startNumber','closeNumber'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('vehicleName').focus();
+    }
+
+    function addEntry() {
+      const vehicleName = getInputValue('vehicleName');
+      const branch = getInputValue('branch');
+      const cov = getInputValue('cov');
+      const formNumber = getInputValue('formNumber');
+      const startNumber = getInputValue('startNumber');
+      const closeNumber = getInputValue('closeNumber');
+
+      if (!vehicleName || !branch || !cov || !formNumber || !startNumber || !closeNumber) {
+        alert('Please fill all fields before adding.');
+        return;
+      }
+
+      entries.push({ vehicleName, branch, cov, formNumber, startNumber, closeNumber });
+      renderEntries();
+      clearForm();
+    }
+
+    function deleteEntry(idx) {
+      entries.splice(idx, 1);
+      renderEntries();
+    }
+
+    function renderEntries() {
+      const container = document.getElementById('entries');
+      if (entries.length === 0) {
+        container.innerHTML = '<div style="opacity:0.85">No entries added yet.</div>';
+        return;
+      }
+      container.innerHTML = entries.map((e, i) => {
+        return `
+          <div class="entry">
+            <div class="meta">
+              <strong>${i + 1}.</strong> Vehicle: ${escapeHtml(e.vehicleName)} | Branch: ${escapeHtml(e.branch)} | Form: ${escapeHtml(e.formNumber)} | Cov: ${escapeHtml(e.cov)} | Range: ${escapeHtml(e.startNumber)} - ${escapeHtml(e.closeNumber)}
+            </div>
+            <button class="delete-btn" onclick="deleteEntry(${i})">Delete</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"]+/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    }
+
+    function createPDF() {
+      if (entries.length === 0) {
+        alert('Please add at least one entry.');
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+
+      const margin = 10;         // outer margin
+      const columns = 2;         // 2 columns
+      const rows = 3;            // 3 rows => 6 labels per page
+      const columnGap = 6;       // gap between columns
+      const rowGap = 6;          // gap between rows
+
+      const labelWidth = (pageWidth - 2 * margin - (columns - 1) * columnGap) / columns;
+      const labelHeight = (pageHeight - 2 * margin - (rows - 1) * rowGap) / rows;
+      const contentPad = 8;      // padding inside label box
+      const headerHeight = 12;   // taller header for bigger font
+
+      // style
+      doc.setFont('helvetica', 'normal');
+
+      // helpers for fitted and centered text
+      function fitText(text, targetSize, minSize, maxWidth, weight = 'normal') {
+        doc.setFont('helvetica', weight);
+        let s = targetSize;
+        let w = 0;
+        while (s > minSize) {
+          doc.setFontSize(s);
+          w = doc.getTextWidth(text);
+          if (w <= maxWidth) break;
+          s -= 1;
+        }
+        return { size: s, width: w };
+      }
+
+      function drawCentered(text, size, centerX, y, weight = 'normal', color = [20,20,20]) {
+        doc.setFont('helvetica', weight);
+        doc.setFontSize(size);
+        doc.setTextColor(...color);
+        const w = doc.getTextWidth(text);
+        const x = centerX - w / 2;
+        doc.text(text, x, y);
+        return w;
+      }
+
+      entries.forEach((entry, idx) => {
+        const pos = idx % (columns * rows);
+        const row = Math.floor(pos / columns);
+        const col = pos % columns;
+
+        if (pos === 0 && idx !== 0) {
+          doc.addPage();
+        }
+
+        const x = margin + col * (labelWidth + columnGap);
+        const y = margin + row * (labelHeight + rowGap);
+
+        // label border
+        doc.setDrawColor(30, 30, 30);
+        doc.setLineWidth(0.4);
+        doc.rect(x, y, labelWidth, labelHeight);
+
+        // heading box (top strip)
+        doc.setFillColor(32, 64, 128);
+        doc.rect(x, y, labelWidth, headerHeight, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        // Center the header text within the label box
+        const headerText = String(entry.formNumber);
+        doc.text(headerText, x + labelWidth / 2, y + headerHeight - 4, { align: 'center' });
+
+        // content (values only, centered horizontally & vertically, larger for Vehicle & Branch)
+        const cw = labelWidth - 2 * contentPad;
+        const centerX = x + contentPad + cw / 2;
+        const availableHeight = labelHeight - headerHeight - 2 * contentPad;
+
+        // target and min sizes (vehicle/branch largest; then cov/range)
+        const targets = [32, 32, 26, 26];
+        const mins    = [10, 10, 10, 10];
+
+        // width-fitted sizes
+        const vehicle = fitText(String(entry.vehicleName), targets[0], mins[0], cw, 'bold');
+        const branch  = fitText(String(entry.branch),      targets[1], mins[1], cw, 'bold');
+        const cov     = fitText(String(entry.cov),         targets[2], mins[2], cw, 'normal');
+        const rangeText = `${entry.startNumber} - ${entry.closeNumber}`;
+        const range   = fitText(rangeText,                 targets[3], mins[3], cw, 'normal');
+
+        // compute total height; shrink proportionally if exceeds availableHeight
+        let sizes = [vehicle.size, branch.size, cov.size, range.size];
+        const gapsCount = 3;
+        function totalTextHeight(sz) { return sz[0] + sz[1] + sz[2] + sz[3]; }
+
+        // start with zero gap (no line spacing)
+        let assumedGap = 0;
+        let totalHeight = totalTextHeight(sizes) + assumedGap * gapsCount;
+        const availableForText = Math.max(0, availableHeight - assumedGap * gapsCount);
+        if (totalHeight > availableHeight && availableForText > 0) {
+          const sumSizes = totalTextHeight(sizes);
+          let scale = availableForText / sumSizes;
+          if (scale < 1) {
+            sizes = sizes.map((s, i) => Math.max(mins[i], Math.floor(s * scale)));
+          }
+          // If still overflow due to hitting mins, reduce iteratively from largest lines
+          let guard = 100;
+          while (totalTextHeight(sizes) + assumedGap * gapsCount > availableHeight && guard-- > 0) {
+            // Prefer reducing Cov/Range first, then Branch, finally Vehicle
+            const order = [2, 3, 1, 0];
+            let idxReduce = -1;
+            for (let k = 0; k < order.length; k++) {
+              const i = order[k];
+              if (sizes[i] > mins[i]) { idxReduce = i; break; }
+            }
+            if (idxReduce === -1) break; // cannot reduce further
+            sizes[idxReduce] -= 1;
+          }
+        }
+
+        // dynamic gap to fill the box height without overflow
+        const sizesSum = totalTextHeight(sizes);
+        let gap = 0; // enforce no line spacing
+
+        // final vertical position centered with computed gap
+        totalHeight = sizesSum + gap * gapsCount;
+        let cy = y + headerHeight + contentPad + Math.max(0, (availableHeight - totalHeight) / 2);
+
+        // draw text centered
+        drawCentered(String(entry.vehicleName), sizes[0], centerX, cy, 'bold');
+        cy += sizes[0];
+        drawCentered(String(entry.branch), sizes[1], centerX, cy, 'bold');
+        cy += sizes[1];
+        drawCentered(String(entry.cov), sizes[2], centerX, cy, 'normal');
+        cy += sizes[2];
+        drawCentered(rangeText, sizes[3], centerX, cy, 'normal');
+
+        // optional interior border accents
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.2);
+        doc.line(x + contentPad, y + headerHeight, x + labelWidth - contentPad, y + headerHeight); // under header
+      });
+
+      doc.save('labels.pdf');
+    }
+  </script>
+</body>
+</html>

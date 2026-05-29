@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hold Tasks | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(212, 175, 55, 0.03) 0%, transparent 40%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .header-title h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .task-count-badge {
+            background: var(--gold-muted);
+            color: var(--gold);
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 1px solid var(--gold);
+        }
+
+        .back-button {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateX(-5px);
+        }
+
+        /* Filter Section */
+        .controls-panel {
+            background: var(--bg-accent);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lux);
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box, .filter-select {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            padding: 0.9rem 1.5rem;
+            border-radius: 14px;
+            color: var(--text-main);
+            font-family: inherit;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .filter-select option {
+            background: var(--bg-accent);
+            color: var(--text-main);
+        }
+
+        /* Task Grid & Cards */
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .task-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 2rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .task-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold-muted);
+            box-shadow: var(--shadow-lux);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .task-id {
+            font-weight: 700;
+            color: var(--gold);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .task-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .info-row strong {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-row span {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .hold-days {
+            color: #ef4444;
+            font-weight: 700;
+        }
+
+        /* Status Update Section */
+        .status-update-section {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .status-select, .status-notes {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            color: var(--text-main);
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .status-select:focus, .status-notes:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .status-select option {
+            background: var(--bg-accent);
+            color: var(--text-main);
+        }
+
+        .update-button {
+            background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+            color: var(--bg-dark);
+            border: none;
+            padding: 0.9rem;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .update-button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 5rem 2rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1.25rem 2.5rem;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            box-shadow: var(--shadow-lux);
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .header { flex-direction: column; align-items: flex-start; }
+            .controls-panel { flex-direction: column; align-items: stretch; }
+            .task-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-title">
+                <a href="fresh-license.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <h1>Hold Tasks</h1>
+                <span id="taskCountDisplay" class="task-count-badge">0</span>
+            </div>
+        </div>
+
+        <div class="controls-panel">
+            <input type="text" class="search-box" id="taskSearch" placeholder="Search name, mobile, or ID...">
+            <select class="filter-select" id="vehicleFilter">
+                <option value="">All Vehicle Classes</option>
+            </select>
+        </div>
+
+        <div id="taskGrid" class="task-grid"></div>
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <i class="fas fa-pause-circle" style="font-size: 3rem; margin-bottom: 1.5rem; display: block; color: var(--gold-muted);"></i>
+            No tasks currently on hold.
+        </div>
+    </div>
+
+    <!-- API Utils -->
+    <script src="api-utils.js"></script>
+
+    <script>
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.backgroundColor = type === 'success' ? 'rgba(16, 185, 129, 0.9)' : 'rgba(239, 68, 68, 0.9)';
+            notification.style.border = `1px solid ${type === 'success' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(30px)';
+                setTimeout(() => notification.remove(), 400);
+            }, 3000);
+        }
+
+        function calculateHoldDays(lastUpdateDate) {
+            if (!lastUpdateDate) return 0;
+            const last = new Date(lastUpdateDate);
+            const now = new Date();
+            const diffTime = Math.abs(now - last);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        async function loadHoldTasks() {
+            const searchTerm = document.getElementById('taskSearch').value.toLowerCase();
+            const vehicleFilter = document.getElementById('vehicleFilter').value;
+            const tasks = await apiUtils.getTasks();
+
+            const holdTasks = tasks.filter(task => {
+                const matchesSearch = 
+                    task.applicantName.toLowerCase().includes(searchTerm) ||
+                    task.mobile.includes(searchTerm) ||
+                    String(task.id).includes(searchTerm);
+                const matchesVehicle = !vehicleFilter || task.vehicleClass === vehicleFilter;
+                return task.details && task.details.isManuallyHeld === true && matchesSearch && matchesVehicle;
+            });
+
+            document.getElementById('taskCountDisplay').textContent = holdTasks.length;
+            document.getElementById('emptyState').style.display = holdTasks.length === 0 ? 'block' : 'none';
+
+            await displayTasks(holdTasks);
+        }
+
+        async function displayTasks(tasks) {
+            const taskGrid = document.getElementById('taskGrid');
+            taskGrid.innerHTML = '';
+
+            const statuses = await apiUtils.getSettings('freshLicenseStatuses', []);
+
+            tasks.forEach(task => {
+                const lastHistory = task.statusHistory && task.statusHistory.length > 0 
+                    ? task.statusHistory[task.statusHistory.length - 1] 
+                    : null;
+                const holdDays = lastHistory ? calculateHoldDays(lastHistory.date) : 0;
+
+                const taskCard = document.createElement('div');
+                taskCard.className = 'task-card';
+                
+                const statusOptions = statuses
+                    .map(status => `<option value="${status}" ${task.status === status ? 'selected' : ''}>${status}</option>`)
+                    .join('');
+
+                taskCard.innerHTML = `
+                    <div class="task-header">
+                        <span class="task-id">
+                            <i class="fas fa-pause-circle" style="color: #ef4444;"></i>
+                            #${String(task.id).padStart(4, '0')}
+                        </span>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">${task.creationDate}</span>
+                    </div>
+                    <div class="task-info">
+                        <div class="info-row"><strong>Name</strong> <span>${task.applicantName.toUpperCase()}</span></div>
+                        <div class="info-row"><strong>Mobile</strong> <span>${task.mobile}</span></div>
+                        <div class="info-row"><strong>Classes</strong> <span>${task.vehicleClass.toUpperCase()}</span></div>
+                        <div class="info-row"><strong>Duration</strong> <span class="hold-days">${holdDays} Days</span></div>
+                        ${task.notes ? `<div class="info-row"><strong>Reason</strong> <span>${task.notes}</span></div>` : ''}
+                    </div>
+                    <div class="status-update-section">
+                        <select class="status-select" id="status-${task.id}">
+                            ${statusOptions}
+                        </select>
+                        <input type="text" class="status-notes" id="notes-${task.id}" placeholder="Reason for move...">
+                        <button class="update-button" onclick="updateTaskStatus('${task.id}')">Move Task</button>
+                    </div>
+                `;
+                taskGrid.appendChild(taskCard);
+            });
+        }
+
+        async function updateTaskStatus(taskId) {
+            const tasks = await apiUtils.getTasks();
+            const taskIndex = tasks.findIndex(t => String(t.id) === String(taskId));
+            
+            if (taskIndex !== -1) {
+                const newStatus = document.getElementById(`status-${taskId}`).value;
+                const notes = document.getElementById(`notes-${taskId}`).value;
+                
+                tasks[taskIndex].status = newStatus;
+                if (notes) tasks[taskIndex].notes = notes;
+                if (!tasks[taskIndex].details) tasks[taskIndex].details = {};
+                tasks[taskIndex].details.isManuallyHeld = false;
+
+                if (!tasks[taskIndex].statusHistory) tasks[taskIndex].statusHistory = [];
+                tasks[taskIndex].statusHistory.push({
+                    status: newStatus,
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString(),
+                    updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System',
+                    notes: notes || 'Moved from Hold'
+                });
+                
+                await apiUtils.saveTask(tasks[taskIndex]);
+                showNotification('Task moved successfully!');
+                await loadHoldTasks();
+            }
+        }
+
+        async function initializePage() {
+            const vehicleClasses = await apiUtils.getSettings('vehicleClasses', []);
+            const vehicleFilter = document.getElementById('vehicleFilter');
+            vehicleClasses.forEach(vehicle => {
+                const opt = document.createElement('option');
+                opt.value = vehicle;
+                opt.textContent = vehicle;
+                vehicleFilter.appendChild(opt);
+            });
+            await loadHoldTasks();
+        }
+
+        document.getElementById('taskSearch').addEventListener('input', loadHoldTasks);
+        document.getElementById('vehicleFilter').addEventListener('change', loadHoldTasks);
+        window.onload = initializePage;
+    </script>
+</body>
+</html>

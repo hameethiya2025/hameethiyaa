@@ -79,6 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('profile_email').innerText = data.email;
         document.getElementById('profile_mobile').innerText = data.mobile;
         document.getElementById('profile_course').innerHTML = `<span class="badge">${data.course}</span>`;
+        
+        const status = data.status || 'Pending';
+        document.getElementById('profile_status').innerHTML = `<span class="status-badge status-${status.toLowerCase().replace(/\s+/g, '-')}">${status.toUpperCase()}</span>`;
 
         fetchLLRData(data.mobile);
     }
@@ -93,35 +96,53 @@ document.addEventListener('DOMContentLoaded', () => {
             content.style.display = 'none';
             timeline.style.display = 'block';
 
-            const llrDate = new Date(doc.llrDate);
-            const maturityDate = new Date(llrDate);
-            maturityDate.setDate(llrDate.getDate() + 30);
-            const expiryDate = new Date(llrDate);
-            expiryDate.setDate(llrDate.getDate() + 180);
+            // Use dates from doc or calculate if missing
+            const llrDateStr = doc.llrDate || '';
+            const llrDate = llrDateStr ? new Date(llrDateStr) : null;
+            
+            if (llrDate && !isNaN(llrDate.getTime())) {
+                const maturityDate = new Date(llrDate);
+                maturityDate.setDate(llrDate.getDate() + 30);
+                const expiryDate = new Date(llrDate);
+                expiryDate.setDate(llrDate.getDate() + 180);
 
-            document.getElementById('val_llr_date').innerText = doc.llrDate;
-            document.getElementById('val_maturity_date').innerText = maturityDate.toISOString().split('T')[0];
-            document.getElementById('val_expiry_date').innerText = expiryDate.toISOString().split('T')[0];
+                document.getElementById('val_llr_date').innerText = llrDate.toISOString().split('T')[0];
+                document.getElementById('val_maturity_date').innerText = maturityDate.toISOString().split('T')[0];
+                document.getElementById('val_expiry_date').innerText = expiryDate.toISOString().split('T')[0];
 
-            // Maturity Check (30 days)
-            const now = new Date();
-            if (now >= maturityDate) {
-                document.getElementById('maturity_notice').style.display = 'flex';
+                // Maturity Check (30 days)
+                const now = new Date();
+                if (now >= maturityDate) {
+                    document.getElementById('maturity_notice').style.display = 'flex';
+                } else {
+                    document.getElementById('maturity_notice').style.display = 'none';
+                }
+
+                // Expiry Warning (30 days before expiry)
+                const warningThreshold = new Date(expiryDate);
+                warningThreshold.setDate(expiryDate.getDate() - 30);
+                if (now >= warningThreshold && now < expiryDate) {
+                    document.getElementById('expiry_warning').style.display = 'flex';
+                } else {
+                    document.getElementById('expiry_warning').style.display = 'none';
+                }
+            } else {
+                document.getElementById('val_llr_date').innerText = 'Processing...';
+                document.getElementById('val_maturity_date').innerText = 'Pending';
+                document.getElementById('val_expiry_date').innerText = 'Pending';
             }
 
-            // Expiry Warning (30 days before expiry)
-            const warningThreshold = new Date(expiryDate);
-            warningThreshold.setDate(expiryDate.getDate() - 30);
-            if (now >= warningThreshold && now < expiryDate) {
-                document.getElementById('expiry_warning').style.display = 'flex';
+            if (doc.file) {
+                document.getElementById('download_btn').style.display = 'inline-block';
+                document.getElementById('download_btn').onclick = () => {
+                    const link = document.createElement('a');
+                    link.href = doc.file;
+                    link.download = `LLR_${doc.mobile}.${doc.fileType ? doc.fileType.split('/')[1] : 'pdf'}`;
+                    link.click();
+                };
+            } else {
+                document.getElementById('download_btn').style.display = 'none';
             }
-
-            document.getElementById('download_btn').onclick = () => {
-                const link = document.createElement('a');
-                link.href = doc.file;
-                link.download = `LLR_${doc.mobile}.${doc.fileType.split('/')[1] || 'pdf'}`;
-                link.click();
-            };
         };
 
         if (db) {

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Applications | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 95% 95%, rgba(212, 175, 55, 0.03) 0%, transparent 40%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .header-title h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .task-count-badge {
+            background: var(--gold-muted);
+            color: var(--gold);
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 1px solid var(--gold);
+        }
+
+        .back-button {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .back-button:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateX(-5px);
+        }
+
+        /* Filters Section */
+        .controls-panel {
+            background: var(--bg-accent);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lux);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            padding: 0.9rem 1.5rem;
+            border-radius: 14px;
+            color: var(--text-main);
+            font-family: inherit;
+            flex: 1;
+            min-width: 300px;
+            transition: var(--transition);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .status-button {
+            padding: 0.9rem 1.5rem;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            background: var(--glass);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .status-button:hover {
+            border-color: var(--gold);
+            background: var(--gold-muted);
+        }
+
+        .status-button.active {
+            background: var(--gold);
+            color: var(--bg-dark);
+            border-color: var(--gold);
+        }
+
+        /* Table Premium Styles */
+        .table-container {
+            background: var(--glass);
+            border-radius: 28px;
+            border: 1px solid var(--glass-border);
+            overflow-x: auto;
+            box-shadow: var(--shadow-lux);
+        }
+
+        .test-app-list {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .test-app-list th {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 1.5rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+            letter-spacing: 0.02em;
+        }
+
+        .test-app-list td {
+            padding: 1.25rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            transition: var(--transition);
+        }
+
+        .test-app-list tr:last-child td {
+            border-bottom: none;
+        }
+
+        .test-app-list tr:hover td {
+            background: rgba(212, 175, 55, 0.03);
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            margin-right: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .commit-btn { background: rgba(212, 175, 55, 0.1); color: var(--gold); border: 1px solid var(--gold-muted); }
+        .commit-btn:hover { background: var(--gold); color: var(--bg-dark); }
+
+        .reschedule-btn { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .reschedule-btn:hover { background: #f59e0b; color: white; }
+
+        .revoke-btn { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .revoke-btn:hover { background: #ef4444; color: white; }
+
+        .complete-btn { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .complete-btn:hover:not(:disabled) { background: #10b981; color: white; }
+        .complete-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+        }
+
+        .reschedule-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            padding: 3rem;
+            border-radius: 32px;
+            box-shadow: var(--shadow-lux);
+            z-index: 2001;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .reschedule-modal h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            margin-bottom: 2rem;
+            font-size: 1.75rem;
+        }
+
+        .reschedule-modal input[type="date"] {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            color: var(--text-main);
+            margin-bottom: 2rem;
+            font-family: inherit;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .header { flex-direction: column; align-items: flex-start; }
+            .controls-panel { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-title">
+                <button class="back-button" onclick="window.location.href='fresh-license.html'">
+                    <i class="fas fa-chevron-left"></i> Back
+                </button>
+                <h1>Test Applications</h1>
+                <span id="taskCount" class="task-count-badge">0</span>
+            </div>
+        </div>
+
+        <div class="controls-panel">
+            <input type="text" class="search-box" id="searchInput" 
+                   placeholder="Search by name, mobile, or ID..." 
+                   oninput="filterTasks()">
+            
+            <button class="status-button" id="filterBtn" onclick="toggleFilter()">
+                <i class="fas fa-calendar-check"></i> Today's Committed
+            </button>
+            <button class="status-button" id="todayApptBtn" onclick="toggleAppointmentFilter()">
+                <i class="fas fa-clock"></i> Today's Appointments
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="test-app-list">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Mobile</th>
+                        <th>Vehicle Class</th>
+                        <th>LLR Date</th>
+                        <th>App Number</th>
+                        <th>Test App. Date</th>
+                        <th>Appt. Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="testAppList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeRescheduleModal()"></div>
+    <div class="reschedule-modal" id="rescheduleModal">
+        <h3>Reschedule Appointment</h3>
+        <input type="date" id="newAppointmentDate">
+        <div class="modal-buttons">
+            <button class="action-btn revoke-btn" onclick="closeRescheduleModal()">Cancel</button>
+            <button class="action-btn complete-btn" onclick="confirmReschedule()">Confirm</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="api-utils.js"></script>
+    <script>
+        let showTodayCommitted = false;
+        let showTodayAppointment = false;
+        let currentTaskId = null;
+
+        async function toggleFilter() {
+            showTodayCommitted = !showTodayCommitted;
+            if (showTodayCommitted) showTodayAppointment = false;
+            updateFilterButtons();
+            await filterTasks();
+        }
+
+        async function toggleAppointmentFilter() {
+            showTodayAppointment = !showTodayAppointment;
+            if (showTodayAppointment) showTodayCommitted = false;
+            updateFilterButtons();
+            await filterTasks();
+        }
+
+        function updateFilterButtons() {
+            const commitBtn = document.getElementById('filterBtn');
+            const apptBtn = document.getElementById('todayApptBtn');
+            
+            commitBtn.classList.toggle('active', showTodayCommitted);
+            apptBtn.classList.toggle('active', showTodayAppointment);
+        }
+
+        async function filterTasks() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const tasks = await apiUtils.getTasks();
+            
+            const now = new Date();
+            const todayStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
+            const todayLocale = now.toLocaleDateString();
+            
+            const filteredTasks = tasks.filter(task => {
+                if (task.status !== 'Test Application Generated' && task.status !== 'Test Committed') return false;
+                if (task.testStatus === 'Completed') return false;
+                
+                if (showTodayCommitted) {
+                    const todayCommitted = task.statusHistory?.some(status => 
+                        status.status === 'Test Committed' && 
+                        (status.date === todayLocale || status.date === todayStr)
+                    );
+                    if (!todayCommitted) return false;
+                }
+
+                if (showTodayAppointment) {
+                    const formatDate = (dateStr) => {
+                        if (!dateStr) return null;
+                        if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) return dateStr;
+                        const d = new Date(dateStr);
+                        if (isNaN(d.getTime())) return null;
+                        return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
+                    };
+
+                    const testAppIntimation = task.intimations?.find(i => i.status === 'Test Application Generated');
+                    const appointmentDate = formatDate(
+                        task.details?.testAppointmentDate || 
+                        testAppIntimation?.appointmentDate || 
+                        task.appointmentDate
+                    );
+
+                    if (appointmentDate !== todayStr) return false;
+                }
+                
+                return task.applicantName.toLowerCase().includes(searchTerm) ||
+                       task.mobile.includes(searchTerm) ||
+                       String(task.id).includes(searchTerm);
+            });
+            
+            // Explicitly sort tasks by ID descending to ensure stable order after updates
+            filteredTasks.sort((a, b) => {
+                const idA = parseFloat(a.id) || 0;
+                const idB = parseFloat(b.id) || 0;
+                return idB - idA;
+            });
+            
+            displayTasks(filteredTasks);
+        }
+
+        function displayTasks(tasks) {
+            const tbody = document.getElementById('testAppList');
+            tbody.innerHTML = '';
+            document.getElementById('taskCount').textContent = tasks.length;
+
+            if (tasks.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 3rem; color: var(--text-muted);">No test applications found.</td></tr>';
+                return;
+            }
+
+            tasks.forEach(task => {
+                const testAppIntimation = task.intimations?.find(i => i.status === 'Test Application Generated');
+                const formatDate = (dateStr) => {
+                    if (!dateStr) return '-';
+                    if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) return dateStr;
+                    const d = new Date(dateStr);
+                    if (isNaN(d.getTime())) return '-';
+                    return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
+                };
+                
+                const testAppDate = formatDate(testAppIntimation?.date || task.details?.testApplicationDate || task.testApplicationDate || task.createdAt);
+                const appointmentDate = formatDate(task.details?.testAppointmentDate || testAppIntimation?.appointmentDate || task.appointmentDate || testAppDate);
+                const currentStatus = task.statusHistory?.length > 0 ? task.statusHistory[task.statusHistory.length - 1].status : (task.testStatus || 'Pending');
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="color: var(--text-muted);">#${String(task.id).padStart(4, '0')}</td>
+                    <td style="font-weight: 600; color: var(--gold-bright);">${task.applicantName.toUpperCase()}</td>
+                    <td>${task.mobile}</td>
+                    <td>${task.vehicleClass.toUpperCase()}</td>
+                    <td>${formatDate(task.llrDate)}</td>
+                    <td style="font-family: monospace;">${task.applicationNumber || '-'}</td>
+                    <td>${testAppDate}</td>
+                    <td>${appointmentDate}</td>
+                    <td><span style="color: var(--gold); font-weight: 600;">${currentStatus.toUpperCase()}</span></td>
+                    <td>
+                        <button class="action-btn commit-btn" onclick="updateTestStatus('${task.id}', 'Committed')">Commit</button>
+                        ${!task.testStatus ? `<button class="action-btn reschedule-btn" onclick="rescheduleAppointment('${task.id}')">Reschedule</button>` : ''}
+                        ${task.testStatus === 'Committed' ? `<button class="action-btn revoke-btn" onclick="revokeTestCommitment('${task.id}')">Revoke</button>` : ''}
+                        <button class="action-btn complete-btn" onclick="updateTestStatus('${task.id}', 'Completed')" ${task.testStatus !== 'Committed' ? 'disabled' : ''}>Complete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function rescheduleAppointment(taskId) {
+            currentTaskId = taskId;
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.getElementById('rescheduleModal').style.display = 'block';
+        }
+
+        function closeRescheduleModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('rescheduleModal').style.display = 'none';
+            currentTaskId = null;
+        }
+
+        async function confirmReschedule() {
+            const newDate = document.getElementById('newAppointmentDate').value;
+            if (!newDate) return alert('Please select a date');
+
+            const tasks = await apiUtils.getTasks();
+            const taskIndex = tasks.findIndex(t => t.id === currentTaskId);
+            
+            if (taskIndex !== -1) {
+                const date = new Date(newDate);
+                const formattedDate = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+                
+                const testAppIntimationIndex = tasks[taskIndex].intimations?.findIndex(i => i.status === 'Test Application Generated');
+                if (testAppIntimationIndex !== -1) tasks[taskIndex].intimations[testAppIntimationIndex].appointmentDate = formattedDate;
+
+                if (!tasks[taskIndex].details) tasks[taskIndex].details = {};
+                tasks[taskIndex].details.testAppointmentDate = formattedDate;
+                
+                if (!tasks[taskIndex].statusHistory) tasks[taskIndex].statusHistory = [];
+                tasks[taskIndex].statusHistory.push({
+                    status: 'Test Appointment Rescheduled',
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString(),
+                    updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System',
+                    note: `Rescheduled to ${formattedDate}`
+                });
+                
+                await apiUtils.saveTask(tasks[taskIndex]);
+                closeRescheduleModal();
+                await filterTasks();
+            }
+        }
+
+        async function updateTestStatus(taskId, status) {
+            const tasks = await apiUtils.getTasks();
+            const taskIndex = tasks.findIndex(t => t.id === taskId);
+            
+            if (taskIndex !== -1) {
+                tasks[taskIndex].testStatus = status;
+                if (status === 'Completed') tasks[taskIndex].status = 'Test Completed';
+                else if (status === 'Committed') tasks[taskIndex].status = 'Test Committed';
+                
+                if (!tasks[taskIndex].statusHistory) tasks[taskIndex].statusHistory = [];
+                tasks[taskIndex].statusHistory.push({
+                    status: `Test ${status}`,
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString(),
+                    updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System'
+                });
+                
+                await apiUtils.saveTask(tasks[taskIndex]);
+                await filterTasks();
+            }
+        }
+
+        async function revokeTestCommitment(taskId) {
+            const tasks = await apiUtils.getTasks();
+            const taskIndex = tasks.findIndex(t => t.id === taskId);
+            
+            if (taskIndex !== -1) {
+                tasks[taskIndex].testStatus = null;
+                tasks[taskIndex].status = 'Test Application Generated';
+                
+                if (!tasks[taskIndex].statusHistory) tasks[taskIndex].statusHistory = [];
+                tasks[taskIndex].statusHistory.push({
+                    status: 'Test Commitment Revoked',
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString(),
+                    updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System'
+                });
+                
+                await apiUtils.saveTask(tasks[taskIndex]);
+                await filterTasks();
+            }
+        }
+
+        window.onload = async function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) { window.location.href = 'hameethiya.html'; return; }
+            await filterTasks();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Task Status | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 95% 95%, rgba(212, 175, 55, 0.03) 0%, transparent 40%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .header-section {
+            max-width: 1600px;
+            margin: 0 auto 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .header-title h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .task-count-badge {
+            background: var(--gold-muted);
+            color: var(--gold);
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 1px solid var(--gold);
+        }
+
+        .back-button {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: fixed;
+            top: 2rem;
+            right: 14rem;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        /* Status Summary Panel */
+        .status-summary {
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            background: var(--glass);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px);
+        }
+
+        .status-badge {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.75rem 1.25rem;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .status-badge:hover {
+            border-color: var(--gold-muted);
+            background: rgba(212, 175, 55, 0.03);
+        }
+
+        .status-badge strong {
+            font-size: 1.1rem;
+            color: var(--gold);
+        }
+
+        .status-badge.total {
+            border-left: 4px solid var(--gold);
+            background: var(--gold-muted);
+        }
+
+        /* Search & Filter Panel */
+        .controls-panel {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lux);
+        }
+
+        .search-row {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box, .filter-select {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            padding: 0.9rem 1.25rem;
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-box:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .filter-select option {
+            background: var(--bg-accent);
+            color: var(--text-main);
+        }
+
+        /* Table Premium Styles */
+        .table-container {
+            overflow-x: auto;
+            background: var(--glass);
+            border-radius: 28px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lux);
+        }
+
+        .check-task-list {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .check-task-list th {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 1.5rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+            letter-spacing: 0.02em;
+        }
+
+        .check-task-list td {
+            padding: 1.25rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            transition: var(--transition);
+        }
+
+        .check-task-list tr:last-child td {
+            border-bottom: none;
+        }
+
+        .check-task-list tr:hover td {
+            background: rgba(212, 175, 55, 0.03);
+        }
+
+        .task-name {
+            color: var(--gold-bright);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+            display: block;
+        }
+
+        .task-name:hover {
+            color: var(--gold);
+            transform: translateX(5px);
+        }
+
+        .roll-number-cell {
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        /* Specialized Rows */
+        .with-driving-row td {
+            background: rgba(16, 185, 129, 0.03) !important;
+            border-left: 4px solid #10b981;
+        }
+
+        .reminder-row td {
+            background: rgba(245, 158, 11, 0.03) !important;
+            border-left: 4px solid #f59e0b;
+        }
+
+        /* Buttons & Links */
+        .whatsapp-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #25D366;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            margin-left: 0.75rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2);
+        }
+
+        .whatsapp-link:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 6px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 0.5rem 0.75rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .delete-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .reminder-btn {
+            background: var(--glass);
+            color: var(--gold);
+            border: 1px solid var(--gold-muted);
+            padding: 0.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .reminder-btn:hover {
+            background: var(--gold-muted);
+            transform: rotate(15deg);
+        }
+
+        .ack-btn {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 0.5rem 0.75rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .ack-btn:hover {
+            background: #10b981;
+            color: white;
+        }
+
+        .upload-llr-btn {
+            background: rgba(16, 185, 129, 0.1) !important;
+            color: #10b981 !important;
+            border: 1px solid rgba(16, 185, 129, 0.2) !important;
+            padding: 0.5rem 0.75rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .upload-llr-btn:hover {
+            background: #10b981 !important;
+            color: white !important;
+        }
+
+        .hidden-file-input {
+            display: none;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1.25rem 2.5rem;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            box-shadow: var(--shadow-lux);
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Floating Notification Button */
+        .notification-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 18px;
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: none;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        .notification-btn.active { display: flex; align-items: center; gap: 0.75rem; }
+
+        .badge-count {
+            background: white;
+            color: #d97706;
+            padding: 0.1rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Scroll Buttons */
+        .scroll-bottom-button {
+            background: var(--glass);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .scroll-bottom-button:hover {
+            background: var(--glass-border);
+            transform: translateY(2px);
+        }
+
+        /* Notes Editing */
+        .edit-notes {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--gold-muted);
+            color: var(--text-main);
+            padding: 0.5rem;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        .update-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .back-button, .scroll-bottom-button { position: static; margin-bottom: 1rem; }
+            .header-section { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-section">
+        <div class="header-title">
+            <button class="back-button" onclick="window.location.href='fresh-license.html'">
+                <i class="fas fa-chevron-left"></i> Back
+            </button>
+            <h2>Check Task Status</h2>
+            <span id="taskCount" class="task-count-badge">0</span>
+        </div>
+        <button class="scroll-bottom-button" onclick="scrollToBottom()">
+            <i class="fas fa-chevron-down"></i> Scroll Down
+        </button>
+    </div>
+
+    <button class="notification-btn" id="notificationBtn" onclick="scrollToReminders()">
+        <i class="fas fa-bell"></i> Reminders <span class="badge-count">0</span>
+    </button>
+
+    <div class="status-summary" id="statusSummary">
+        <!-- Status counts injected here -->
+    </div>
+
+    <div class="controls-panel">
+        <div class="search-row">
+            <input type="text" class="search-box" id="checkTaskSearch" 
+                   placeholder="Search name, mobile, application # or ID..." 
+                   style="flex: 2;" oninput="filterCheckTasks()">
+            
+            <input type="date" class="search-box" id="fromDate" onchange="filterCheckTasks()">
+            <input type="date" class="search-box" id="toDate" onchange="filterCheckTasks()">
+            
+            <select class="filter-select" id="statusFilter" onchange="filterCheckTasks()">
+                <option value="">All Statuses</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="check-task-list" id="checkTaskList">
+            <thead>
+                <tr>
+                    <th>Applicant Name</th>
+                    <th>Father's Name</th>
+                    <th>Mobile</th>
+                    <th>Vehicle Class</th>
+                    <th>App Number</th>
+                    <th>Status</th>
+                    <th>Latest Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Scripts -->
+    <script src="api-utils.js"></script>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAY8aW7751YUvDdv4xZYnXSF5AZevOBIxI",
+            authDomain: "hameethiya.firebaseapp.com",
+            projectId: "hameethiya",
+            storageBucket: "hameethiya.firebasestorage.app",
+            messagingSenderId: "206037846",
+            appId: "1:206037846:web:0bcbcfd67f6989e46d6cf7",
+            measurementId: "G-8ZQ1Y0CPQZ"
+        };
+        
+        let db = null;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.firestore();
+        } catch (e) {
+            console.warn("Firebase failed to initialize:", e);
+        }
+
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.backgroundColor = type === 'success' ? 'rgba(16, 185, 129, 0.9)' : 'rgba(239, 68, 68, 0.9)';
+            notification.style.border = `1px solid ${type === 'success' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(30px)';
+                setTimeout(() => notification.remove(), 400);
+            }, 3000);
+        }
+
+        // Core Logic
+        async function filterCheckTasks() {
+            const searchTerm = document.getElementById('checkTaskSearch').value.toLowerCase();
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const tasks = await apiUtils.getTasks();
+
+            await updateLLRExpiryStatuses(tasks);
+            
+            const parseDate = (dStr, tStr) => {
+                if (!dStr) return new Date(0);
+                let dp = dStr;
+                if (dStr.includes('/')) {
+                    const [d, m, y] = dStr.split('/');
+                    dp = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+                }
+                return new Date(`${dp} ${tStr || '00:00:00'}`);
+            };
+
+            const baseFiltered = tasks.filter(task => {
+                const statusUpper = (task.status || '').toUpperCase();
+                if (statusUpper === 'TEST COMPLETED' || statusUpper === 'EXPIRED' || statusUpper === 'LLR EXPIRED') return false;
+                
+                const searchMatch = 
+                    task.applicantName?.toLowerCase().includes(searchTerm) ||
+                    task.mobile?.includes(searchTerm) ||
+                    String(task.id).includes(searchTerm) ||
+                    task.fatherName?.toLowerCase().includes(searchTerm) ||
+                    task.applicationNumber?.toLowerCase().includes(searchTerm);
+            
+                const tDate = parseDate(task.creationDate || task.createdAt, task.creationTime);
+                const dateMatch = (!fromDate || tDate >= new Date(fromDate)) && 
+                                (!toDate || tDate <= new Date(toDate));
+            
+                return searchMatch && dateMatch;
+            });
+
+            updateStatusCounts(baseFiltered);
+
+            const finalTasks = baseFiltered.filter(t => !statusFilter || t.status === statusFilter)
+                .sort((a, b) => parseDate(b.creationDate, b.creationTime) - parseDate(a.creationDate, a.creationTime));
+            
+            const tbody = document.querySelector('#checkTaskList tbody');
+            tbody.innerHTML = '';
+            document.getElementById('taskCount').textContent = finalTasks.length;
+            
+            finalTasks.forEach(task => {
+                const latest = task.statusHistory?.[task.statusHistory.length - 1];
+                const row = document.createElement('tr');
+                
+                const isToday = task.reminderDate && new Date(task.reminderDate).toLocaleDateString() === new Date().toLocaleDateString();
+                if (isToday) row.classList.add('reminder-row');
+                if (task.drivingOption === 'WITH DRIVING') row.classList.add('with-driving-row');
+
+                const isLLRIssued = (task.status || '').toUpperCase() === 'LLR ISSUED';
+
+                row.innerHTML = `
+                    <td>
+                        <span class="task-name" onclick="navigateToDetailedReport('${task.id}')">${task.applicantName?.toUpperCase() || '-'}</span>
+                        ${isToday ? '<span style="color: #f59e0b; font-size: 0.7rem; font-weight: 700;">🔔 REMINDER</span>' : ''}
+                    </td>
+                    <td>${(task.fatherName || '-').toUpperCase()}</td>
+                    <td>
+                        ${task.mobile || task.mobileNumber || '-'}
+                        ${(task.mobile || task.mobileNumber) && (task.mobile || task.mobileNumber) !== '-' ? `<a href="https://wa.me/${(task.mobile || task.mobileNumber).replace(/\D/g, '')}" target="_blank" class="whatsapp-link"><i class="fab fa-whatsapp"></i></a>` : ''}
+                    </td>
+                    <td>${(task.vehicleClass || '-').toUpperCase()}</td>
+                    <td style="font-family: monospace;">${(task.applicationNumber || '-').toUpperCase()}</td>
+                    <td><span style="color: var(--gold); font-weight: 600;">${(task.status || '-').toUpperCase()}</span></td>
+                    <td ondblclick="editNotes(this, '${task.id}')">
+                        <span class="notes-text">${(latest?.notes || '-').toUpperCase()}</span>
+                        <input type="text" class="edit-notes" style="display: none;" value="${latest?.notes || ''}">
+                        <button class="update-btn" style="display: none;" onclick="updateNotes('${task.id}', this.parentElement)">Update</button>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                            <button class="delete-btn" onclick="deleteTask('${task.id}')"><i class="fas fa-trash-alt"></i></button>
+                            <button class="reminder-btn" onclick="toggleReminder('${task.id}')"><i class="fas fa-bell"></i></button>
+                            <input type="date" id="reminder-${task.id}" style="display:none; background: var(--bg-accent); border: 1px solid var(--gold); color: white; border-radius: 8px; padding: 0.2rem;" onchange="saveReminder('${task.id}', this.value)">
+                            ${isToday ? `<button class="ack-btn" title="Acknowledge reminder" onclick="acknowledgeReminder('${task.id}')"><i class="fas fa-check"></i></button>` : ''}
+                            
+                            ${isLLRIssued && !task.llrUploaded ? `
+                                <input type="file" id="llrFileInput-${task.id}" class="hidden-file-input" accept=".pdf,image/jpeg,image/png" onchange="handleLLRFileUpload('${task.id}', event)">
+                                <button class="upload-llr-btn" onclick="document.getElementById('llrFileInput-${task.id}').click()">
+                                    <i class="fas fa-file-upload"></i> Upload
+                                </button>
+                            ` : isLLRIssued && task.llrUploaded ? `
+                                <div style="color: #10b981; font-size: 0.75rem; font-weight: 600;">
+                                    <i class="fas fa-check-circle"></i> Done
+                                </div>
+                            ` : ''}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            checkTodayReminders(tasks);
+        }
+
+        function updateStatusCounts(tasks) {
+            const container = document.getElementById('statusSummary');
+            const counts = {};
+            tasks.forEach(t => { const s = (t.status || 'Unknown').toUpperCase(); counts[s] = (counts[s] || 0) + 1; });
+
+            let html = `<div class="status-badge total"><i class="fas fa-list"></i> Total: <strong>${tasks.length}</strong></div>`;
+            Object.keys(counts).sort().forEach(s => {
+                html += `<div class="status-badge">${s}: <strong>${counts[s]}</strong></div>`;
+            });
+
+            const today = new Date().toLocaleDateString();
+            const rCount = tasks.filter(t => t.reminderDate && new Date(t.reminderDate).toLocaleDateString() === today).length;
+            if (rCount > 0) {
+                html += `<div class="status-badge" style="border-left-color: #f59e0b; background: rgba(245,158,11,0.1); color: #f59e0b;"><i class="fas fa-bell"></i> Today's Reminders: <strong>${rCount}</strong></div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        // Action Handlers
+        async function deleteTask(id) { if (confirm('Delete this task?')) { await apiUtils.deleteTask(id); filterCheckTasks(); } }
+        function navigateToDetailedReport(id) { window.location.href = `detailed-task-report.html?id=${id}`; }
+        
+        async function handleLLRFileUpload(taskId, event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // File type and size validation
+            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+            if (!allowedTypes.includes(file.type)) {
+                showNotification("Only PDF, JPG, and PNG files are allowed.", 'error');
+                return;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                showNotification("File size exceeds 10MB limit.", 'error');
+                return;
+            }
+
+            const tasks = await apiUtils.getTasks();
+            const idx = tasks.findIndex(t => String(t.id) === String(taskId));
+            if (idx === -1) return;
+            const task = { ...tasks[idx] };
+
+            showNotification('Uploading LLR document...', 'success');
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const fileData = e.target.result;
+                const llrDoc = {
+                    mobile: task.mobile || task.mobileNumber,
+                    llrDate: task.llrDate,
+                    file: fileData,
+                    fileName: file.name,
+                    fileType: file.type,
+                    uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    timestamp: new Date().toLocaleString()
+                };
+
+                try {
+                    // 1. Save to llr_documents collection
+                    if (db) {
+                        await db.collection("llr_documents").add(llrDoc);
+                    }
+
+                    // 2. Mark task as llrUploaded
+                    task.llrUploaded = true;
+                    if (!task.statusHistory) task.statusHistory = [];
+                    task.statusHistory.push({
+                        status: task.status,
+                        date: new Date().toISOString().split('T')[0],
+                        time: new Date().toLocaleTimeString(),
+                        updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System',
+                        notes: 'LLR Copy Uploaded'
+                    });
+
+                    const result = await apiUtils.saveTask(task);
+                    if (result.success) {
+                        showNotification('LLR Document uploaded successfully!');
+                        
+                        // 3. Update Student Dashboard Status
+                        if (db) {
+                            const regSnapshot = await db.collection("registrations")
+                                .where("mobile", "==", task.mobile || task.mobileNumber)
+                                .get();
+                            
+                            if (!regSnapshot.empty) {
+                                await db.collection("registrations").doc(regSnapshot.docs[0].id).update({
+                                    llrUploaded: true,
+                                    status: 'LLR Issued',
+                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            }
+                        }
+
+                        // Refresh UI
+                        filterCheckTasks();
+                    } else {
+                        showNotification('Failed to update task record', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error uploading LLR:', error);
+                    showNotification('Error uploading: ' + error.message, 'error');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function calculateExpiryDate(llrDate) {
+            if (!llrDate) return null;
+            const parse = (s) => s.includes('/') ? new Date(`${s.split('/')[2]}-${s.split('/')[1]}-${s.split('/')[0]}`) : new Date(s);
+            const d = parse(llrDate);
+            if (isNaN(d.getTime())) return null;
+            d.setMonth(d.getMonth() + 6);
+            return d.toISOString().split('T')[0];
+        }
+
+        async function updateLLRExpiryStatuses(tasks) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const saves = [];
+
+            for (const task of tasks) {
+                const hasTestCompleted = task.statusHistory?.some(s => s.status === 'Test Completed');
+                if (task.llrDate && !hasTestCompleted) {
+                    const expStr = calculateExpiryDate(task.llrDate);
+                    if (expStr) {
+                        const exp = new Date(expStr);
+                        exp.setHours(0, 0, 0, 0);
+                        const currentStatus = (task.status || '').toUpperCase();
+                        if (today >= exp && currentStatus !== 'LLR EXPIRED') {
+                            task.status = 'LLR EXPIRED';
+                            if (!task.statusHistory) task.statusHistory = [];
+                            task.statusHistory.push({
+                                status: 'LLR EXPIRED',
+                                notes: 'Automatically updated due to LLR expiry',
+                                date: new Date().toLocaleDateString(),
+                                time: new Date().toLocaleTimeString(),
+                                updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System'
+                            });
+                            saves.push(apiUtils.saveTask(task));
+                        }
+                    }
+                }
+            }
+
+            if (saves.length > 0) {
+                await Promise.all(saves);
+            }
+        }
+
+        async function populateStatusFilter() {
+            const filter = document.getElementById('statusFilter');
+            const tasks = await apiUtils.getTasks();
+            const unique = [...new Set(tasks.map(t => t.status))].filter(Boolean);
+            filter.innerHTML = '<option value="">All Statuses</option>' + unique.map(s => `<option value="${s}">${s.toUpperCase()}</option>`).join('');
+        }
+
+        function editNotes(cell, id) {
+            cell.querySelector('.notes-text').style.display = 'none';
+            cell.querySelector('.edit-notes').style.display = 'block';
+            cell.querySelector('.update-btn').style.display = 'inline-block';
+            cell.querySelector('.edit-notes').focus();
+        }
+
+        async function updateNotes(id, cell) {
+            const input = cell.querySelector('.edit-notes');
+            const tasks = await apiUtils.getTasks();
+            const idx = tasks.findIndex(t => t.id === id);
+            if (idx !== -1) {
+                if (!tasks[idx].statusHistory) tasks[idx].statusHistory = [];
+                tasks[idx].statusHistory.push({
+                    status: tasks[idx].status,
+                    notes: input.value,
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString(),
+                    updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System'
+                });
+                await apiUtils.saveTask(tasks[idx]);
+                filterCheckTasks();
+            }
+        }
+
+        function toggleReminder(id) {
+            const input = document.getElementById(`reminder-${id}`);
+            input.style.display = input.style.display === 'none' ? 'inline-block' : 'none';
+        }
+
+        async function saveReminder(id, date) {
+            const tasks = await apiUtils.getTasks();
+            const idx = tasks.findIndex(t => t.id === id);
+            if (idx !== -1) {
+                tasks[idx].reminderDate = date;
+                await apiUtils.saveTask(tasks[idx]);
+                filterCheckTasks();
+            }
+        }
+
+        async function acknowledgeReminder(id) {
+            const tasks = await apiUtils.getTasks();
+            const idx = tasks.findIndex(t => t.id === id);
+            if (idx !== -1) {
+                tasks[idx].reminderDate = '';
+                if (!tasks[idx].statusHistory) tasks[idx].statusHistory = [];
+                tasks[idx].statusHistory.push({
+                    status: tasks[idx].status,
+                    notes: 'Reminder acknowledged',
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString(),
+                    updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System'
+                });
+                await apiUtils.saveTask(tasks[idx]);
+                filterCheckTasks();
+            }
+        }
+
+        function checkTodayReminders(tasks) {
+            const today = new Date().toLocaleDateString();
+            const count = tasks.filter(t => t.reminderDate && new Date(t.reminderDate).toLocaleDateString() === today).length;
+            const btn = document.getElementById('notificationBtn');
+            if (count > 0) {
+                btn.classList.add('active');
+                btn.querySelector('.badge-count').textContent = count;
+                btn.style.display = 'flex';
+            } else {
+                btn.classList.remove('active');
+                btn.style.display = 'none';
+            }
+        }
+
+        function scrollToBottom() { window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }); }
+        function scrollToReminders() { document.querySelector('.reminder-row')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+
+        window.onload = async () => {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user || (!user.moduleAccess?.license && user.role !== 'admin')) { window.location.href = '../user/Login.html'; return; }
+            await populateStatusFilter();
+            await filterCheckTasks();
+        };
+    </script>
+</body>
+</html>

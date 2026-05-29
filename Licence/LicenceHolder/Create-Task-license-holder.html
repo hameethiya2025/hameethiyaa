@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create License Holder Task | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --radius: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(212, 175, 55, 0.04) 0%, transparent 35%),
+                radial-gradient(circle at 95% 95%, rgba(212, 175, 55, 0.04) 0%, transparent 35%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 2rem 3rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lux);
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: 0.02em;
+        }
+
+        .back-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateX(-5px);
+        }
+
+        /* Form Styling */
+        .form-container {
+            background: var(--bg-accent);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lux);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1rem 1.25rem;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .form-group select option {
+            background: var(--bg-accent);
+            color: var(--text-main);
+        }
+
+        .submit-btn {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+            color: var(--bg-dark);
+            border: none;
+            padding: 1.25rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3);
+            filter: brightness(1.1);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header { padding: 1.5rem; flex-direction: column; gap: 1.5rem; text-align: center; }
+            .form-container { padding: 2rem 1.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Create Holder Task</h1>
+            <button class="back-btn" onclick="location.href='../LicenceHolder/license-holder-Services.html'">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+        </div>
+
+        <div class="form-container">
+            <form id="createTaskForm" class="form-grid">
+                <div class="form-group">
+                    <label>Applicant Name</label>
+                    <input type="text" id="name" placeholder="Full name of applicant" required>
+                </div>
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <input type="tel" id="mobile" placeholder="10-digit mobile number" required pattern="[0-9]{10}">
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="dob" required>
+                </div>
+                <div class="form-group">
+                    <label>License Number</label>
+                    <input type="text" id="licenseNumber" placeholder="DL number" required onblur="checkDuplicateLicense()">
+                    <span id="licenseError" style="color: #ff4444; font-size: 0.7rem; display: none;">License number already exists!</span>
+                </div>
+                <div class="form-group">
+                    <label>Reference</label>
+                    <input type="text" id="reference" placeholder="Reference Name">
+                </div>
+                <div class="form-group">
+                    <label>Creation Date</label>
+                    <input type="date" id="creationDate" required>
+                </div>
+                <div class="form-group full-width">
+                    <label>Select Services</label>
+                    <select id="serviceType" multiple required style="height: 120px;">
+                        <option value="Renewal">Renewal</option>
+                        <option value="Address Change">Address Change</option>
+                        <option value="Duplicate License">Duplicate License</option>
+                        <option value="Name Change">Name Change</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Commitment Amount (₹)</label>
+                    <input type="number" id="commitmentAmount" placeholder="Total amount" required min="0">
+                </div>
+                <div class="form-group">
+                    <label>Advance Amount (₹)</label>
+                    <input type="number" id="advanceAmount" placeholder="Initial payment" required min="0">
+                </div>
+                <div class="form-group">
+                    <label>Reminder Date</label>
+                    <input type="date" id="reminderDate">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="status" required>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label>Additional Notes</label>
+                    <textarea id="notes" placeholder="Any specific requirements or instructions..." rows="4"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-plus-circle"></i> Create Task
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- API Utils -->
+    <script src="../api-utils.js"></script>
+
+    <script>
+        document.getElementById('createTaskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser')) || { username: 'System' };
+                
+                const serviceTypeSelect = document.getElementById('serviceType');
+                const selectedServices = Array.from(serviceTypeSelect.selectedOptions).map(o => o.value);
+                
+                const licenseNumber = document.getElementById('licenseNumber').value.toUpperCase().trim();
+                
+                // Fetch all existing services to check for duplicate license number
+                const existingServices = await apiUtils.getLicenseHolderServices();
+                const isDuplicate = existingServices.some(s => 
+                    s.licenseNumber === licenseNumber && 
+                    (s.status || '').toLowerCase() !== 'completed' && 
+                    (s.status || '').toLowerCase() !== 'returned'
+                );
+
+                if (isDuplicate) {
+                    alert(`Error: A task with license number ${licenseNumber} already exists and is not yet completed or returned.`);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Create Task';
+                    return;
+                }
+
+                const data = {
+                    id: Date.now().toString(),
+                    name: document.getElementById('name').value.toUpperCase(),
+                    mobileNumber: document.getElementById('mobile').value,
+                    mobile: document.getElementById('mobile').value,
+                    dateOfBirth: document.getElementById('dob').value,
+                    licenseNumber: licenseNumber,
+                    reference: document.getElementById('reference').value.trim().toUpperCase(),
+                    creationDate: document.getElementById('creationDate').value,
+                    serviceType: selectedServices.join(', '),
+                    commitmentPayment: Number(document.getElementById('commitmentAmount').value),
+                    advancePayment: Number(document.getElementById('advanceAmount').value),
+                    reminderDate: document.getElementById('reminderDate').value,
+                    appointmentDate: document.getElementById('reminderDate').value,
+                    status: document.getElementById('status').value,
+                    notes: document.getElementById('notes').value,
+                    date: new Date().toISOString(),
+                    statusHistory: [{
+                        from: 'None',
+                        to: document.getElementById('status').value,
+                        date: new Date().toISOString(),
+                        notes: 'Task created',
+                        user: currentUser.username
+                    }],
+                    payments: [{
+                        amount: Number(document.getElementById('advanceAmount').value),
+                        date: new Date().toISOString(),
+                        type: 'Advance'
+                    }],
+                    intimations: [],
+                    details: {},
+                    feedbackVerified: false,
+                    feedbackRemarks: '',
+                    feedbackReview: '',
+                    feedbackVerifiedAt: '',
+                    feedbackVerifiedBy: ''
+                };
+
+                const result = await apiUtils.saveLicenseHolderService(data);
+
+                if (result.success) {
+                    alert('Task created successfully!');
+                    e.target.reset();
+                    window.location.href = '../LicenceHolder/license-holder-Services.html';
+                } else {
+                    throw new Error(result.error || 'Failed to save to server');
+                }
+                
+            } catch (error) {
+                console.error('Error creating task:', error);
+                alert('Failed to create task: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Create Task';
+            }
+        });
+
+        // Real-time duplicate license check
+        async function checkDuplicateLicense() {
+            const licenseInput = document.getElementById('licenseNumber');
+            const licenseError = document.getElementById('licenseError');
+            const licenseNumber = licenseInput.value.toUpperCase().trim();
+            
+            if (!licenseNumber) return;
+
+            try {
+                const services = await apiUtils.getLicenseHolderServices();
+                const isDuplicate = services.some(s => 
+                    s.licenseNumber === licenseNumber && 
+                    (s.status || '').toLowerCase() !== 'completed' && 
+                    (s.status || '').toLowerCase() !== 'returned'
+                );
+
+                if (isDuplicate) {
+                    licenseInput.style.borderColor = '#ff4444';
+                    licenseError.style.display = 'block';
+                } else {
+                    licenseInput.style.borderColor = '';
+                    licenseError.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error checking duplicate license:', error);
+            }
+        }
+
+        // Load custom service types if available
+        async function loadServiceTypes() {
+            const customTypes = await apiUtils.getSettings('licenseHolderServices_types') || [];
+            if (customTypes.length > 0) {
+                const select = document.getElementById('serviceType');
+                const existingOptions = Array.from(select.options).map(o => o.value);
+                
+                customTypes.forEach(type => {
+                    if (!existingOptions.includes(type.name)) {
+                        const option = document.createElement('option');
+                        option.value = type.name;
+                        option.textContent = type.name;
+                        option.dataset.commitment = type.defaultCommitment;
+                        select.appendChild(option);
+                    }
+                });
+            }
+        }
+
+        document.getElementById('serviceType').addEventListener('change', function() {
+            const selected = this.options[this.selectedIndex];
+            const commitment = selected.dataset.commitment;
+            if (commitment) {
+                document.getElementById('commitmentAmount').value = commitment;
+            }
+        });
+
+        window.onload = async function() {
+            await loadServiceTypes();
+            const today = new Date();
+            document.getElementById('reminderDate').valueAsDate = today;
+            document.getElementById('creationDate').valueAsDate = today;
+        };
+    </script>
+</body>
+</html>

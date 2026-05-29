@@ -201,7 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         emptyMsg.style.display = 'none';
-        tableBody.innerHTML = filtered.map((reg, index) => `
+        tableBody.innerHTML = filtered.map((reg, index) => {
+            const safeName = (reg.name || '').replace(/'/g, "\\'");
+            const safeCourse = (reg.course || '').replace(/'/g, "\\'");
+            return `
                 <tr>
                     <td>${reg.timestamp}</td>
                     <td>
@@ -220,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </td>
                     <td>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn-ack" onclick="processRegistration('${reg.id || index}', '${reg.mobile}', ${!!reg.id})" title="Process & Upload LLR">
+                            <button class="btn-ack" onclick="processRegistration('${reg.mobile}', '${safeName}', '${safeCourse}')" title="Process & Create Task">
                                 <i class="fas fa-file-export"></i> Process
                             </button>
                             <button class="btn-ack" style="background: #dc3545;" onclick="deleteRegistration('${reg.id || index}', ${!!reg.id})" title="Delete">
@@ -229,38 +232,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `;
+        }).join('');
     };
 
-    window.processRegistration = function(id, mobile, isCloud) {
-        // Generate a Student ID if not already present
-        const year = new Date().getFullYear();
-        const randomNum = Math.floor(1000 + Math.random() * 9000);
-        const newStudentId = `HM-${year}-${randomNum}`;
+    window.processRegistration = function(mobile, name, course) {
+        const params = new URLSearchParams();
+        params.set('name', name || '');
+        params.set('mobile', mobile || '');
+        params.set('course', course || '');
 
-        // Switch to Documents tab and pre-fill mobile
-        switchAdminTab('documents');
-        document.getElementById('llr_mobile').value = mobile;
-        
-        // Update status and studentId in database
-        if (isCloud && db) {
-            db.collection("registrations").doc(id).update({
-                status: 'Processing',
-                studentId: newStudentId
-            }).then(() => {
-                alert(`Registration processing started. Student User ID assigned: ${newStudentId}`);
-            });
-        } else {
-            const regs = JSON.parse(localStorage.getItem('hameethiya_registrations') || '[]');
-            const index = isCloud ? -1 : id; // Local storage uses index
-            if (regs[index]) {
-                regs[index].status = 'Processing';
-                regs[index].studentId = newStudentId;
-                localStorage.setItem('hameethiya_registrations', JSON.stringify(regs));
-                updateRegistrationDashboard();
-                alert(`Local Registration processing started. Student User ID assigned: ${newStudentId}`);
-            }
-        }
+        // Redirect to Create License Task with data in URL parameters
+        window.location.href = `Licence/create-license-task.html?${params.toString()}`;
     };
 
     window.deleteRegistration = function(id, isCloud) {

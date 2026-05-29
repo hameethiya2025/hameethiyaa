@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Flow Cards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, #1a237e, #311b92);
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .flow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .flow-header h2 {
+            color: white;
+            margin: 0;
+        }
+        
+        .task-count {
+            background-color: #1a3a5f;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-controls input,
+        .filter-controls select {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            background: #1a3a5f;
+            color: white;
+        }
+        
+        .filter-controls select option {
+            background: #1a3a5f;
+            color: white;
+        }
+        
+        .filter-button {
+            background-color: #e53935;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .filter-button:hover {
+            background-color: #c62828;
+        }
+        
+        .filter-button.active {
+            background-color: #b71c1c;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .status-column {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            min-height: 300px;
+        }
+        
+        .column-header {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .column-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .task-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .task-card.priority {
+            border-left: 4px solid #ff9800;
+        }
+        
+        .task-card.critical-task {
+            border-left: 4px solid #f44336;
+        }
+        
+        .applicant-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #1a237e;
+        }
+        
+        .task-details {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+        
+        .task-date {
+            font-size: 0.8rem;
+            color: #777;
+        }
+        
+        .task-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .action-button {
+            background: #1a237e;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .action-button:hover {
+            background: #0d1257;
+        }
+        
+        .add-task {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .add-task:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Task Modal */
+        .task-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 10px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            .card-columns {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-button" onclick="window.location.href='fresh-license.html'">Back to Main Page</button>
+            <h1>Task Flow Management</h1>
+        </div>
+        
+        <div class="flow-header">
+            <h2>Task Flow <span class="task-count" id="taskCount">0</span></h2>
+            <div class="filter-controls">
+                <input type="text" id="searchInput" placeholder="Search tasks..." class="search-box">
+                <select id="statusFilter">
+                    <option value="">All Status</option>
+                    <!-- Status options will be populated dynamically -->
+                </select>
+                <button id="criticalFilter" class="filter-button" onclick="toggleCriticalFilter()">Show Critical Tasks</button>
+            </div>
+        </div>
+        
+        <div class="card-columns" id="taskColumns">
+            <!-- Columns will be generated dynamically based on available statuses -->
+        </div>
+    </div>
+    
+    <!-- Task Detail Modal -->
+    <div id="taskModal" class="task-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeTaskModal()">&times;</span>
+            <div id="taskModalContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Global variables
+        let tasks = [];
+        let statuses = [];
+        let criticalFilterActive = false;
+        
+        // Initialize the page
+        window.onload = function() {
+            // Check authentication
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = '../hameethiya.html';
+                return;
+            }
+            
+            if (!currentUser.moduleAccess?.license && currentUser.role !== 'admin') {
+                alert('You do not have access to License Services');
+                window.location.href = '../service-selection.html';
+                return;
+            }
+            
+            // Load tasks and initialize the interface
+            loadTasks();
+            setupEventListeners();
+        };
+        
+        function loadTasks() {
+            // Get tasks from localStorage
+            tasks = JSON.parse(localStorage.getItem('freshLicenseTasks')) || [];
+            
+            // Extract unique statuses
+            statuses = [...new Set(tasks.map(task => task.status).filter(status => status))];
+            if (!statuses.includes('New')) statuses.unshift('New');
+            
+            // Populate status filter
+            populateStatusFilter();
+            
+            // Create columns for each status
+            createStatusColumns();
+            
+            // Display tasks in their respective columns
+            displayTasks();
+        }
+        
+        function populateStatusFilter() {
+            const statusFilter = document.getElementById('statusFilter');
+            statusFilter.innerHTML = '<option value="">All Status</option>';
+            
+            // Add the four specific flows to the filter
+            const specificFlows = ['Update Status', 'Check Status', 'LLR ISSUED', 'TEST APPLICATION GENERATED Generated'];
+            specificFlows.forEach(flow => {
+                const option = document.createElement('option');
+                option.value = flow;
+                option.textContent = flow.toUpperCase();
+                statusFilter.appendChild(option);
+            });
+            
+            // Also add any other statuses from tasks
+            statuses.forEach(status => {
+                // Skip if it's already one of the specific flows
+                if (!specificFlows.includes(status)) {
+                    const option = document.createElement('option');
+                    option.value = status;
+                    option.textContent = status.toUpperCase();
+                    statusFilter.appendChild(option);
+                }
+            });
+        }
+        
+        function createStatusColumns() {
+            const taskColumns = document.getElementById('taskColumns');
+            taskColumns.innerHTML = '';
+            
+            // Define the four specific flows
+            const specificFlows = ['Update Status', 'Check Status', 'LLR ISSUED', 'TEST APPLICATION GENERATED'];
+            
+            specificFlows.forEach(flow => {
+                const column = document.createElement('div');
+                column.className = 'status-column';
+                column.id = `column-${flow.replace(/\s+/g, '-').toLowerCase()}`;
+                
+                column.innerHTML = `
+                    <div class="column-header">
+                        <span>${flow.toUpperCase()}</span>
+                        <span class="column-count" id="count-${flow.replace(/\s+/g, '-').toLowerCase()}">0</span>
+                    </div>
+                    <div class="column-tasks" id="tasks-${flow.replace(/\s+/g, '-').toLowerCase()}" ondrop="drop(event, '${flow}')" ondragover="allowDrop(event)"></div>
+                    <div class="add-task" onclick="addNewTask('${flow}')">+ Add Task</div>
+                `;
+                
+                taskColumns.appendChild(column);
+            });
+        }
+        
+        function displayTasks() {
+            // Apply filters
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            const filteredTasks = tasks.filter(task => {
+                // Search filter
+                const matchesSearch = 
+                    task.applicantName?.toLowerCase().includes(searchTerm) ||
+                    task.mobile?.includes(searchTerm) ||
+                    String(task.id).includes(searchTerm) ||
+                    (task.fatherName && task.fatherName.toLowerCase().includes(searchTerm)) ||
+                    (task.applicationNumber && task.applicationNumber.toLowerCase().includes(searchTerm));
+                
+                // Status filter
+                const matchesStatus = !statusFilter || task.status === statusFilter || task.flow === statusFilter;
+                
+                // Critical filter
+                let matchesCritical = true;
+                if (criticalFilterActive) {
+                    const llrDate = new Date(task.llrDate);
+                    const today = new Date();
+                    const daysPassed = Math.floor((today - llrDate) / (1000 * 60 * 60 * 24));
+                    matchesCritical = daysPassed === 30;
+                }
+                
+                return matchesSearch && matchesStatus && matchesCritical;
+            });
+            
+            // Define the four specific flows
+            const specificFlows = ['Update Status', 'Check Status', 'LLR ISSUED', 'TEST APPLICATION GENERATED'];
+            
+            // Clear all task containers
+            specificFlows.forEach(flow => {
+                const tasksContainer = document.getElementById(`tasks-${flow.replace(/\s+/g, '-').toLowerCase()}`);
+                if (tasksContainer) tasksContainer.innerHTML = '';
+            });
+            
+            // Reset all counters
+            specificFlows.forEach(flow => {
+                document.getElementById(`count-${flow.replace(/\s+/g, '-').toLowerCase()}`).textContent = '0';
+            });
+            
+            // Display filtered tasks in their respective columns
+            filteredTasks.forEach(task => {
+                // Determine which flow this task belongs to
+                let flow = task.flow || 'Update Status'; // Default to Update Status if no flow is specified
+                
+                // If flow is not one of the specific flows, assign based on status or other criteria
+                const specificFlows = ['Update Status', 'Check Status', 'LLR ISSUED', 'TEST APPLICATION GENERATED'];
+                if (!specificFlows.includes(flow)) {
+                    // Assign flow based on task status or other properties
+                    if (task.status === 'Completed' || task.status === 'Verified') {
+                        flow = 'Check Status';
+                    } else if (task.llrDate) {
+                        const llrDate = new Date(task.llrDate);
+                        const today = new Date();
+                        const daysPassed = Math.floor((today - llrDate) / (1000 * 60 * 60 * 24));
+                        if (daysPassed >= 30) {
+                            flow = 'LLR ISSUED';
+                        }
+                    } else if (task.status === 'Test Scheduled' || task.status === 'Test Completed') {
+                        flow = 'TEST APPLICATION GENERATED';
+                    }
+                }
+                
+                const columnId = `tasks-${flow.replace(/\s+/g, '-').toLowerCase()}`;
+                const tasksContainer = document.getElementById(columnId);
+                
+                if (tasksContainer) {
+                    // Increment the counter for this flow
+                    const countElement = document.getElementById(`count-${flow.replace(/\s+/g, '-').toLowerCase()}`);
+                    const currentCount = parseInt(countElement.textContent);
+                    countElement.textContent = currentCount + 1;
+                    
+                    // Create task card
+                    const taskCard = createTaskCard(task, flow);
+                    tasksContainer.appendChild(taskCard);
+                }
+            });
+            
+            // Update total task count
+            document.getElementById('taskCount').textContent = filteredTasks.length;
+        }
+        
+        function createTaskCard(task, flow) {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.onclick = () => showTaskDetails(task.id);
+            card.draggable = true;
+            card.id = `task-${task.id}`;
+            card.setAttribute('data-task-id', task.id);
+            
+            // Set up drag events
+            card.addEventListener('dragstart', (e) => drag(e, task.id, flow));
+            
+            // Check if task is priority or critical
+            if (task.llrDate) {
+                const llrDate = new Date(task.llrDate);
+                const today = new Date();
+                const daysPassed = Math.floor((today - llrDate) / (1000 * 60 * 60 * 24));
+                
+                if (daysPassed > 30) {
+                    card.classList.add('priority');
+                } else if (daysPassed === 30) {
+                    card.classList.add('critical-task');
+                }
+            }
+            
+            // Format the date
+            const taskDate = task.createdAt || task.llrDate;
+            const formattedDate = taskDate ? new Date(taskDate).toLocaleDateString() : 'N/A';
+            
+            card.innerHTML = `
+                <div class="applicant-name">${task.applicantName?.toUpperCase() || 'No Name'}</div>
+                <div class="task-details">${task.vehicleClass || 'N/A'} | ${task.mobile || 'N/A'}</div>
+                <div class="task-date">Created: ${formattedDate}</div>
+                <div class="task-flow">Flow: ${flow}</div>
+                <div class="task-actions">
+                    <button class="action-button" onclick="editTask(event, '${task.id}')">Edit</button>
+                    <button class="action-button" onclick="moveTask(event, '${task.id}')">Move</button>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function showTaskDetails(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            const modal = document.getElementById('taskModal');
+            const modalContent = document.getElementById('taskModalContent');
+            
+            // Format dates
+            const createdDate = task.createdAt ? new Date(task.createdAt).toLocaleDateString() : 'N/A';
+            const llrDate = task.llrDate ? new Date(task.llrDate).toLocaleDateString() : 'N/A';
+            
+            // Get status history
+            const statusHistory = task.statusHistory || [];
+            let historyHTML = '';
+            
+            if (statusHistory.length > 0) {
+                historyHTML = '<h3>Status History</h3><ul>';
+                statusHistory.forEach(entry => {
+                    historyHTML += `<li>
+                        <strong>${entry.status}</strong> - ${entry.date} ${entry.time}<br>
+                        <em>Notes: ${entry.notes || 'None'}</em><br>
+                        <small>Updated by: ${entry.updatedBy}</small>
+                    </li>`;
+                });
+                historyHTML += '</ul>';
+            }
+            
+            modalContent.innerHTML = `
+                <h2>${task.applicantName?.toUpperCase() || 'No Name'}</h2>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                    <div>
+                        <p><strong>ID:</strong> ${String(task.id).padStart(4, '0')}</p>
+                        <p><strong>Father's Name:</strong> ${task.fatherName?.toUpperCase() || 'N/A'}</p>
+                        <p><strong>Mobile:</strong> ${task.mobile || 'N/A'}</p>
+                        <p><strong>Vehicle Class:</strong> ${task.vehicleClass?.toUpperCase() || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p><strong>Application Number:</strong> ${task.applicationNumber?.toUpperCase() || 'N/A'}</p>
+                        <p><strong>Status:</strong> ${task.status?.toUpperCase() || 'New'}</p>
+                        <p><strong>Created Date:</strong> ${createdDate}</p>
+                        <p><strong>LLR Date:</strong> ${llrDate}</p>
+                    </div>
+                </div>
+                ${historyHTML}
+                <div style="margin-top: 1rem; display: flex; justify-content: space-between;">
+                    <button class="action-button" style="padding: 0.5rem 1rem;" onclick="editTask(event, '${task.id}')">Edit Task</button>
+                    <button class="action-button" style="padding: 0.5rem 1rem; background: #e53935;" onclick="deleteTask(event, '${task.id}')">Delete Task</button>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+        
+        function closeTaskModal() {
+            document.getElementById('taskModal').style.display = 'none';
+        }
+        
+        function editTask(event, taskId) {
+            event.stopPropagation();
+            window.location.href = `update-task-status.html?id=${taskId}`;
+        }
+        
+        function moveTask(event, taskId) {
+            event.stopPropagation();
+            // Show a dropdown with available flows
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            // Create a dropdown element
+            const dropdown = document.createElement('select');
+            dropdown.style.position = 'absolute';
+            dropdown.style.zIndex = '1001';
+            dropdown.style.padding = '0.5rem';
+            dropdown.style.borderRadius = '5px';
+            dropdown.style.border = '1px solid #ddd';
+            
+            // Position it near the clicked button
+            dropdown.style.left = `${event.clientX}px`;
+            dropdown.style.top = `${event.clientY}px`;
+            
+            // Add options for each flow
+            const specificFlows = ['Update Status', 'Check Status', 'LLR ISSUED', 'TEST APPLICATION GENERATED'];
+            specificFlows.forEach(flow => {
+                if (flow !== task.flow) {
+                    const option = document.createElement('option');
+                    option.value = flow;
+                    option.textContent = flow.toUpperCase();
+                    dropdown.appendChild(option);
+                }
+            });
+            
+            // Handle selection
+            dropdown.onchange = function() {
+                const sourceFlow = task.flow || 'Update Status';
+                const oldStatus = task.status;
+                task.flow = this.value;
+                
+                // Update the task status based on the target flow
+                let newStatus;
+                switch (this.value) {
+                    case 'Update Status':
+                        newStatus = 'Pending Update';
+                        break;
+                    case 'Check Status':
+                        newStatus = 'Under Review';
+                        break;
+                    case 'Matured Llr':
+                        newStatus = 'LLR Matured';
+                        break;
+                    case 'Test Application':
+                        newStatus = 'Test Scheduled';
+                        break;
+                    default:
+                        newStatus = oldStatus;
+                }
+                
+                task.status = newStatus;
+                
+                // Add to status history
+                if (!task.statusHistory) task.statusHistory = [];
+                
+                task.statusHistory.push({
+                    status: newStatus,
+                    notes: `Flow changed from ${sourceFlow} to ${this.value}. Status updated from ${oldStatus} to ${newStatus}`,
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString(),
+                    updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System'
+                });
+                
+                // Save to localStorage
+                localStorage.setItem('freshLicenseTasks', JSON.stringify(tasks));
+                
+                // Refresh the display
+                displayTasks();
+                
+                document.body.removeChild(this);
+            };
+            
+            // Handle clicking outside
+            dropdown.onblur = function() {
+                if (document.body.contains(this)) {
+                    document.body.removeChild(this);
+                }
+            };
+            
+            document.body.appendChild(dropdown);
+            dropdown.focus();
+        }
+        
+        function updateTaskStatus(taskId, newStatus) {
+            const taskIndex = tasks.findIndex(t => t.id === taskId);
+            if (taskIndex === -1) return;
+            
+            const task = tasks[taskIndex];
+            const oldStatus = task.status;
+            
+            // Update the task status
+            task.status = newStatus;
+            
+            // Add to status history
+            if (!task.statusHistory) task.statusHistory = [];
+            
+            task.statusHistory.push({
+                status: newStatus,
+                notes: `Status changed from ${oldStatus || 'New'} to ${newStatus}`,
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString(),
+                updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System'
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('freshLicenseTasks', JSON.stringify(tasks));
+            
+            // Refresh the display
+            displayTasks();
+        }
+        
+        function deleteTask(event, taskId) {
+            event.stopPropagation();
+            
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(task => task.id !== taskId);
+                localStorage.setItem('freshLicenseTasks', JSON.stringify(tasks));
+                closeTaskModal();
+                displayTasks();
+            }
+        }
+        
+        function addNewTask(flow) {
+            // Redirect to create task page with pre-selected flow
+            window.location.href = `create-license-task.html?flow=${encodeURIComponent(flow)}`;
+        }
+        
+        function toggleCriticalFilter() {
+            const filterButton = document.getElementById('criticalFilter');
+            criticalFilterActive = !criticalFilterActive;
+            
+            if (criticalFilterActive) {
+                filterButton.textContent = 'Show All Tasks';
+                filterButton.classList.add('active');
+            } else {
+                filterButton.textContent = 'Show Critical Tasks';
+                filterButton.classList.remove('active');
+            }
+            
+            displayTasks();
+        }
+        
+        // Drag and drop functions
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+        
+        function drag(ev, taskId, sourceFlow) {
+            ev.dataTransfer.setData('text/plain', JSON.stringify({
+                taskId: taskId,
+                sourceFlow: sourceFlow
+            }));
+        }
+        
+        function drop(ev, targetFlow) {
+            ev.preventDefault();
+            const data = JSON.parse(ev.dataTransfer.getData('text/plain'));
+            const taskId = data.taskId;
+            const sourceFlow = data.sourceFlow;
+            
+            if (sourceFlow !== targetFlow) {
+                // Find the task
+                const taskIndex = tasks.findIndex(t => t.id === taskId);
+                if (taskIndex === -1) return;
+                
+                const oldStatus = tasks[taskIndex].status;
+                
+                // Update the task flow
+                tasks[taskIndex].flow = targetFlow;
+                
+                // Update the task status based on the target flow
+                let newStatus;
+                switch (targetFlow) {
+                    case 'Update Status':
+                        newStatus = 'Pending Update';
+                        break;
+                    case 'Check Status':
+                        newStatus = 'Under Review';
+                        break;
+                    case 'Matured Llr':
+                        newStatus = 'LLR Matured';
+                        break;
+                    case 'Test Application':
+                        newStatus = 'Test Scheduled';
+                        break;
+                    default:
+                        newStatus = oldStatus;
+                }
+                
+                tasks[taskIndex].status = newStatus;
+                
+                // Add to status history
+                if (!tasks[taskIndex].statusHistory) tasks[taskIndex].statusHistory = [];
+                
+                tasks[taskIndex].statusHistory.push({
+                    status: newStatus,
+                    notes: `Flow changed from ${sourceFlow} to ${targetFlow}. Status updated from ${oldStatus} to ${newStatus}`,
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString(),
+                    updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System'
+                });
+                
+                // Save to localStorage
+                localStorage.setItem('freshLicenseTasks', JSON.stringify(tasks));
+                
+                // Refresh the display
+                displayTasks();
+            }
+        }
+        
+        function setupEventListeners() {
+            // Search input
+            document.getElementById('searchInput').addEventListener('input', displayTasks);
+            
+            // Status filter
+            document.getElementById('statusFilter').addEventListener('change', displayTasks);
+            
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                const modal = document.getElementById('taskModal');
+                if (event.target === modal) {
+                    closeTaskModal();
+                }
+            };
+        }
+    </script>
+</body>
+</html>

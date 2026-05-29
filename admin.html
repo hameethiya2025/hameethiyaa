@@ -186,9 +186,17 @@
         <!-- Dashboard Panel -->
         <div id="adminPanel">
             <div class="admin-header">
-                <h2>Admin Dashboard</h2>
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <span id="adminGreeting" style="color: var(--text-muted); font-size: 0.9rem;">Welcome, Admin</span>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div class="logo-icon">H</div>
+                    <div>
+                        <h2>Hameethiya Admin Portal</h2>
+                        <p style="color: var(--text-muted); font-size: 0.8rem;">Centralized Business Management System</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <a href="Licence/fresh-license.html" class="btn-primary" style="text-decoration: none; display: flex; align-items: center; gap: 8px; background: var(--gold-gradient); color: var(--secondary-color); font-weight: 600; padding: 10px 20px; border-radius: 5px;">
+                        <i class="fas fa-tasks"></i> Task Dashboard
+                    </a>
                     <button class="btn-logout" onclick="adminLogout()">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>

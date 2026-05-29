@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Tasks Status | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PDF Libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(212, 175, 55, 0.03) 0%, transparent 40%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .header-title h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .back-button {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateX(-5px);
+        }
+
+        /* Status Summary Panel */
+        .status-summary {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            background: var(--glass);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px);
+        }
+
+        .status-badge {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.6rem 1.25rem;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .status-badge strong {
+            font-size: 1.1rem;
+            color: var(--gold);
+        }
+
+        .status-badge.total {
+            border-left: 4px solid var(--gold);
+            background: var(--gold-muted);
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            background: var(--bg-accent);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lux);
+        }
+
+        .search-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box, .filter-select {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            padding: 0.9rem 1.5rem;
+            border-radius: 14px;
+            color: var(--text-main);
+            font-family: inherit;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-box:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .filter-select option {
+            background: var(--bg-accent);
+            color: var(--text-main);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-lux {
+            padding: 0.9rem 1.5rem;
+            border-radius: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-report { background: linear-gradient(135deg, var(--gold), var(--gold-bright)); color: var(--bg-dark); }
+        .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .btn-delete:hover { background: #ef4444; color: white; }
+
+        /* Table Premium Styles */
+        .table-container {
+            background: var(--glass);
+            border-radius: 28px;
+            border: 1px solid var(--glass-border);
+            overflow-x: auto;
+            box-shadow: var(--shadow-lux);
+        }
+
+        .check-task-list {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .check-task-list th {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 1.5rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+            letter-spacing: 0.02em;
+        }
+
+        .check-task-list td {
+            padding: 1.25rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            transition: var(--transition);
+            text-transform: uppercase;
+        }
+
+        .check-task-list tr:last-child td { border-bottom: none; }
+        .check-task-list tr:hover td { background: rgba(212, 175, 55, 0.03); }
+
+        .task-name {
+            color: var(--gold-bright);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .task-name:hover { color: var(--gold); transform: translateX(5px); display: inline-block; }
+
+        .negative-review-row td { color: #ef4444 !important; font-weight: 600; }
+        .negative-review-row { background: rgba(239, 68, 68, 0.05) !important; }
+
+        .reminder-row { background: rgba(245, 158, 11, 0.05) !important; }
+
+        /* Actions */
+        .whatsapp-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #25D366;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            margin-left: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .whatsapp-link:hover { transform: scale(1.1); }
+
+        .btn-action-small {
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .btn-del-small { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .btn-del-small:hover { background: #ef4444; color: white; }
+
+        .btn-bell { background: var(--glass); color: var(--gold); border: 1px solid var(--gold-muted); margin-left: 0.5rem; font-size: 1rem; padding: 0.3rem 0.6rem; }
+
+        /* Floating Notification Button */
+        .notification-btn {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 18px;
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: none;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .notification-btn.active { display: flex; align-items: center; gap: 0.75rem; animation: blink 1.5s infinite; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .header { flex-direction: column; align-items: flex-start; }
+            .controls-panel { padding: 1.5rem; }
+            .search-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-title">
+                <button class="back-button" onclick="window.location.href='fresh-license.html'">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <h1>All Tasks Status</h1>
+            </div>
+            <button class="notification-btn" id="notificationBtn" onclick="scrollToReminders()">
+                <i class="fas fa-bell"></i> Today's Reminders
+            </button>
+        </div>
+
+        <div id="statusSummary" class="status-summary"></div>
+
+        <div class="controls-panel">
+            <div class="search-row">
+                <input type="text" class="search-box" id="checkTaskSearch" 
+                       placeholder="Search name, mobile, app # or ID..." 
+                       style="flex: 2;" oninput="filterCheckTasks()">
+                
+                <select class="filter-select" id="yearFilter" onchange="filterCheckTasks()">
+                    <option value="">All Years</option>
+                </select>
+                <select class="filter-select" id="statusFilter" onchange="filterCheckTasks()">
+                    <option value="">All Statuses</option>
+                </select>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn-lux btn-report" onclick="generateReport()">
+                    <i class="fas fa-file-pdf"></i> Generate Report
+                </button>
+                <button class="btn-lux btn-delete" onclick="deleteYearTasks()">
+                    <i class="fas fa-trash-sweep"></i> Delete Year Records
+                </button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="check-task-list" id="checkTaskList">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Father's Name</th>
+                        <th>Mobile</th>
+                        <th>Vehicle Class</th>
+                        <th>App Number</th>
+                        <th>Current Status</th>
+                        <th>Latest Notes</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- API Utils -->
+    <script src="api-utils.js"></script>
+
+    <script>
+        async function filterCheckTasks() {
+            const searchTerm = document.getElementById('checkTaskSearch').value.toLowerCase();
+            const yearFilter = document.getElementById('yearFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const tasks = await apiUtils.getTasks();
+            
+            const parseDate = (dateStr, timeStr) => {
+                if (!dateStr) return new Date(0);
+                let datePart = dateStr;
+                if (dateStr.includes('/')) {
+                    const parts = dateStr.split('/');
+                    if (parts.length === 3) datePart = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                }
+                return new Date(`${datePart} ${timeStr || '00:00:00'}`);
+            };
+
+            const baseFilteredTasks = tasks.filter(task => {
+                const matchesSearch = 
+                    task.applicantName?.toLowerCase().includes(searchTerm) ||
+                    task.mobile?.includes(searchTerm) ||
+                    String(task.id).includes(searchTerm) ||
+                    task.fatherName?.toLowerCase().includes(searchTerm) ||
+                    task.applicationNumber?.toLowerCase().includes(searchTerm);
+            
+                let taskDate = task.creationDate ? parseDate(task.creationDate, task.creationTime) : new Date(task.llrDate || task.createdAt);
+                const taskYear = isNaN(taskDate.getTime()) ? null : taskDate.getFullYear();
+                const matchesYear = !yearFilter || (taskYear && taskYear.toString() === yearFilter);
+            
+                return matchesSearch && matchesYear;
+            });
+
+            updateStatusCounts(baseFilteredTasks);
+
+            const finalFilteredTasks = baseFilteredTasks.filter(task => !statusFilter || task.status === statusFilter)
+                .sort((a, b) => parseDate(b.creationDate, b.creationTime) - parseDate(a.creationDate, a.creationTime));
+            
+            const tbody = document.querySelector('#checkTaskList tbody');
+            tbody.innerHTML = '';
+        
+            finalFilteredTasks.forEach(task => {
+                const latestStatus = task.statusHistory?.[task.statusHistory.length - 1];
+                const row = document.createElement('tr');
+                const isNegativeReview = String(task.feedbackReview || '').toLowerCase() === 'negative';
+                
+                if (task.reminderDate && new Date(task.reminderDate).toLocaleDateString() === new Date().toLocaleDateString()) row.classList.add('reminder-row');
+                if (isNegativeReview) row.classList.add('negative-review-row');
+
+                row.innerHTML = `
+                    <td style="color:var(--text-muted);">#${String(task.id).padStart(4, '0')}</td>
+                    <td><span class="task-name" onclick="navigateToDetailedReport('${task.id}')">${task.applicantName?.toUpperCase() || '-'}</span></td>
+                    <td>${(task.fatherName || '-').toUpperCase()}</td>
+                    <td>
+                        ${task.mobile || '-'}
+                        ${task.mobile && task.mobile !== '-' ? `<a href="https://wa.me/${task.mobile.replace(/\D/g, '')}" target="_blank" class="whatsapp-link"><i class="fab fa-whatsapp"></i></a>` : ''}
+                    </td>
+                    <td>${(task.vehicleClass || '-').toUpperCase()}</td>
+                    <td style="font-family:monospace;">${(task.applicationNumber || '-').toUpperCase()}</td>
+                    <td><span style="color:var(--gold);font-weight:600;">${(task.status || '-').toUpperCase()}</span></td>
+                    <td ondblclick="editNotes(this, '${task.id}')">
+                        <span class="notes-text">${(latestStatus?.notes || '-').toUpperCase()}</span>
+                        <input type="text" class="search-box" style="display:none;padding:0.4rem;margin:0;" value="${latestStatus?.notes || ''}">
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center;">
+                            <button class="btn-action-small btn-del-small" onclick="deleteTask('${task.id}')"><i class="fas fa-trash"></i></button>
+                            <button class="btn-action-small btn-bell" onclick="toggleReminder('${task.id}')"><i class="fas fa-bell"></i></button>
+                            <input type="date" class="search-box" id="reminder-${task.id}" style="display:none;padding:0.2rem;width:120px;margin-left:0.5rem;" onchange="saveReminder('${task.id}', this.value)">
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            await checkTodayReminders();
+        }
+
+        function updateStatusCounts(tasks) {
+            const container = document.getElementById('statusSummary');
+            const counts = {};
+            tasks.forEach(t => { const s = (t.status || 'Unknown').toUpperCase(); counts[s] = (counts[s] || 0) + 1; });
+
+            let html = `<div class="status-badge total">Total: <strong>${tasks.length}</strong></div>`;
+            Object.keys(counts).sort().forEach(s => { html += `<div class="status-badge">${s}: <strong>${counts[s]}</strong></div>`; });
+            container.innerHTML = html;
+        }
+
+        async function deleteTask(id) {
+            if (confirm('Permanently delete this task?')) {
+                let tasks = await apiUtils.getTasks();
+                tasks = tasks.filter(t => t.id !== id);
+                localStorage.setItem('freshLicenseTasks', JSON.stringify(tasks));
+                await filterCheckTasks();
+            }
+        }
+
+        async function deleteYearTasks() {
+            const year = document.getElementById('yearFilter').value;
+            if (!year) return alert('Select a year to delete records.');
+            if (confirm(`Delete TEST COMPLETED, EXPIRED, and RETURNED records for ${year}?`)) {
+                if (confirm('THIS ACTION CANNOT BE UNDONE. Proceed?')) {
+                    let tasks = await apiUtils.getTasks();
+                    const initial = tasks.length;
+                    tasks = tasks.filter(t => {
+                        const d = new Date(t.createdAt || t.llrDate);
+                        if (d.getFullYear().toString() !== year) return true;
+                        const s = (t.status || '').toUpperCase();
+                        return !['TEST COMPLETED', 'EXPIRED', 'RETURNED'].includes(s);
+                    });
+                    localStorage.setItem('freshLicenseTasks', JSON.stringify(tasks));
+                    await populateYearFilter();
+                    await filterCheckTasks();
+                    alert(`Deleted ${initial - tasks.length} records.`);
+                }
+            }
+        }
+
+        function navigateToDetailedReport(id) { window.location.href = `detailed-task-report.html?id=${id}`; }
+
+        async function populateYearFilter() {
+            const el = document.getElementById('yearFilter');
+            const tasks = await apiUtils.getTasks();
+            const years = [...new Set(tasks.map(t => {
+                const d = new Date(t.createdAt || t.llrDate);
+                return isNaN(d.getTime()) ? null : d.getFullYear();
+            }))].filter(y => y).sort((a,b) => b-a);
+            el.innerHTML = '<option value="">All Years</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
+        }
+
+        async function populateStatusFilter() {
+            const el = document.getElementById('statusFilter');
+            const tasks = await apiUtils.getTasks();
+            const unique = [...new Set(tasks.map(t => t.status))].filter(Boolean);
+            el.innerHTML = '<option value="">All Statuses</option>' + unique.map(s => `<option value="${s}">${s.toUpperCase()}</option>`).join('');
+        }
+
+        function editNotes(cell, id) {
+            const text = cell.querySelector('.notes-text');
+            const input = cell.querySelector('input');
+            text.style.display = 'none';
+            input.style.display = 'block';
+            input.focus();
+            input.onblur = async () => {
+                let tasks = await apiUtils.getTasks();
+                const idx = tasks.findIndex(t => t.id === id);
+                if (idx !== -1) {
+                    if (!tasks[idx].statusHistory) tasks[idx].statusHistory = [];
+                    tasks[idx].statusHistory.push({
+                        status: tasks[idx].status,
+                        notes: input.value,
+                        date: new Date().toLocaleDateString(),
+                        time: new Date().toLocaleTimeString(),
+                        updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System',
+                        type: 'notes_update'
+                    });
+                    await apiUtils.saveTask(tasks[idx]);
+                    text.textContent = input.value.toUpperCase();
+                    text.style.display = 'block';
+                    input.style.display = 'none';
+                }
+            };
+        }
+
+        function toggleReminder(id) {
+            const el = document.getElementById(`reminder-${id}`);
+            el.style.display = el.style.display === 'none' ? 'inline-block' : 'none';
+        }
+
+        async function saveReminder(id, date) {
+            let tasks = await apiUtils.getTasks();
+            const idx = tasks.findIndex(t => t.id === id);
+            if (idx !== -1) {
+                tasks[idx].reminderDate = date;
+                await apiUtils.saveTask(tasks[idx]);
+                await filterCheckTasks();
+            }
+        }
+
+        async function checkTodayReminders() {
+            const tasks = await apiUtils.getTasks();
+            const today = new Date().toLocaleDateString();
+            const has = tasks.some(t => t.reminderDate && new Date(t.reminderDate).toLocaleDateString() === today);
+            document.getElementById('notificationBtn').classList.toggle('active', has);
+        }
+
+        function scrollToReminders() {
+            const row = document.querySelector('.reminder-row');
+            if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        async function generateReport() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const year = document.getElementById('yearFilter').value;
+            const tasks = await apiUtils.getTasks();
+            const filtered = tasks.filter(t => {
+                const d = new Date(t.createdAt || t.llrDate);
+                return !year || d.getFullYear().toString() === year;
+            });
+
+            if (!filtered.length) return alert('No records for this year.');
+
+            const INR = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
+            const body = filtered.map(t => [
+                t.applicantName || '-',
+                t.applicationNumber || '-',
+                t.dob || '-',
+                t.mobile || '-',
+                (t.status || '-').toUpperCase(),
+                INR.format((Number(t.advancePayment) || 0) + (t.payments || []).reduce((s,p) => s + Number(p.amount||0), 0)),
+                INR.format(Math.max(0, Number(t.declaredPayment || 0) - ((Number(t.advancePayment) || 0) + (t.payments || []).reduce((s,p) => s + Number(p.amount||0), 0))))
+            ]);
+
+            doc.text(`License Tasks Report - ${year || 'All Years'}`, 14, 15);
+            doc.autoTable({
+                head: [['Name', 'App #', 'DOB', 'Mobile', 'Status', 'Paid', 'Balance']],
+                body,
+                startY: 25,
+                theme: 'grid',
+                headStyles: { fillColor: [26, 35, 126] }
+            });
+            doc.save(`license-report-${new Date().toISOString().split('T')[0]}.pdf`);
+        }
+
+        window.onload = async function() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) { window.location.href = 'hameethiya.html'; return; }
+            await populateStatusFilter();
+            await populateYearFilter();
+            await filterCheckTasks();
+        }
+    </script>
+</body>
+</html>

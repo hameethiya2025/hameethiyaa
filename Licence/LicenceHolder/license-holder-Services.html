@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>License Holder Services | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --radius: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(212, 175, 55, 0.04) 0%, transparent 35%),
+                radial-gradient(circle at 95% 95%, rgba(212, 175, 55, 0.04) 0%, transparent 35%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 2rem 3rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lux);
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: 0.02em;
+        }
+
+        .back-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateX(-5px);
+        }
+
+        /* Card Container */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+            align-items: stretch;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            height: 100%;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, var(--gold-muted), transparent 70%);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold-muted);
+            box-shadow: var(--shadow-lux);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--text-main);
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-description {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 1000px;
+            padding: 3rem;
+            border-radius: 32px;
+            box-shadow: var(--shadow-lux);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: auto;
+        }
+
+        .modal-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--glass);
+        }
+
+        .close-btn:hover {
+            color: var(--gold);
+            background: var(--gold-muted);
+            transform: rotate(90deg);
+        }
+
+        /* Search Container */
+        .search-container {
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            padding: 1.1rem 1.5rem;
+            border-radius: 16px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: var(--glass);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        #appointmentTable, #todoTable {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: transparent;
+        }
+
+        #appointmentTable th, #todoTable th {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 1.5rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        #appointmentTable td, #todoTable td {
+            padding: 1.25rem;
+            color: var(--text-main);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            font-size: 0.95rem;
+        }
+
+        #appointmentTable tr:last-child td, #todoTable tr:last-child td {
+            border-bottom: none;
+        }
+
+        #appointmentTable tbody tr:hover, #todoTable tbody tr:hover {
+            background: rgba(212, 175, 55, 0.03);
+        }
+
+        .no-appointments {
+            text-align: center !important;
+            padding: 4rem !important;
+            color: var(--text-muted) !important;
+            font-style: italic;
+        }
+
+        /* Badge Styles */
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+        }
+
+        .badge.license-holder {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+            border: 1px solid var(--gold-muted);
+        }
+
+        .badge.fresh-license {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header { padding: 1.5rem; flex-direction: column; gap: 1.5rem; text-align: center; }
+            .card-container { grid-template-columns: 1fr; }
+            .modal-content { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>License Holder Services</h1>
+            <button class="back-btn" onclick="location.href='../license-services.html'">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+        </div>
+
+        <div class="card-container">
+            <div class="card" onclick="location.href='../LicenceHolder/Create-Task-license-holder.html'">
+                <div class="card-icon"><i class="fas fa-file-signature"></i></div>
+                <div class="card-title">Create Task</div>
+                <div class="card-description">Create and manage new license service requests with our premium management system.</div>
+            </div>
+
+            <div class="card" onclick="location.href='../LicenceHolder/license-check-status.html'">
+                <div class="card-icon"><i class="fas fa-search-location"></i></div>
+                <div class="card-title">Check Status</div>
+                <div class="card-description">Track and view the real-time status of your ongoing service requests.</div>
+            </div>
+
+            <div class="card" onclick="location.href='../LicenceHolder/license-update-status.html'">
+                <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="card-title">Update Status</div>
+                <div class="card-description">Modify and update the progress of active tasks and maintain service flow.</div>
+            </div>
+
+            <div class="card" onclick="location.href='../LicenceHolder/Licence-holder-payment.html'">
+                <div class="card-icon"><i class="fas fa-credit-card"></i></div>
+                <div class="card-title">Payment</div>
+                <div class="card-description">Manage payments, track billing history, and handle financial records securely.</div>
+            </div>
+
+            <div class="card" onclick="showTodayAppointments()">
+                <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="card-title">Today's Appointments</div>
+                <div class="card-description">View all scheduled customer appointments for the current day.</div>
+            </div>
+
+            <div class="card" onclick="showTodoTasks()">
+                <div class="card-icon"><i class="fas fa-tasks"></i></div>
+                <div class="card-title">TO-DO List</div>
+                <div class="card-description">Access and manage tasks that are ready for immediate follow-up actions.</div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div id="todoModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeTodoModal()">&times;</span>
+                <h2>Tasks Ready To Follow</h2>
+                <div id="todoList"></div>
+            </div>
+        </div>
+
+        <div id="appointmentModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeAppointmentModal()">&times;</span>
+                <h2>Today's Appointments</h2>
+                <div id="appointmentList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add API utils script -->
+    <script src="../api-utils.js"></script>
+
+    <script>
+        // Check user access
+        window.onload = async function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = '../hameethiya.html';
+                return;
+            }
+
+            if (!currentUser.moduleAccess?.license && currentUser.role !== 'admin') {
+                alert('You do not have access to License Services');
+                window.location.href = '../service-selection.html';
+            }
+        }
+
+        async function showTodayAppointments() {
+            const [services, freshTasks] = await Promise.all([
+                apiUtils.getLicenseHolderServices(),
+                apiUtils.getTasks()
+            ]);
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayLocale = new Date().toLocaleDateString();
+            
+            // Helper to format date for comparison
+            const formatDateForComparison = (dateStr) => {
+                if (!dateStr) return null;
+                if (dateStr.includes('-')) return dateStr; // YYYY-MM-DD
+                if (dateStr.includes('/')) {
+                    const [d, m, y] = dateStr.split('/');
+                    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+                }
+                const d = new Date(dateStr);
+                return isNaN(d.getTime()) ? null : d.toISOString().split('T')[0];
+            };
+
+            // Filter services
+            const holderAppointments = services.filter(service => {
+                const appDate = formatDateForComparison(service.appointmentDate);
+                const isAppointmentFixed = service.status?.toLowerCase() === 'appointment fixed';
+                return appDate === today && isAppointmentFixed;
+            }).map(s => ({
+                name: s.name,
+                type: s.serviceType,
+                mobile: s.mobileNumber,
+                time: s.statusHistory?.length > 0 ? s.statusHistory[s.statusHistory.length - 1].time : 'N/A',
+                source: 'License Holder'
+            }));
+
+            // Filter fresh tasks
+            const freshAppointments = freshTasks.filter(task => {
+                const appDate = formatDateForComparison(task.appointmentDate || task.details?.testAppointmentDate);
+                const isAppointmentFixed = task.status?.toLowerCase() === 'appointment fixed' || 
+                                         task.status?.toLowerCase() === 'test application generated';
+                return appDate === today && isAppointmentFixed;
+            }).map(t => ({
+                name: t.applicantName,
+                type: 'Fresh License',
+                mobile: t.mobile,
+                time: t.statusHistory?.length > 0 ? t.statusHistory[t.statusHistory.length - 1].time : 'N/A',
+                source: 'Fresh License'
+            }));
+
+            const allAppointments = [...holderAppointments, ...freshAppointments];
+    
+            const appointmentList = document.getElementById('appointmentList');
+            
+            appointmentList.innerHTML = `
+                <div class="search-container">
+                    <input type="text" id="appointmentSearch" class="search-input" placeholder="Search appointments..." onkeyup="filterAppointments()">
+                </div>
+                <div class="table-container">
+                    <table id="appointmentTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Service Type</th>
+                                <th>Mobile Number</th>
+                                <th>Time</th>
+                                <th>Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${allAppointments.length === 0 ? 
+                                '<tr><td colspan="5" class="no-appointments">No appointments scheduled for today</td></tr>' :
+                                allAppointments.map(app => `
+                                    <tr>
+                                        <td>${(app.name || 'No Name').toUpperCase()}</td>
+                                        <td>${(app.type || 'N/A').toUpperCase()}</td>
+                                        <td>${app.mobile || app.mobileNumber || 'N/A'}</td>
+                                        <td>${app.time}</td>
+                                        <td><span class="badge ${app.source.toLowerCase().replace(' ', '-')} ">${app.source}</span></td>
+                                    </tr>
+                                `).join('')
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            `;
+    
+            document.getElementById('appointmentModal').style.display = 'block';
+        }
+
+        async function showTodoTasks() {
+            const [services, freshTasks] = await Promise.all([
+                apiUtils.getLicenseHolderServices(),
+                apiUtils.getTasks()
+            ]);
+            
+            const holderTodo = services.filter(service => 
+                service.status?.toLowerCase() === 'ready to follow'
+            ).map(s => ({
+                name: s.name,
+                type: s.serviceType,
+                notes: s.statusHistory?.length > 0 ? (s.statusHistory[s.statusHistory.length - 1].notes || 'No notes') : 'No notes',
+                source: 'License Holder'
+            }));
+
+            const freshTodo = freshTasks.filter(task => 
+                task.status?.toLowerCase() === 'ready to follow'
+            ).map(t => ({
+                name: t.applicantName,
+                type: 'Fresh License',
+                notes: t.statusHistory?.length > 0 ? (t.statusHistory[t.statusHistory.length - 1].notes || 'No notes') : 'No notes',
+                source: 'Fresh License'
+            }));
+
+            const allTodo = [...holderTodo, ...freshTodo];
+    
+            const todoList = document.getElementById('todoList');
+            
+            todoList.innerHTML = `
+                <div class="search-container">
+                    <input type="text" id="todoSearch" class="search-input" placeholder="Search tasks..." onkeyup="filterTodoTasks()">
+                </div>
+                <div class="table-container">
+                    <table id="todoTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Service Type</th>
+                                <th>Notes</th>
+                                <th>Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${allTodo.length === 0 ? 
+                                '<tr><td colspan="4" class="no-appointments">No tasks ready to follow</td></tr>' :
+                                allTodo.map(todo => `
+                                    <tr>
+                                        <td>${(todo.name || 'No Name').toUpperCase()}</td>
+                                        <td>${(todo.type || 'N/A').toUpperCase()}</td>
+                                        <td>${(todo.notes || 'No notes').toUpperCase()}</td>
+                                        <td><span class="badge ${todo.source.toLowerCase().replace(' ', '-')}">${todo.source}</span></td>
+                                    </tr>
+                                `).join('')
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            `;
+    
+            document.getElementById('todoModal').style.display = 'block';
+        }
+
+        function filterTodoTasks() {
+            const searchText = document.getElementById('todoSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#todoTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchText) ? '' : 'none';
+            });
+        }
+
+        function closeTodoModal() {
+            document.getElementById('todoModal').style.display = 'none';
+        }
+
+        // Update window.onclick to handle both modals
+        window.onclick = function(event) {
+            const appointmentModal = document.getElementById('appointmentModal');
+            const todoModal = document.getElementById('todoModal');
+            if (event.target === appointmentModal) {
+                appointmentModal.style.display = 'none';
+            }
+            if (event.target === todoModal) {
+                todoModal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

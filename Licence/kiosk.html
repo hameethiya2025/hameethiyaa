@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Enquiry | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 95% 95%, rgba(212, 175, 55, 0.03) 0%, transparent 40%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .kiosk-container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            padding: 3.5rem;
+            border-radius: 32px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lux);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kiosk-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .header-section {
+            margin-bottom: 3.5rem;
+            text-align: center;
+        }
+
+        .header-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            letter-spacing: 0.02em;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-section p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-button:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding-left: 0.5rem;
+        }
+
+        .form-group input, .form-group select {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.1rem 1.5rem;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .form-group select option {
+            background: var(--bg-accent);
+            color: var(--text-main);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+            color: var(--bg-dark);
+            border: none;
+            padding: 1.25rem;
+            border-radius: 18px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1.5rem;
+            transition: var(--transition);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1.25rem 2.5rem;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            box-shadow: var(--shadow-lux);
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+            background: rgba(16, 185, 129, 0.9);
+            display: none;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .kiosk-container { padding: 2.5rem 1.5rem; }
+            .header-section h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="kiosk-container">
+        <a href="fresh-license.html" class="back-button">
+            <i class="fas fa-chevron-left"></i> Back
+        </a>
+        <div class="header-section">
+            <h1>Quick Enquiry</h1>
+            <p>Welcome to Hameethiya Driving School</p>
+        </div>
+
+        <form id="kioskForm" onsubmit="handleKioskSubmit(event)">
+            <div class="form-group">
+                <label for="applicantName">Applicant Name</label>
+                <input type="text" id="applicantName" placeholder="Enter your full name" required style="text-transform: uppercase;">
+            </div>
+
+            <div class="form-group">
+                <label for="mobileNumber">Mobile Number</label>
+                <input type="tel" id="mobileNumber" pattern="[0-9]{10}" maxlength="10" 
+                       placeholder="Enter 10-digit mobile number" required
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+
+            <div class="form-group">
+                <label for="serviceType">Interested Service</label>
+                <select id="serviceType" required>
+                    <option value="">Select a service</option>
+                    <option value="Fresh License">Fresh License</option>
+                    <option value="LLR Issued">Already have LLR</option>
+                    <option value="Other Service">Other Services</option>
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn">Register Enquiry</button>
+        </form>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <!-- API Utils -->
+    <script src="api-utils.js"></script>
+
+    <script>
+        function showNotification(message) {
+            const el = document.getElementById('notification');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => {
+                el.style.opacity = '0';
+                setTimeout(() => { el.style.display = 'none'; el.style.opacity = '1'; }, 400);
+            }, 3000);
+        }
+
+        async function handleKioskSubmit(event) {
+            event.preventDefault();
+            const submitBtn = event.target.querySelector('button');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Registering...';
+
+            const name = document.getElementById('applicantName').value.trim().toUpperCase();
+            const mobile = document.getElementById('mobileNumber').value.trim();
+            const service = document.getElementById('serviceType').value;
+
+            // Save to local storage for the Create Task page to pick up
+            localStorage.setItem('currentEnquiry', JSON.stringify({ name, mobile, service, date: new Date().toLocaleString() }));
+
+            // Log the enquiry
+            let enquiries = JSON.parse(localStorage.getItem('kioskEnquiries') || '[]');
+            enquiries.push({ name, mobile, service, timestamp: new Date().toISOString() });
+            localStorage.setItem('kioskEnquiries', JSON.stringify(enquiries));
+
+            showNotification('Enquiry registered! Redirecting to create task...');
+            
+            setTimeout(() => {
+                window.location.href = 'create-license-task.html';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

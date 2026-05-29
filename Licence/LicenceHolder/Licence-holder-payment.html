@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Management | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --radius: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(212, 175, 55, 0.04) 0%, transparent 35%),
+                radial-gradient(circle at 95% 95%, rgba(212, 175, 55, 0.04) 0%, transparent 35%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 2rem 3rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lux);
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: 0.02em;
+        }
+
+        .back-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateX(-5px);
+        }
+
+        /* Search Section */
+        .search-container {
+            background: var(--bg-accent);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lux);
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            padding: 1.1rem 1.5rem;
+            border-radius: 16px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Task Cards */
+        #taskContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.25rem;
+            align-items: stretch;
+        }
+
+        .task-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border-left: 4px solid var(--gold);
+            height: 100%;
+        }
+
+        .task-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold-muted);
+            box-shadow: var(--shadow-lux);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .task-header h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 1.15rem;
+            margin: 0;
+        }
+
+        .task-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .task-info span {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* Payment Form */
+        .payment-form {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1.25rem;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            margin-top: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .form-group input, .form-group select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .form-group select option {
+            background: var(--bg-accent);
+            color: var(--text-main);
+        }
+
+        .payment-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+            color: var(--bg-dark);
+            border: none;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .payment-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+            filter: brightness(1.1);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header { padding: 1.5rem; flex-direction: column; gap: 1.5rem; text-align: center; }
+            .search-container { padding: 1.5rem; }
+            #taskContainer { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Payment Management</h1>
+            <button class="back-btn" onclick="location.href='../LicenceHolder/license-holder-Services.html'">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by name, license number or mobile..." onkeyup="filterTasks(this.value)">
+        </div>
+
+        <div id="taskContainer"></div>
+    </div>
+
+    <!-- Add API utils script -->
+    <script src="../api-utils.js"></script>
+
+    <script>
+        function calculateBalance(service) {
+            // Parse all amounts with proper decimal handling
+            const commitment = parseFloat(service.commitmentPayment || '0');
+            const advance = parseFloat(service.advancePayment || '0');
+            const additionalPayments = (service.paymentHistory || [])
+                .reduce((sum, payment) => sum + parseFloat(payment.amount || '0'), 0);
+            
+            // Calculate balance with proper decimal precision
+            const balance = (commitment - advance - additionalPayments).toFixed(2);
+            return Math.max(0, parseFloat(balance));
+        }
+
+        async function updateTasks(filter = '') {
+            const services = await apiUtils.getLicenseHolderServices();
+            const container = document.getElementById('taskContainer');
+            
+            if (services.length === 0) {
+                container.innerHTML = '<div class="task-card">No tasks found</div>';
+                return;
+            }
+
+            const searchTerms = filter.toLowerCase().trim().split(/\s+/).filter(term => term.length > 0);
+
+            const filteredServices = services.filter(service => {
+                const name = (service.name || '').toLowerCase();
+                const license = (service.licenseNumber || '').toLowerCase();
+                const mobile = (service.mobileNumber || service.mobile || '').toLowerCase();
+                const status = (service.status || '').toLowerCase();
+
+                // Check if all search terms are found in any of the fields
+                const matchesSearch = searchTerms.length === 0 || searchTerms.every(term => 
+                    name.includes(term) || 
+                    license.includes(term) || 
+                    mobile.includes(term)
+                );
+
+                return matchesSearch &&
+                    status !== 'completed' && 
+                    status !== 'returned' &&
+                    calculateBalance(service) > 0
+            });
+
+            if (filteredServices.length === 0) {
+                container.innerHTML = '<div class="task-card">No pending payments found</div>';
+                return;
+            }
+
+            container.innerHTML = filteredServices.map((service) => `
+                <div class="task-card">
+                    <div class="task-header">
+                        <h3>${service.name || 'No Name'}</h3>
+                    </div>
+                    <div class="task-info">
+                        <strong>License Number:</strong> ${service.licenseNumber || 'N/A'}
+                    </div>
+                    <div class="task-info">
+                        <strong>Mobile:</strong> ${service.mobileNumber || service.mobile || 'N/A'}
+                    </div>
+                    <div class="task-info">
+                        <strong>Service Type:</strong> ${service.serviceType || 'N/A'}
+                    </div>
+                    <div class="task-info">
+                        <strong>Commitment Payment:</strong> Rs. ${parseFloat(service.commitmentPayment || '0').toFixed(2)}
+                    </div>
+                    <div class="task-info">
+                        <strong>Advance Payment:</strong> Rs. ${parseFloat(service.advancePayment || '0').toFixed(2)}
+                    </div>
+                    <div class="task-info">
+                        <strong>Additional Payments:</strong> Rs. ${(service.paymentHistory || [])
+                            .reduce((sum, payment) => sum + parseFloat(payment.amount || '0'), 0)
+                            .toFixed(2)}
+                    </div>
+                    <div class="task-info">
+                        <strong>Balance:</strong> Rs. ${calculateBalance(service).toFixed(2)}
+                    </div>
+                    <div class="payment-form">
+                        <div class="form-group">
+                            <label>Payment Type</label>
+                            <select id="paymentType-${service.licenseNumber}">
+                                <option value="additional">Additional Payment</option>
+                                <option value="final">Final Payment</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount (Rs.)</label>
+                            <input type="number" id="amount-${service.licenseNumber}" min="0" step="0.01">
+                        </div>
+                        <button class="payment-btn" onclick="addPayment('${service.licenseNumber}')">Add Payment</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function addPayment(licenseNumber) {
+            const services = await apiUtils.getLicenseHolderServices();
+            
+            const amountInput = document.getElementById(`amount-${licenseNumber}`);
+            const amount = parseFloat(amountInput.value);
+            const type = document.getElementById(`paymentType-${licenseNumber}`).value;
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+
+            const serviceIndex = services.findIndex(s => s.licenseNumber === licenseNumber);
+            if (serviceIndex === -1) {
+                alert('Error: Service not found');
+                return;
+            }
+
+            const service = services[serviceIndex];
+
+            if (!service.paymentHistory) {
+                service.paymentHistory = [];
+            }
+
+            // Create payment record
+            const currentUser = JSON.parse(localStorage.getItem('currentUser')) || { username: 'Unknown' };
+            const paymentRecord = {
+                amount: amount,
+                type: type,
+                date: new Date().toISOString(),
+                timestamp: new Date().getTime(),
+                licenseNumber: service.licenseNumber,
+                serviceName: service.name,
+                serviceType: service.serviceType,
+                user: currentUser.username || 'Unknown'
+            };
+
+            // Add payment to the service
+            service.paymentHistory.push(paymentRecord);
+
+            // Save updated services
+            const result = await apiUtils.saveLicenseHolderService(service);
+            
+            if (result.success) {
+                alert('Payment recorded successfully!');
+                amountInput.value = '';
+                updateTasks(document.getElementById('searchInput').value);
+            } else {
+                alert('Failed to save payment: ' + (result.error || 'Unknown error'));
+            }
+        }
+
+        function filterTasks(searchText) {
+            updateTasks(searchText);
+        }
+
+        // Initialize tasks
+        document.addEventListener('DOMContentLoaded', () => updateTasks());
+    </script>
+</body>
+</html>

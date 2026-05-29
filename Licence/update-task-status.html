@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Task Status | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(212, 175, 55, 0.03) 0%, transparent 40%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .header-section {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .header-title h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .task-count {
+            background: var(--gold-muted);
+            color: var(--gold);
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 1px solid var(--gold);
+        }
+
+        .back-button {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .back-button:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateX(-5px);
+        }
+
+        /* Filters Section */
+        .status-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .task-filters {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-lux);
+        }
+
+        .task-filters input, 
+        .task-filters select {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            padding: 0.9rem 1.25rem;
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            min-width: 250px;
+            flex: 1;
+            transition: var(--transition);
+        }
+
+        .task-filters input:focus, 
+        .task-filters select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .task-filters select option,
+        .status-select option {
+            background: var(--bg-accent);
+            color: var(--text-main);
+        }
+
+        /* Task Grid & Cards */
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.25rem;
+            align-items: stretch;
+        }
+
+        .task-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 1.75rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            height: 100%;
+        }
+
+        .task-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold-muted);
+            box-shadow: var(--shadow-lux);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .task-id {
+            font-weight: 700;
+            color: var(--gold);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .priority-star {
+            color: var(--gold-bright);
+            font-size: 1.25rem;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .task-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .info-row strong {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-row span {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        /* Status Update Section */
+        .status-update-section {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .status-select, 
+        .app-number-input,
+        .status-notes {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            color: var(--text-main);
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .status-select:focus, 
+        .app-number-input:focus,
+        .status-notes:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .update-button {
+            background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+            color: var(--bg-dark);
+            border: none;
+            padding: 0.9rem;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .update-button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .hold-move-btn {
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #ef4444 !important;
+            border: 1px solid rgba(239, 68, 68, 0.2) !important;
+        }
+
+        .hold-move-btn:hover {
+            background: #ef4444 !important;
+            color: white !important;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1.25rem 2.5rem;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            box-shadow: var(--shadow-lux);
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Modal Premium */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 650px;
+            padding: 3rem;
+            border-radius: 32px;
+            box-shadow: var(--shadow-lux);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--gold);
+            transform: rotate(90deg);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header-section { flex-direction: column; align-items: flex-start; }
+            .task-filters { flex-direction: column; padding: 1.5rem; }
+            .task-filters input, .task-filters select { min-width: 100%; }
+            .task-grid { grid-template-columns: 1fr; }
+            .task-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-section">
+        <div class="header-title">
+            <button class="back-button" onclick="window.location.href='fresh-license.html'">
+                <i class="fas fa-chevron-left"></i> Back
+            </button>
+            <h2>Update Task Status</h2>
+            <span id="taskCountDisplay" class="task-count">0</span>
+        </div>
+    </div>
+
+    <div class="status-container">
+        <div class="task-filters">
+            <input type="text" id="taskSearch" placeholder="Search applicant, mobile, or ID...">
+            <select id="statusFilter">
+                <option value="">All Statuses</option>
+            </select>
+            <select id="vehicleFilter">
+                <option value="">All Vehicle Classes</option>
+            </select>
+        </div>
+        
+        <div id="taskGrid" class="task-grid">
+            <!-- Tasks will be injected here -->
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeEditModal()">&times;</span>
+            <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 2rem; color: var(--gold);">Edit Task Details</h2>
+            
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Applicant Name</label>
+                    <input type="text" id="editName" class="status-notes">
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Mobile Number</label>
+                    <input type="text" id="editMobile" class="status-notes">
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Vehicle Classes (Hold Ctrl/Cmd)</label>
+                    <select id="editVehicleClass" class="status-select" multiple style="height: 120px;"></select>
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Notes</label>
+                    <textarea id="editNotes" class="status-notes" style="height: 100px; resize: none;"></textarea>
+                </div>
+                <button class="update-button" onclick="saveEditTask()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="api-utils.js"></script>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAY8aW7751YUvDdv4xZYnXSF5AZevOBIxI",
+            authDomain: "hameethiya.firebaseapp.com",
+            projectId: "hameethiya",
+            storageBucket: "hameethiya.firebasestorage.app",
+            messagingSenderId: "206037846",
+            appId: "1:206037846:web:0bcbcfd67f6989e46d6cf7",
+            measurementId: "G-8ZQ1Y0CPQZ"
+        };
+        
+        let db = null;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.firestore();
+        } catch (e) {
+            console.warn("Firebase failed to initialize:", e);
+        }
+
+        let allTasks = []; // Store tasks locally for efficient updates
+
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.backgroundColor = type === 'success' ? 'rgba(16, 185, 129, 0.9)' : 'rgba(239, 68, 68, 0.9)';
+            notification.style.border = `1px solid ${type === 'success' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(30px)';
+                setTimeout(() => notification.remove(), 400);
+            }, 3000);
+        }
+
+        // Date Helpers
+        function parseAnyDate(str) {
+            if (!str) return new Date();
+            const d = new Date(str);
+            if (!isNaN(d.getTime())) return d;
+            if (str.includes('/')) {
+                const [day, month, year] = str.split('/').map(Number);
+                return new Date(year, month - 1, day);
+            }
+            return new Date();
+        }
+
+        function calculateMaturityDate(llrDate) {
+            if (!llrDate) return '';
+            const date = parseAnyDate(llrDate);
+            date.setDate(date.getDate() + 30);
+            return date.toISOString().split('T')[0];
+        }
+
+        function calculateExpiryDate(llrDate) {
+            if (!llrDate) return '';
+            const date = parseAnyDate(llrDate);
+            date.setMonth(date.getMonth() + 6);
+            return date.toISOString().split('T')[0];
+        }
+
+        // Hold Duration Helper
+        function getHoldDuration(task) {
+            const HOLD_STATUS = 'Hold by Customer';
+            let holdDateStr = null;
+            
+            if (task.statusHistory && Array.isArray(task.statusHistory)) {
+                const holdEntry = [...task.statusHistory].reverse().find(h => 
+                    (h.status || '').toLowerCase() === HOLD_STATUS.toLowerCase()
+                );
+                if (holdEntry && holdEntry.date) holdDateStr = holdEntry.date;
+            }
+            
+            if (!holdDateStr && (task.status || '').toLowerCase() === HOLD_STATUS.toLowerCase()) {
+                holdDateStr = task.creationDate;
+            }
+            
+            if (!holdDateStr) return 0;
+
+            const d1 = parseAnyDate(holdDateStr);
+            const d2 = new Date();
+            d1.setHours(0,0,0,0);
+            d2.setHours(0,0,0,0);
+            
+            return Math.max(0, Math.floor((d2 - d1) / (1000 * 60 * 60 * 24)));
+        }
+
+        // Task Display Logic
+        function getFilteredTasks(tasks) {
+            const searchTerm = (document.getElementById('taskSearch').value || '').toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const vehicleFilter = document.getElementById('vehicleFilter').value;
+
+            return tasks.filter(task => {
+                const name = (task.applicantName || '').toLowerCase();
+                const mobile = (task.mobile || '').toLowerCase();
+                const mobileNum = (task.mobileNumber || '').toLowerCase();
+                const id = String(task.id || '');
+
+                const matchesSearch = 
+                    name.includes(searchTerm) ||
+                    mobile.includes(searchTerm) ||
+                    mobileNum.includes(searchTerm) ||
+                    id.includes(searchTerm);
+                const matchesStatus = !statusFilter || task.status === statusFilter;
+                const matchesVehicle = !vehicleFilter || task.vehicleClass === vehicleFilter;
+                
+                const hiddenStatuses = ['LLR Issued', 'Returned', 'Test Application Generated', 'Test Completed', 'Test Committed', 'Committed', 'Engagged', 'Expired', 'LLR EXPIRED'];
+                const isNotHidden = !hiddenStatuses.includes(task.status) && !(task.details && task.details.isManuallyHeld);
+                
+                return matchesSearch && matchesStatus && matchesVehicle && isNotHidden;
+            });
+        }
+
+        async function loadTasks() {
+            // Fetch all tasks and store in global allTasks
+            const tasks = await apiUtils.getTasks();
+            if (Array.isArray(tasks)) {
+                allTasks = tasks;
+            } else {
+                console.warn('Failed to fetch tasks, using empty array');
+                allTasks = [];
+            }
+
+            const filteredTasks = getFilteredTasks(allTasks);
+            document.getElementById('taskCountDisplay').textContent = filteredTasks.length;
+            await displayTasks(filteredTasks);
+        }
+
+        async function displayTasks(tasks) {
+            const taskGrid = document.getElementById('taskGrid');
+            taskGrid.innerHTML = '';
+            
+            // Default statuses if none are configured in settings
+            const defaultStatuses = [
+                'New Application', 
+                'Pending', 
+                'Hold by Customer', 
+                'Application Generated', 
+                'Appointment Fixed', 
+                'Test Application Generated', 
+                'Test Completed', 
+                'Test Committed', 
+                'Committed', 
+                'Engagged', 
+                'LLR Issued', 
+                'Returned', 
+                'Expired'
+            ];
+            
+            const customStatuses = await apiUtils.getSettings('freshLicenseStatuses', []);
+            const configuredStatuses = customStatuses.length > 0 ? customStatuses : defaultStatuses;
+
+            tasks.forEach(task => {
+                // Ensure current status is in the dropdown even if not in settings
+                const taskStatuses = [...new Set([task.status, ...configuredStatuses])];
+                
+                const holdDuration = getHoldDuration(task);
+                const isHoldStatus = (task.status || '').toLowerCase() === 'hold by customer';
+                const isHoldEligible = isHoldStatus && holdDuration >= 30;
+                const mode = (task.applicationMode || '').toUpperCase();
+
+                const card = document.createElement('div');
+                card.className = 'task-card';
+                
+                card.innerHTML = `
+                    <div class="task-header">
+                        <span class="task-id">
+                            ${task.isPriority ? '<i class="fas fa-star priority-star"></i>' : ''}
+                            ${mode === 'FACELESS' ? '🖥️' : mode === 'DIRECT' ? '🤝' : ''}
+                            #${String(task.id).padStart(4, '0')}
+                        </span>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <button class="update-button" style="width: auto; padding: 0.4rem 0.6rem; background: var(--glass);" onclick="editTask('${task.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">${task.creationDate}</span>
+                        </div>
+                    </div>
+
+                    <div class="task-info">
+                        <div class="info-row"><strong>Applicant</strong> <span>${task.applicantName.toUpperCase()}</span></div>
+                        <div class="info-row"><strong>Mobile</strong> <span>${task.mobile || task.mobileNumber || ''}</span></div>
+                        <div class="info-row"><strong>Classes</strong> <span>${task.vehicleClass.toUpperCase()}</span></div>
+                        <div class="info-row"><strong>Status</strong> <span style="color: var(--gold);">${task.status.toUpperCase()}</span></div>
+                        ${isHoldStatus ? `<div class="info-row"><strong>Hold</strong> <span style="color: #ef4444;">${holdDuration} Days</span></div>` : ''}
+                        ${task.applicationNumber ? `<div class="info-row"><strong>App #</strong> <span>${task.applicationNumber.toUpperCase()}</span></div>` : ''}
+                        ${task.appointmentDate ? `<div class="info-row"><strong>Appt Date</strong> <span>${task.appointmentDate}</span></div>` : ''}
+                        ${task.llrDate ? `
+                            <div class="info-row"><strong>LLR Date</strong> <span>${task.llrDate}</span></div>
+                            <div class="info-row"><strong>Maturity</strong> <span>${calculateMaturityDate(task.llrDate)}</span></div>
+                            <div class="info-row"><strong>Expiry</strong> <span>${calculateExpiryDate(task.llrDate)}</span></div>
+                        ` : ''}
+                    </div>
+
+                    <div class="status-update-section">
+                        <select class="status-select" id="status-${task.id}" onchange="handleStatusChange('${task.id}')">
+                            ${taskStatuses.map(s => `<option value="${s}" ${task.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                        </select>
+                        
+                        <div id="appNumber-${task.id}" style="display: none;">
+                            <input type="text" class="app-number-input" id="appNumberInput-${task.id}" placeholder="Application Number" value="${task.applicationNumber || ''}">
+                        </div>
+                        
+                        <div id="appointmentDate-${task.id}" style="display: none;">
+                            <input type="date" class="app-number-input" id="appointmentDateInput-${task.id}" value="${task.appointmentDate || ''}">
+                            <small style="color: var(--text-muted); font-size: 0.7rem;">Select Appointment Date</small>
+                        </div>
+
+                        <input type="text" class="status-notes" id="statusNotes-${task.id}" placeholder="Update notes...">
+                        <button class="update-button" onclick="updateTaskStatus('${task.id}', event)">Update Status</button>
+                        
+                        ${isHoldEligible ? `
+                            <button class="update-button hold-move-btn" onclick="moveToHoldRecords('${task.id}', event)">
+                                <i class="fas fa-pause-circle"></i> Move to Hold
+                            </button>
+                        ` : ''}
+                    </div>
+
+                    <div class="status-update-section" style="margin-top: 0.5rem; border-top: 1px dashed var(--glass-border); padding-top: 1.5rem;">
+                        <select class="status-select" id="intimation-${task.id}">
+                            <option value="">Select Intimation</option>
+                            <option value="Informed">Informed</option>
+                            <option value="Not Reachable">Not Reachable</option>
+                            <option value="Wrong Number">Wrong Number</option>
+                            <option value="Call Later">Call Later</option>
+                        </select>
+                        <input type="text" class="status-notes" id="intimationRemarks-${task.id}" placeholder="Intimation remarks...">
+                        <button class="update-button" style="background: var(--glass); color: var(--gold); border: 1px solid var(--gold-muted);" onclick="addIntimation('${task.id}', event)">Record Intimation</button>
+                    </div>
+                `;
+                taskGrid.appendChild(card);
+                
+                // Set initial field visibility
+                handleStatusChange(task.id);
+            });
+        }
+
+        // Status Visibility Helpers
+        function handleStatusChange(taskId) {
+            const select = document.getElementById(`status-${taskId}`);
+            if (!select) return;
+            const status = select.value;
+            const needsAppNum = [
+                'Application Generated', 
+                'Appointment Fixed', 
+                'Test Application Generated', 
+                'Test Completed', 
+                'Test Committed', 
+                'Committed', 
+                'LLR Issued'
+            ].includes(status);
+            
+            const appNumDiv = document.getElementById(`appNumber-${taskId}`);
+            const apptDateDiv = document.getElementById(`appointmentDate-${taskId}`);
+            
+            if (appNumDiv) appNumDiv.style.display = needsAppNum ? 'block' : 'none';
+            if (apptDateDiv) apptDateDiv.style.display = status === 'Test Application Generated' ? 'block' : 'none';
+        }
+
+        // Status Update Logic
+        async function updateTaskStatus(taskId, event) {
+            console.group(`Update Task Status: ${taskId}`);
+            
+            // 1. Identify Button safely
+            let updateBtn = null;
+            if (event && event.currentTarget) updateBtn = event.currentTarget;
+            else if (event && event.target) updateBtn = event.target;
+            
+            const originalText = updateBtn ? updateBtn.innerHTML : 'Update Status';
+            
+            if (updateBtn) {
+                updateBtn.disabled = true;
+                updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            }
+
+            try {
+                // 2. Refresh/Fetch Task Cache
+                if (!allTasks || allTasks.length === 0) {
+                    allTasks = await apiUtils.getTasks();
+                }
+
+                const idx = allTasks.findIndex(t => String(t.id) === String(taskId));
+                if (idx === -1) {
+                    throw new Error('Task not found in system. Please refresh the page.');
+                }
+
+                const task = { ...allTasks[idx] };
+                const statusSelect = document.getElementById(`status-${taskId}`);
+                if (!statusSelect) throw new Error('Status selector not found');
+                
+                const newStatus = statusSelect.value;
+                if (!newStatus) throw new Error('No status selected');
+
+                console.log(`Updating ${task.applicantName} to ${newStatus}`);
+
+                // 3. Conditional Data Capture (Always capture if visible)
+                const appNumInput = document.getElementById(`appNumberInput-${taskId}`);
+                const appNumDiv = document.getElementById(`appNumber-${taskId}`);
+                if (appNumDiv && appNumDiv.style.display !== 'none' && appNumInput) {
+                    task.applicationNumber = appNumInput.value.trim().toUpperCase();
+                }
+
+                const dateInput = document.getElementById(`appointmentDateInput-${taskId}`);
+                const apptDateDiv = document.getElementById(`appointmentDate-${taskId}`);
+                if (apptDateDiv && apptDateDiv.style.display !== 'none' && dateInput) {
+                    task.appointmentDate = dateInput.value;
+                }
+
+                // 4. Validation & Conditional Logic
+                if (newStatus === 'LLR Issued') {
+                    if (!task.applicationNumber) {
+                        throw new Error('Application Number is required to issue LLR');
+                    }
+                    
+                    const today = new Date().toISOString().split('T')[0];
+                    task.llrDate = today;
+                    task.maturityDate = calculateMaturityDate(today);
+                    task.expiryDate = calculateExpiryDate(today);
+                    console.log('LLR Issued data:', { llrDate: task.llrDate, maturity: task.maturityDate, expiry: task.expiryDate });
+                } else if (newStatus === 'Application Generated') {
+                    if (!task.applicationNumber) {
+                        throw new Error('Please enter the Application Number');
+                    }
+                } else if (newStatus === 'Test Application Generated') {
+                    if (!task.appointmentDate) {
+                        throw new Error('Please select an Appointment Date');
+                    }
+                }
+
+                // 5. Final Object Update
+                task.status = newStatus;
+                const notesInput = document.getElementById(`statusNotes-${taskId}`);
+                const notes = notesInput ? notesInput.value.trim() : '';
+
+                if (!task.statusHistory) task.statusHistory = [];
+                task.statusHistory.push({
+                    status: newStatus,
+                    date: new Date().toISOString().split('T')[0],
+                    time: new Date().toLocaleTimeString(),
+                    updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System',
+                    notes: notes || 'Status updated via dashboard'
+                });
+
+                // 6. Save to Server
+                const result = await apiUtils.saveTask(task);
+                
+                if (result.success) {
+                    // --- Update Student Dashboard (Registration Collection) ---
+                    if (db) {
+                        try {
+                            const regSnapshot = await db.collection("registrations")
+                                .where("mobile", "==", task.mobile || task.mobileNumber)
+                                .get();
+                            
+                            if (!regSnapshot.empty) {
+                                await db.collection("registrations").doc(regSnapshot.docs[0].id).update({
+                                    status: newStatus,
+                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                                console.log(`Student dashboard updated with status: ${newStatus}`);
+                            }
+                        } catch (regErr) {
+                            console.error("Error updating student dashboard:", regErr);
+                        }
+                    }
+
+                    showNotification(`Success: Status updated to ${newStatus}`);
+                    allTasks[idx] = task;
+                    
+                    // 7. Refresh UI
+                    const filteredTasks = getFilteredTasks(allTasks);
+                    document.getElementById('taskCountDisplay').textContent = filteredTasks.length;
+                    await displayTasks(filteredTasks);
+                } else {
+                    throw new Error(result.error || 'The server rejected the update. Please check connection.');
+                }
+            } catch (error) {
+                console.error('Update operation failed:', error);
+                showNotification(error.message, 'error');
+            } finally {
+                if (updateBtn) {
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = originalText;
+                }
+                console.groupEnd();
+            }
+        }
+
+        async function addIntimation(taskId, event) {
+            const idx = allTasks.findIndex(t => String(t.id) === String(taskId));
+            if (idx === -1) return;
+
+            const updateBtn = event.currentTarget;
+            const originalText = updateBtn.innerHTML;
+            updateBtn.disabled = true;
+            updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            try {
+                const statusSelect = document.getElementById(`intimation-${taskId}`);
+                const status = statusSelect ? statusSelect.value : '';
+                if (!status) {
+                    showNotification('Select intimation status', 'error');
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = originalText;
+                    return;
+                }
+
+                const task = { ...allTasks[idx] };
+                if (!task.intimations) task.intimations = [];
+                
+                const remarksInput = document.getElementById(`intimationRemarks-${taskId}`);
+                const remarks = remarksInput ? remarksInput.value.trim() : 'None';
+
+                task.intimations.push({
+                    status,
+                    remarks,
+                    date: new Date().toISOString().split('T')[0],
+                    time: new Date().toLocaleTimeString(),
+                    by: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System'
+                });
+
+                const result = await apiUtils.saveTask(task);
+                if (result.success) {
+                    showNotification('Intimation recorded!');
+                    allTasks[idx] = task; // Update local state
+                    // We don't need to re-render everything just for an intimation
+                    // but we can clear the inputs
+                    if (statusSelect) statusSelect.value = '';
+                    if (remarksInput) remarksInput.value = '';
+                } else {
+                    showNotification(result.error || 'Failed to save intimation', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving intimation:', error);
+                showNotification('Error saving: ' + error.message, 'error');
+            } finally {
+                if (updateBtn) {
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = originalText;
+                }
+            }
+        }
+
+        async function moveToHoldRecords(taskId, event) {
+            const idx = allTasks.findIndex(t => String(t.id) === String(taskId));
+            if (idx === -1) return;
+
+            if (!confirm('Move this task to hold records? It will be hidden from this view.')) return;
+
+            const updateBtn = event.currentTarget;
+            const originalText = updateBtn.innerHTML;
+            updateBtn.disabled = true;
+            updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Moving...';
+
+            try {
+                const task = { ...allTasks[idx] };
+                if (!task.details) task.details = {};
+                task.details.isManuallyHeld = true;
+
+                if (!task.statusHistory) task.statusHistory = [];
+                task.statusHistory.push({
+                    status: task.status,
+                    date: new Date().toISOString().split('T')[0],
+                    time: new Date().toLocaleTimeString(),
+                    updatedBy: JSON.parse(localStorage.getItem('currentUser'))?.username || 'System',
+                    notes: 'Task moved to hold records manually'
+                });
+
+                const result = await apiUtils.saveTask(task);
+                if (result.success) {
+                    // --- Update Student Dashboard ---
+                    if (db) {
+                        try {
+                            const regSnapshot = await db.collection("registrations")
+                                .where("mobile", "==", task.mobile || task.mobileNumber)
+                                .get();
+                            
+                            if (!regSnapshot.empty) {
+                                await db.collection("registrations").doc(regSnapshot.docs[0].id).update({
+                                    status: 'Hold by Customer',
+                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            }
+                        } catch (regErr) {
+                            console.error("Error updating student dashboard:", regErr);
+                        }
+                    }
+
+                    showNotification('Task moved to hold!');
+                    allTasks[idx] = task;
+                    // Filter and re-render to hide the task
+                    const filteredTasks = getFilteredTasks(allTasks);
+                    document.getElementById('taskCountDisplay').textContent = filteredTasks.length;
+                    await displayTasks(filteredTasks);
+                } else {
+                    showNotification(result.error || 'Failed to move task', 'error');
+                }
+            } catch (error) {
+                console.error('Error moving task:', error);
+                showNotification('Error moving task: ' + error.message, 'error');
+            } finally {
+                if (updateBtn) {
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = originalText;
+                }
+            }
+        }
+
+        // Edit Modal Logic
+        let currentEditingId = null;
+        async function editTask(taskId) {
+            const tasks = await apiUtils.getTasks();
+            const task = tasks.find(t => String(t.id) === String(taskId));
+            if (!task) return;
+
+            currentEditingId = taskId;
+            document.getElementById('editName').value = task.applicantName;
+            document.getElementById('editMobile').value = task.mobile || task.mobileNumber || '';
+            document.getElementById('editNotes').value = task.notes || '';
+
+            const vehicleClasses = await apiUtils.getSettings('vehicleClasses', []);
+            const currentClasses = task.vehicleClass ? task.vehicleClass.split(', ') : [];
+            document.getElementById('editVehicleClass').innerHTML = vehicleClasses.map(vc => 
+                `<option value="${vc}" ${currentClasses.includes(vc) ? 'selected' : ''}>${vc}</option>`
+            ).join('');
+
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            currentEditingId = null;
+        }
+
+        async function saveEditTask() {
+            const idx = allTasks.findIndex(t => String(t.id) === String(currentEditingId));
+            if (idx === -1) return;
+
+            const vehicles = Array.from(document.getElementById('editVehicleClass').selectedOptions).map(o => o.value);
+            const task = { ...allTasks[idx] };
+            
+            task.applicantName = document.getElementById('editName').value.trim();
+            task.mobile = document.getElementById('editMobile').value.trim();
+            task.mobileNumber = task.mobile; // Keep in sync
+            task.vehicleClass = vehicles.join(', ');
+            task.notes = document.getElementById('editNotes').value.trim();
+
+            const result = await apiUtils.saveTask(task);
+            if (result.success) {
+                showNotification('Changes saved!');
+                allTasks[idx] = task;
+                closeEditModal();
+                await loadTasks();
+            } else {
+                showNotification(result.error || 'Failed to save changes', 'error');
+            }
+        }
+
+        // Initialization
+        async function init() {
+            // Default statuses if none are configured in settings
+            const defaultStatuses = [
+                'New Application', 
+                'Pending', 
+                'Hold by Customer', 
+                'Application Generated', 
+                'Appointment Fixed', 
+                'Test Application Generated', 
+                'Test Completed', 
+                'Test Committed', 
+                'Committed', 
+                'Engagged', 
+                'LLR Issued', 
+                'Returned', 
+                'Expired'
+            ];
+            
+            const customStatuses = await apiUtils.getSettings('freshLicenseStatuses', []);
+            const statuses = customStatuses.length > 0 ? customStatuses : defaultStatuses;
+
+            const statusFilter = document.getElementById('statusFilter');
+            statuses.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s;
+                option.textContent = s;
+                statusFilter.appendChild(option);
+            });
+
+            const vehicles = await apiUtils.getSettings('vehicleClasses', ['MCWG', 'MCWOG', 'LMV', 'TRANS', 'HMV']);
+            const vehicleFilter = document.getElementById('vehicleFilter');
+            vehicles.forEach(v => {
+                const option = document.createElement('option');
+                option.value = v;
+                option.textContent = v;
+                vehicleFilter.appendChild(option);
+            });
+
+            await loadTasks();
+            
+            document.getElementById('taskSearch').addEventListener('input', loadTasks);
+            document.getElementById('statusFilter').addEventListener('change', loadTasks);
+            document.getElementById('vehicleFilter').addEventListener('change', loadTasks);
+        }
+
+        window.onclick = (e) => { if (e.target.id === 'editModal') closeEditModal(); };
+        window.onload = init;
+    </script>
+</body>
+</html>

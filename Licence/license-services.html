@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>License Services - Hameethiya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../dark-premium-theme.css">
+    <style>
+        :root {
+            --primary: #fbbf24;
+            --primary-dark: #d97706;
+            --bg-main: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-blur: blur(12px);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(251, 191, 36, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.05) 0px, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .header-section {
+            margin-bottom: 4rem;
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 3.5rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .premium-service-card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            border-radius: 1.5rem;
+            border: 1px solid var(--glass-border);
+            padding: 3rem 2rem;
+            transition: var(--transition);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-premium);
+        }
+
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background: rgba(251, 191, 36, 0.1);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .premium-service-card:hover .icon-wrapper {
+            background: var(--primary);
+            color: var(--bg-main);
+            transform: scale(1.1);
+        }
+
+        .service-name {
+            color: var(--text-main);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .service-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary);
+            color: var(--bg-main);
+            border-color: var(--primary);
+        }
+
+        .nav-btn.logout-btn:hover {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .user-badge {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .top-nav { padding: 1rem; }
+            .nav-btn span { display: none; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <div class="nav-left">
+            <a href="../admin.html" class="nav-btn">
+                <i class="fas fa-columns"></i> <span>Dashboard</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <div class="user-badge" id="userDisplay">
+                <i class="fas fa-user-circle"></i> Guest
+            </div>
+            <button onclick="handleLogout()" class="nav-btn logout-btn">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header-section">
+            <h1>License Services</h1>
+            <p class="subtitle">Efficiently manage fresh applications, license renewals, and premium services for Hameethiya Driving School.</p>
+        </div>
+
+        <div class="button-container">
+            <a href="../Licence/fresh-license.html" class="premium-service-card">
+                <div class="icon-wrapper"><i class="fas fa-id-card"></i></div>
+                <div class="service-name">Fresh License</div>
+                <div class="service-desc">Start new applications for learners and permanent driving licenses.</div>
+            </a>
+            
+            <a href="../Licence/LicenceHolder/license-holder-Services.html" class="premium-service-card">
+                <div class="icon-wrapper"><i class="fas fa-user-check"></i></div>
+                <div class="service-name">License Holder</div>
+                <div class="service-desc">Process renewals, address changes, and duplicates for existing holders.</div>
+            </a>
+
+            <a href="../Licence/create-labels.html" class="premium-service-card">
+                <div class="icon-wrapper"><i class="fas fa-print"></i></div>
+                <div class="service-name">Print Labels</div>
+                <div class="service-desc">Design and generate high-quality notebook-style labels in PDF format.</div>
+            </a>
+
+            <a href="../backup-restore.html" class="premium-service-card">
+                <div class="icon-wrapper"><i class="fas fa-database"></i></div>
+                <div class="service-name">Data Backup</div>
+                <div class="service-desc">Synchronize and back up license data to ensure business continuity.</div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                sessionStorage.removeItem('hameethiya_admin_logged_in');
+                window.location.href = '../admin.html';
+            }
+        }
+
+        window.onload = function() {
+            // Check for Admin Session
+            const adminSession = sessionStorage.getItem('hameethiya_admin_logged_in');
+            if (adminSession === 'true') {
+                localStorage.setItem('currentUser', JSON.stringify({
+                    username: 'admin',
+                    role: 'admin',
+                    moduleAccess: { license: true }
+                }));
+            }
+
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('Please login as admin to access this page.');
+                window.location.href = '../admin.html';
+                return;
+            }
+
+            // Display username
+            document.getElementById('userDisplay').innerHTML = `<i class="fas fa-user-circle"></i> ${currentUser.username}`;
+
+            // Allow access if user is admin or has license module access
+            if (!currentUser.moduleAccess?.license && currentUser.role !== 'admin') {
+                alert('You do not have access to License Services');
+                window.location.href = '../service-selection.html';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fresh License | Hameethiya Premium</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --bg-accent: #111315;
+            --gold: #d4af37;
+            --gold-bright: #f1d592;
+            --gold-muted: rgba(212, 175, 55, 0.2);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 40%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Premium Header */
+        .header {
+            background: rgba(8, 9, 10, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            letter-spacing: 0.05em;
+            background: linear-gradient(to right, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn-premium {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-premium:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.1);
+        }
+
+        .btn-premium i {
+            font-size: 1rem;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 3rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(212, 175, 55, 0.03), transparent);
+            transform: translateX(-100%);
+            transition: 0.6s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--gold-muted);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lux);
+        }
+
+        .stat-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            color: var(--gold);
+            opacity: 0.9;
+        }
+
+        .stat-info h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-info span {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: block;
+        }
+
+        /* Commitment Card */
+        .commitment-card {
+            grid-column: 1 / -1;
+            display: block !important;
+            padding: 2.5rem !important;
+        }
+
+        .commitment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .commitment-title {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .commitment-title h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            margin: 0;
+        }
+
+        .commitment-values {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .val-group {
+            text-align: right;
+        }
+
+        .val-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .val-num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        /* Category Grid */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .category-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .category-item:hover {
+            background: var(--gold-muted);
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+
+        .cat-name {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .cat-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Modules Grid */
+        .modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .module-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 3rem 2rem;
+            border-radius: 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .module-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 28px;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--gold-muted), transparent, var(--gold-muted));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.3;
+            transition: var(--transition);
+        }
+
+        .module-card:hover {
+            transform: translateY(-10px);
+            background: rgba(212, 175, 55, 0.05);
+            box-shadow: var(--shadow-lux);
+        }
+
+        .module-card:hover::after {
+            opacity: 1;
+        }
+
+        .module-card i {
+            font-size: 3rem;
+            color: var(--gold);
+            transition: var(--transition);
+        }
+
+        .module-card:hover i {
+            transform: scale(1.1);
+            color: var(--gold-bright);
+        }
+
+        .module-card span {
+            font-size: 1.2rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        /* Badges */
+        .count-badge {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: #ef4444;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            z-index: 2;
+        }
+
+        /* Modal Premium */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: var(--bg-accent);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 600px;
+            padding: 3rem;
+            border-radius: 32px;
+            box-shadow: var(--shadow-lux);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--gold);
+            transform: rotate(90deg);
+        }
+
+        .settings-section {
+            margin-top: 2rem;
+        }
+
+        .settings-section h3 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .item-list {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+
+        .btn-delete:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .modules {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                padding: 2rem 1rem;
+            }
+            .module-card {
+                padding: 2rem 1rem;
+            }
+            .commitment-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+            .commitment-values {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modules {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <button class="btn-premium" onclick="window.location.href='../Licence/license-services.html'">
+            <i class="fas fa-chevron-left"></i> Back
+        </button>
+        <h1>FRESH LICENSE</h1>
+        <div class="header-actions">
+            <button class="btn-premium" onclick="toggleDashboard()">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </button>
+            <button class="btn-premium" onclick="toggleSettings()">
+                <i class="fas fa-sliders"></i> Settings
+            </button>
+        </div>
+    </header>
+
+    <!-- Dashboard Section -->
+    <div class="dashboard">
+        <div class="stat-card">
+            <i class="fas fa-file-invoice"></i>
+            <div class="stat-info">
+                <h3>Total Applications</h3>
+                <span id="totalCount">0</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-hourglass-half"></i>
+            <div class="stat-info">
+                <h3>LLR Pending</h3>
+                <span id="pendingCount">0</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-id-card-clip"></i>
+            <div class="stat-info">
+                <h3>LLR Issued</h3>
+                <span id="llrCount">0</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-calendar-day"></i>
+            <div class="stat-info">
+                <h3>Test Apps</h3>
+                <span id="testCount">0</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-award"></i>
+            <div class="stat-info">
+                <h3>Test Completed</h3>
+                <span id="testCompletedCount">0</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-circle-pause"></i>
+            <div class="stat-info">
+                <h3>Hold Tasks</h3>
+                <span id="holdCount">0</span>
+            </div>
+        </div>
+
+        <!-- Commitment Card -->
+        <div class="stat-card commitment-card">
+            <div class="commitment-header">
+                <div class="commitment-title">
+                    <i class="fas fa-star"></i>
+                    <h3>Today's Commitment</h3>
+                </div>
+                <div class="commitment-values">
+                    <div class="val-group">
+                        <div class="val-label">Appointment Fixed</div>
+                        <div class="val-num" id="appointmentFixedCount">0</div>
+                    </div>
+                    <div class="val-group">
+                        <div class="val-label">Test Committed</div>
+                        <div class="val-num" id="testCommittedCount">0</div>
+                    </div>
+                </div>
+            </div>
+            <div id="categoryBreakdown" class="category-grid">
+                <!-- Categories injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modules Grid -->
+    <div class="modules">
+        <div class="module-card" onclick="window.location.href='../Licence/kiosk.html'">
+            <i class="fas fa-bolt"></i>
+            <span>Quick Enquiry</span>
+        </div>
+        <div class="module-card" onclick="window.location.href='../Licence/create-license-task.html'">
+            <i class="fas fa-plus-circle"></i>
+            <span>Create Task</span>
+        </div>
+        <div class="module-card" onclick="window.location.href='../Licence/update-task-status.html'">
+            <i class="fas fa-arrows-rotate"></i>
+            <span>Update Status</span>
+        </div>
+        <div class="module-card" onclick="window.location.href='../Licence/check-task-status.html'">
+            <i class="fas fa-magnifying-glass"></i>
+            <span>Check Status</span>
+            <span class="count-badge" id="reminderBadge" style="display:none">0</span>
+        </div>
+        <div class="module-card" onclick="window.location.href='../Licence/matured-llr.html'">
+            <i class="fas fa-calendar-check"></i>
+            <span>Matured LLR</span>
+        </div>
+        <div class="module-card" onclick="window.location.href='license-payment.html'">
+            <i class="fas fa-credit-card"></i>
+            <span>Payment</span>
+        </div>
+        <div class="module-card" onclick="window.location.href='test-applications.html'">
+            <i class="fas fa-list-check"></i>
+            <span>Test Applications</span>
+        </div>
+        <div class="module-card" onclick="window.location.href='feedback-tasks.html'">
+            <i class="fas fa-comment-dots"></i>
+            <span>Feedback</span>
+        </div>
+        <div class="module-card" onclick="window.location.href='license-statistics.html'">
+            <i class="fas fa-chart-line"></i>
+            <span>Statistics</span>
+        </div>
+        <div class="module-card" onclick="window.location.href='../Licence/hold-tasks.html'">
+            <i class="fas fa-pause-circle"></i>
+            <span>Hold Tasks</span>
+            <span class="count-badge" id="holdBadge" style="display:none">0</span>
+        </div>
+        <div class="module-card" onclick="window.location.href='../Licence/check-all-status.html'">
+            <i class="fas fa-table-list"></i>
+            <span>All Status</span>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="toggleSettings()">&times;</span>
+            <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 0.5rem; color: var(--gold);">Settings</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2.5rem;">Manage application statuses and vehicle categories.</p>
+            
+            <div class="settings-section">
+                <h3>Status Management</h3>
+                <div class="form-group">
+                    <input type="text" id="newStatus" placeholder="Enter status name...">
+                    <button onclick="addNewStatus()" class="btn-premium">Add</button>
+                </div>
+                <div id="statusList"></div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Vehicle Categories</h3>
+                <div class="form-group">
+                    <input type="text" id="newVehicleClass" placeholder="Enter vehicle class...">
+                    <button onclick="addNewVehicleClass()" class="btn-premium">Add</button>
+                </div>
+                <div id="vehicleClassList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="api-utils.js"></script>
+    <script>
+        // Authentication
+        async function checkAuth() {
+            // Check if user is already logged in as Admin in the main portal
+            const adminSession = sessionStorage.getItem('hameethiya_admin_logged_in');
+            
+            if (adminSession === 'true') {
+                // If admin session exists, ensure currentUser is set in localStorage
+                localStorage.setItem('currentUser', JSON.stringify({
+                    username: 'admin',
+                    role: 'admin',
+                    moduleAccess: { license: true }
+                }));
+                return true;
+            }
+
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                // If no admin session and no license user, redirect to main page or admin login
+                alert('Please login as admin to access this page.');
+                window.location.href = '../admin.html';
+                return false;
+            }
+            return true;
+        }
+
+        // UI Toggles
+        function toggleSettings() {
+            const modal = document.getElementById('settingsModal');
+            const isShowing = modal.style.display === 'flex';
+            modal.style.display = isShowing ? 'none' : 'flex';
+            if (!isShowing) {
+                updateStatusList();
+                updateVehicleClassList();
+            }
+        }
+        
+        function toggleDashboard() {
+            const dashboard = document.querySelector('.dashboard');
+            dashboard.style.display = dashboard.style.display === 'grid' ? 'none' : 'grid';
+        }
+
+        // Settings Logic
+        async function addNewStatus() {
+            const val = document.getElementById('newStatus').value.trim();
+            if (!val) return;
+            let list = await apiUtils.getSettings('freshLicenseStatuses', []);
+            if (!list.includes(val)) {
+                list.push(val);
+                await apiUtils.saveSettings('freshLicenseStatuses', list);
+                document.getElementById('newStatus').value = '';
+                updateStatusList();
+            }
+        }
+
+        async function addNewVehicleClass() {
+            const val = document.getElementById('newVehicleClass').value.trim();
+            if (!val) return;
+            let list = await apiUtils.getSettings('vehicleClasses', []);
+            if (!list.includes(val)) {
+                list.push(val);
+                await apiUtils.saveSettings('vehicleClasses', list);
+                document.getElementById('newVehicleClass').value = '';
+                updateVehicleClassList();
+            }
+        }
+
+        async function updateStatusList() {
+            let list = await apiUtils.getSettings('freshLicenseStatuses', ['Pending', 'Hold by Customer', 'Application Generated']);
+            const container = document.getElementById('statusList');
+            container.innerHTML = list.map(item => `
+                <div class="item-list">
+                    <span>${item}</span>
+                    <button class="btn-delete" onclick="deleteStatus('${item}')">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        async function updateVehicleClassList() {
+            let list = await apiUtils.getSettings('vehicleClasses', []);
+            const container = document.getElementById('vehicleClassList');
+            container.innerHTML = list.map(item => `
+                <div class="item-list">
+                    <span>${item}</span>
+                    <button class="btn-delete" onclick="deleteVehicleClass('${item}')">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        async function deleteStatus(item) {
+            let list = await apiUtils.getSettings('freshLicenseStatuses', []);
+            list = list.filter(i => i !== item);
+            await apiUtils.saveSettings('freshLicenseStatuses', list);
+            updateStatusList();
+        }
+
+        async function deleteVehicleClass(item) {
+            let list = await apiUtils.getSettings('vehicleClasses', []);
+            list = list.filter(i => i !== item);
+            await apiUtils.saveSettings('vehicleClasses', list);
+            updateVehicleClassList();
+        }
+
+        // Dashboard Data
+        async function updateDashboardCounts() {
+            const [tasks, lhServices] = await Promise.all([
+                apiUtils.getTasks(),
+                apiUtils.getLicenseHolderServices()
+            ]);
+            
+            document.getElementById('totalCount').textContent = tasks.length;
+            
+            const pending = tasks.filter(t => 
+                !['LLR Issued', 'Returned', 'Committed', 'Test Completed', 'Test Application Generated'].includes(t.status) &&
+                !(t.details && t.details.isManuallyHeld)
+            ).length;
+            document.getElementById('pendingCount').textContent = pending;
+            
+            const holdCount = tasks.filter(t => t.details && t.details.isManuallyHeld).length;
+            document.getElementById('holdCount').textContent = holdCount;
+            const holdBadge = document.getElementById('holdBadge');
+            if (holdBadge) {
+                holdBadge.textContent = holdCount;
+                holdBadge.style.display = holdCount > 0 ? 'inline-block' : 'none';
+            }
+            
+            document.getElementById('llrCount').textContent = tasks.filter(t => t.status === 'LLR Issued').length;
+            document.getElementById('testCount').textContent = tasks.filter(t => t.status === 'Test Application Generated').length;
+            document.getElementById('testCompletedCount').textContent = tasks.filter(t => t.status === 'Test Completed').length;
+
+            // Commitment
+            const appFixed = tasks.filter(t => ['Appointment Fixed', 'Test Application Generated'].includes(t.status)).length +
+                             lhServices.filter(s => (s.status || '').toLowerCase() === 'appointment fixed').length;
+            const testComm = tasks.filter(t => t.status === 'Test Committed').length;
+            
+            document.getElementById('appointmentFixedCount').textContent = appFixed;
+            document.getElementById('testCommittedCount').textContent = testComm;
+
+            // Categories
+            const categories = ['MCWG', 'MCWOG', 'LMV', 'MCWG+LMV', 'MCWOG+LMV', 'TRANS', 'LLD', 'BADGE', 'RETEST', 'CHANGE OF ADDRESS'];
+            const counts = {};
+            categories.forEach(c => counts[c] = 0);
+
+            [...tasks.filter(t => ['Appointment Fixed', 'Test Application Generated', 'Test Committed'].includes(t.status))].forEach(t => {
+                if (!t.vehicleClass) return;
+                const vcs = t.vehicleClass.split(',').map(v => v.trim().toUpperCase());
+                if (vcs.includes('MCWG') && vcs.includes('LMV')) counts['MCWG+LMV']++;
+                else if (vcs.includes('MCWOG') && vcs.includes('LMV')) counts['MCWOG+LMV']++;
+                else vcs.forEach(vc => { if (categories.includes(vc)) counts[vc]++; });
+            });
+
+            lhServices.filter(s => (s.status || '').toLowerCase() === 'appointment fixed').forEach(s => {
+                const type = (s.serviceType || '').toUpperCase();
+                if (type.includes('LLD')) counts['LLD']++;
+                if (type.includes('BADGE')) counts['BADGE']++;
+                if (type.includes('RETEST')) counts['RETEST']++;
+                if (type.includes('CHANGE OF ADDRESS')) counts['CHANGE OF ADDRESS']++;
+            });
+
+            document.getElementById('categoryBreakdown').innerHTML = categories.map(cat => `
+                <div class="category-item">
+                    <div class="cat-name">${cat}</div>
+                    <div class="cat-count">${counts[cat]}</div>
+                </div>
+            `).join('');
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!(await checkAuth())) return;
+            await updateDashboardCounts();
+            
+            // Reminders
+            const tasks = await apiUtils.getTasks();
+            const today = new Date().toLocaleDateString();
+            const reminders = tasks.filter(t => t.reminderDate && new Date(t.reminderDate).toLocaleDateString() === today).length;
+            const badge = document.getElementById('reminderBadge');
+            if (badge) {
+                badge.textContent = reminders;
+                badge.style.display = reminders > 0 ? 'inline-block' : 'none';
+            }
+
+            // Close dashboard on outside click
+            document.addEventListener('click', (e) => {
+                const dash = document.querySelector('.dashboard');
+                const btn = document.querySelector('[onclick="toggleDashboard()"]');
+                if (dash.style.display === 'grid' && !dash.contains(e.target) && !btn.contains(e.target)) {
+                    dash.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
