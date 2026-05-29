@@ -666,6 +666,54 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial Render of Reviews
     renderPublicReviews();
 
+    // --- Student Registration Logic ---
+    window.handleStudentRegistration = function(e) {
+        e.preventDefault();
+        const name = document.getElementById('reg_name').value;
+        const email = document.getElementById('reg_email').value;
+        const mobile = document.getElementById('reg_mobile').value;
+        const course = document.getElementById('reg_course').value;
+        const btn = e.target.querySelector('button');
+
+        btn.innerText = "Registering...";
+        btn.disabled = true;
+
+        const regData = {
+            name: name,
+            email: email,
+            mobile: mobile,
+            course: course,
+            status: 'Pending',
+            timestamp: new Date().toLocaleString(),
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        if (db) {
+            db.collection("registrations").add(regData)
+                .then(() => {
+                    alert("Registration successful! Our team will contact you shortly to proceed with the LLR process.");
+                    e.target.reset();
+                })
+                .catch(err => {
+                    console.error("Registration error:", err);
+                    alert("An error occurred during registration. Please try again.");
+                })
+                .finally(() => {
+                    btn.innerHTML = '<i class="fas fa-user-plus"></i> Submit Registration';
+                    btn.disabled = false;
+                });
+        } else {
+            // Fallback for local storage
+            const local = JSON.parse(localStorage.getItem('hameethiya_registrations') || '[]');
+            local.push(regData);
+            localStorage.setItem('hameethiya_registrations', JSON.stringify(local));
+            alert("Registration saved locally (Cloud not configured).");
+            e.target.reset();
+            btn.innerHTML = '<i class="fas fa-user-plus"></i> Submit Registration';
+            btn.disabled = false;
+        }
+    };
+
     // --- LLR Download Logic ---
     let downloadAttempts = JSON.parse(localStorage.getItem('llr_download_attempts') || '{}');
 

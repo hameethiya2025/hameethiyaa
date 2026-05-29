@@ -107,6 +107,56 @@
         .back-to-site:hover {
             color: var(--primary-color);
         }
+
+        /* Responsive Admin Dashboard */
+        @media (max-width: 992px) {
+            .tab-content > div {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .admin-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 5px;
+            }
+            .tab-btn {
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 20px 15px;
+            }
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                width: 100%;
+            }
+            .search-input {
+                min-width: 100%;
+            }
+            .admin-table th, .admin-table td {
+                padding: 10px;
+                font-size: 0.8rem;
+            }
+            .admin-header h2 {
+                font-size: 1.5rem;
+            }
+            .back-to-site {
+                position: static;
+                margin-bottom: 20px;
+                display: inline-flex;
+            }
+        }
     </style>
 </head>
 <body>
@@ -147,6 +197,7 @@
 
             <div class="admin-tabs">
                 <button class="tab-btn active" onclick="switchAdminTab('payments')">Payments</button>
+                <button class="tab-btn" onclick="switchAdminTab('registrations')">Registrations <span id="regBadge" class="badge">0</span></button>
                 <button class="tab-btn" onclick="switchAdminTab('documents')">Documents</button>
                 <button class="tab-btn" onclick="switchAdminTab('photos')">Photos</button>
                 <button class="tab-btn" onclick="switchAdminTab('packages')">Packages</button>
@@ -191,6 +242,38 @@
                 <div id="paymentEmptyMsg" style="text-align: center; padding: 60px; color: var(--text-muted); display: none;">
                     <i class="fas fa-credit-card" style="font-size: 3rem; margin-bottom: 20px; display: block; opacity: 0.3;"></i>
                     No payment records found matching your criteria.
+                </div>
+            </div>
+
+            <!-- Registrations Section -->
+            <div id="tab-registrations" class="tab-content">
+                <div class="filter-bar">
+                    <div class="filter-group search-input">
+                        <label><i class="fas fa-search"></i> Search Name</label>
+                        <input type="text" id="regSearch" placeholder="Search by student name..." oninput="filterRegistrations()">
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Student Name</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th>Course</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="regTableBody">
+                            <!-- Rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="regEmptyMsg" style="text-align: center; padding: 60px; color: var(--text-muted); display: none;">
+                    <i class="fas fa-user-clock" style="font-size: 3rem; margin-bottom: 20px; display: block; opacity: 0.3;"></i>
+                    No new registrations found.
                 </div>
             </div>
 

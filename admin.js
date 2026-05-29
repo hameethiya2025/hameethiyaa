@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateFeedbackDashboard();
         updatePaymentDashboard();
         updateLLRDashboard();
+        updateRegistrationDashboard();
         cleanupExpiredLLR(); // Auto-delete LLR older than 180 days
         loadPackages();
         
@@ -160,6 +161,105 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- Registrations Management ---
+    let allRegistrations = [];
+
+    function updateRegistrationDashboard() {
+        const tableBody = document.getElementById('regTableBody');
+        const badge = document.getElementById('regBadge');
+        if (!tableBody) return;
+
+        const render = (registrations) => {
+            allRegistrations = registrations;
+            badge.innerText = registrations.length;
+            filterRegistrations();
+        };
+
+        if (db) {
+            db.collection("registrations").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+                const regs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                render(regs);
+            });
+        } else {
+            const local = JSON.parse(localStorage.getItem('hameethiya_registrations') || '[]');
+            render(local);
+        }
+    }
+
+    window.filterRegistrations = function() {
+        const search = document.getElementById('regSearch').value.toLowerCase();
+        const tableBody = document.getElementById('regTableBody');
+        const emptyMsg = document.getElementById('regEmptyMsg');
+
+        const filtered = allRegistrations.filter(r => 
+            r.name.toLowerCase().includes(search)
+        );
+
+        if (filtered.length === 0) {
+            tableBody.innerHTML = '';
+            emptyMsg.style.display = 'block';
+            return;
+        }
+
+        emptyMsg.style.display = 'none';
+        tableBody.innerHTML = filtered.map((reg, index) => `
+                <tr>
+                    <td>${reg.timestamp}</td>
+                    <td><strong>${reg.name}</strong></td>
+                    <td>${reg.email}</td>
+                    <td>${reg.mobile}</td>
+                    <td><span class="badge" style="background: rgba(212, 175, 55, 0.1); color: var(--primary-color);">${reg.course}</span></td>
+                    <td>
+                        <span class="status-badge status-${(reg.status || 'Pending').toLowerCase()}">
+                            ${reg.status || 'Pending'}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-ack" onclick="processRegistration('${reg.id || index}', '${reg.mobile}', ${!!reg.id})" title="Process & Upload LLR">
+                                <i class="fas fa-file-export"></i> Process
+                            </button>
+                            <button class="btn-ack" style="background: #dc3545;" onclick="deleteRegistration('${reg.id || index}', ${!!reg.id})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+    };
+
+    window.processRegistration = function(id, mobile, isCloud) {
+        // Switch to Documents tab and pre-fill mobile
+        switchAdminTab('documents');
+        document.getElementById('llr_mobile').value = mobile;
+        
+        // Update status in database
+        if (isCloud && db) {
+            db.collection("registrations").doc(id).update({
+                status: 'Processing'
+            });
+        } else {
+            const regs = JSON.parse(localStorage.getItem('hameethiya_registrations') || '[]');
+            if (regs[id]) {
+                regs[id].status = 'Processing';
+                localStorage.setItem('hameethiya_registrations', JSON.stringify(regs));
+                updateRegistrationDashboard();
+            }
+        }
+    };
+
+    window.deleteRegistration = function(id, isCloud) {
+        if (!confirm("Delete this registration record?")) return;
+        if (isCloud && db) {
+            db.collection("registrations").doc(id).delete();
+        } else {
+            const regs = JSON.parse(localStorage.getItem('hameethiya_registrations') || '[]');
+            regs.splice(id, 1);
+            localStorage.setItem('hameethiya_registrations', JSON.stringify(regs));
+            updateRegistrationDashboard();
+        }
+    };
+
     // --- LLR Documents Management ---
     window.handleLLRUpload = function(e) {
         e.preventDefault();
@@ -197,6 +297,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (db) {
                 db.collection("llr_documents").add(llrData)
                     .then(() => {
+                        // Mark registration as completed if it exists
+                        db.collection("registrations").where("mobile", "==", mobile).get()
+                            .then(snapshot => {
+                                snapshot.forEach(doc => {
+                                    db.collection("registrations").doc(doc.id).update({ status: 'Completed' });
+                                });
+                            });
+                        
                         alert("LLR Document uploaded successfully!");
                         e.target.reset();
                     })
@@ -209,6 +317,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const local = JSON.parse(localStorage.getItem('hameethiya_llr') || '[]');
                 local.push(llrData);
                 localStorage.setItem('hameethiya_llr', JSON.stringify(local));
+                
+                // Local fallback for marking completed
+                const regs = JSON.parse(localStorage.getItem('hameethiya_registrations') || '[]');
+                regs.forEach(r => { if(r.mobile === mobile) r.status = 'Completed'; });
+                localStorage.setItem('hameethiya_registrations', JSON.stringify(regs));
+                updateRegistrationDashboard();
+
                 updateLLRDashboard();
                 alert("Saved locally!");
                 e.target.reset();
